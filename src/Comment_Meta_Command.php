@@ -1,7 +1,7 @@
 <?php
 
-use WP_CLI\CommandWithMeta;
-use WP_CLI\Fetchers\Comment as CommentFetcher;
+use FP_CLI\CommandWithMeta;
+use FP_CLI\Fetchers\Comment as CommentFetcher;
 
 /**
  * Adds, updates, deletes, and lists comment custom fields.
@@ -9,19 +9,19 @@ use WP_CLI\Fetchers\Comment as CommentFetcher;
  * ## EXAMPLES
  *
  *     # Set comment meta
- *     $ wp comment meta set 123 description "Mary is a WordPress developer."
+ *     $ fp comment meta set 123 description "Mary is a FinPress developer."
  *     Success: Updated custom field 'description'.
  *
  *     # Get comment meta
- *     $ wp comment meta get 123 description
- *     Mary is a WordPress developer.
+ *     $ fp comment meta get 123 description
+ *     Mary is a FinPress developer.
  *
  *     # Update comment meta
- *     $ wp comment meta update 123 description "Mary is an awesome WordPress developer."
+ *     $ fp comment meta update 123 description "Mary is an awesome FinPress developer."
  *     Success: Updated custom field 'description'.
  *
  *     # Delete comment meta
- *     $ wp comment meta delete 123 description
+ *     $ fp comment meta delete 123 description
  *     Success: Deleted custom field.
  */
 class Comment_Meta_Command extends CommandWithMeta {

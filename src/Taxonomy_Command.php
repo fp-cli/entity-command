@@ -1,17 +1,17 @@
 <?php
 
-use WP_CLI\Formatter;
-use WP_CLI\Utils;
+use FP_CLI\Formatter;
+use FP_CLI\Utils;
 
 /**
  * Retrieves information about registered taxonomies.
  *
- * See references for [built-in taxonomies](https://developer.wordpress.org/themes/basics/categories-tags-custom-taxonomies/) and [custom taxonomies](https://developer.wordpress.org/plugins/taxonomies/working-with-custom-taxonomies/).
+ * See references for [built-in taxonomies](https://developer.finpress.org/themes/basics/categories-tags-custom-taxonomies/) and [custom taxonomies](https://developer.finpress.org/plugins/taxonomies/working-with-custom-taxonomies/).
  *
  * ## EXAMPLES
  *
  *     # List all taxonomies with 'post' object type.
- *     $ wp taxonomy list --object_type=post --fields=name,public
+ *     $ fp taxonomy list --object_type=post --fields=name,public
  *     +-------------+--------+
  *     | name        | public |
  *     +-------------+--------+
@@ -21,12 +21,12 @@ use WP_CLI\Utils;
  *     +-------------+--------+
  *
  *     # Get capabilities of 'post_tag' taxonomy.
- *     $ wp taxonomy get post_tag --field=cap
+ *     $ fp taxonomy get post_tag --field=cap
  *     {"manage_terms":"manage_categories","edit_terms":"manage_categories","delete_terms":"manage_categories","assign_terms":"edit_posts"}
  *
- * @package wp-cli
+ * @package fp-cli
  */
-class Taxonomy_Command extends WP_CLI_Command {
+class Taxonomy_Command extends FP_CLI_Command {
 
 	private $fields = array(
 		'name',
@@ -45,26 +45,26 @@ class Taxonomy_Command extends WP_CLI_Command {
 	 * @return array Associative array of term counts keyed by taxonomy.
 	 */
 	protected function get_counts( $taxonomies ) {
-		global $wpdb;
+		global $fpdb;
 
 		if ( count( $taxonomies ) <= 0 ) {
 			return [];
 		}
 
-		$query = $wpdb->prepare(
+		$query = $fpdb->prepare(
 			"SELECT `taxonomy`, COUNT(*) AS `count`
-			FROM $wpdb->term_taxonomy
+			FROM $fpdb->term_taxonomy
 			WHERE `taxonomy` IN (" . implode( ',', array_fill( 0, count( $taxonomies ), '%s' ) ) . ')
 			GROUP BY `taxonomy`',
 			$taxonomies
 		);
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $query is already prepared above.
-		$counts = $wpdb->get_results( $query );
+		// phpcs:ignore FinPress.DB.PreparedSQL.NotPrepared -- $query is already prepared above.
+		$counts = $fpdb->get_results( $query );
 
 		// Make sure there's a count for every item.
 		$counts = array_merge(
 			array_fill_keys( $taxonomies, 0 ),
-			wp_list_pluck( $counts, 'count', 'taxonomy' )
+			fp_list_pluck( $counts, 'count', 'taxonomy' )
 		);
 
 		return $counts;
@@ -115,7 +115,7 @@ class Taxonomy_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # List all taxonomies.
-	 *     $ wp taxonomy list --format=csv
+	 *     $ fp taxonomy list --format=csv
 	 *     name,label,description,object_type,show_tagcloud,hierarchical,public
 	 *     category,Categories,,post,1,1,1
 	 *     post_tag,Tags,,post,1,,1
@@ -124,7 +124,7 @@ class Taxonomy_Command extends WP_CLI_Command {
 	 *     post_format,Format,,post,,,1
 	 *
 	 *     # List all taxonomies with 'post' object type.
-	 *     $ wp taxonomy list --object_type=post --fields=name,public
+	 *     $ fp taxonomy list --object_type=post --fields=name,public
 	 *     +-------------+--------+
 	 *     | name        | public |
 	 *     +-------------+--------+
@@ -158,7 +158,7 @@ class Taxonomy_Command extends WP_CLI_Command {
 		$counts = [];
 
 		if ( count( $taxonomies ) > 0 && in_array( 'count', $fields, true ) ) {
-			$counts = $this->get_counts( wp_list_pluck( $taxonomies, 'name' ) );
+			$counts = $this->get_counts( fp_list_pluck( $taxonomies, 'name' ) );
 		}
 
 		$taxonomies = array_map(
@@ -222,7 +222,7 @@ class Taxonomy_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Get details of `category` taxonomy.
-	 *     $ wp taxonomy get category --fields=name,label,object_type
+	 *     $ fp taxonomy get category --fields=name,label,object_type
 	 *     +-------------+------------+
 	 *     | Field       | Value      |
 	 *     +-------------+------------+
@@ -232,14 +232,14 @@ class Taxonomy_Command extends WP_CLI_Command {
 	 *     +-------------+------------+
 	 *
 	 *     # Get capabilities of 'post_tag' taxonomy.
-	 *     $ wp taxonomy get post_tag --field=cap
+	 *     $ fp taxonomy get post_tag --field=cap
 	 *     {"manage_terms":"manage_categories","edit_terms":"manage_categories","delete_terms":"manage_categories","assign_terms":"edit_posts"}
 	 */
 	public function get( $args, $assoc_args ) {
 		$taxonomy = get_taxonomy( $args[0] );
 
 		if ( ! $taxonomy ) {
-			WP_CLI::error( "Taxonomy {$args[0]} doesn't exist." );
+			FP_CLI::error( "Taxonomy {$args[0]} doesn't exist." );
 		}
 
 		if ( empty( $assoc_args['fields'] ) ) {

@@ -1,9 +1,9 @@
-wp-cli/entity-command
+fp-cli/entity-command
 =====================
 
-Manage WordPress comments, menus, options, posts, sites, terms, and users.
+Manage FinPress comments, menus, options, posts, sites, terms, and users.
 
-[![Testing](https://github.com/wp-cli/entity-command/actions/workflows/testing.yml/badge.svg)](https://github.com/wp-cli/entity-command/actions/workflows/testing.yml)
+[![Testing](https://github.com/fp-cli/entity-command/actions/workflows/testing.yml/badge.svg)](https://github.com/fp-cli/entity-command/actions/workflows/testing.yml)
 
 Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contributing) | [Support](#support)
 
@@ -11,41 +11,41 @@ Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contr
 
 This package implements the following commands:
 
-### wp comment
+### fp comment
 
 Creates, updates, deletes, and moderates comments.
 
 ~~~
-wp comment
+fp comment
 ~~~
 
 **EXAMPLES**
 
     # Create a new comment.
-    $ wp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="wp-cli"
+    $ fp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fp-cli"
     Success: Created comment 932.
 
     # Update an existing comment.
-    $ wp comment update 123 --comment_author='That Guy'
+    $ fp comment update 123 --comment_author='That Guy'
     Success: Updated comment 123.
 
     # Delete an existing comment.
-    $ wp comment delete 1337 --force
+    $ fp comment delete 1337 --force
     Success: Deleted comment 1337.
 
     # Trash all spam comments.
-    $ wp comment delete $(wp comment list --status=spam --format=ids)
+    $ fp comment delete $(fp comment list --status=spam --format=ids)
     Success: Trashed comment 264.
     Success: Trashed comment 262.
 
 
 
-### wp comment approve
+### fp comment approve
 
 Approves a comment.
 
 ~~~
-wp comment approve <id>...
+fp comment approve <id>...
 ~~~
 
 **OPTIONS**
@@ -56,17 +56,17 @@ wp comment approve <id>...
 **EXAMPLES**
 
     # Approve comment.
-    $ wp comment approve 1337
+    $ fp comment approve 1337
     Success: Approved comment 1337.
 
 
 
-### wp comment count
+### fp comment count
 
 Counts comments, on whole blog or on a given post.
 
 ~~~
-wp comment count [<post-id>]
+fp comment count [<post-id>]
 ~~~
 
 **OPTIONS**
@@ -77,7 +77,7 @@ wp comment count [<post-id>]
 **EXAMPLES**
 
     # Count comments on whole blog.
-    $ wp comment count
+    $ fp comment count
     approved:        33
     spam:            3
     trash:           1
@@ -87,7 +87,7 @@ wp comment count [<post-id>]
     total_comments:  37
 
     # Count comments in a post.
-    $ wp comment count 42
+    $ fp comment count 42
     approved:        19
     spam:            0
     trash:           0
@@ -98,18 +98,18 @@ wp comment count [<post-id>]
 
 
 
-### wp comment create
+### fp comment create
 
 Creates a new comment.
 
 ~~~
-wp comment create [--<field>=<value>] [--porcelain]
+fp comment create [--<field>=<value>] [--porcelain]
 ~~~
 
 **OPTIONS**
 
 	[--<field>=<value>]
-		Associative args for the new comment. See wp_insert_comment().
+		Associative args for the new comment. See fp_insert_comment().
 
 	[--porcelain]
 		Output just the new comment id.
@@ -117,17 +117,17 @@ wp comment create [--<field>=<value>] [--porcelain]
 **EXAMPLES**
 
     # Create comment.
-    $ wp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="wp-cli"
+    $ fp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fp-cli"
     Success: Created comment 932.
 
 
 
-### wp comment delete
+### fp comment delete
 
 Deletes a comment.
 
 ~~~
-wp comment delete <id>... [--force]
+fp comment delete <id>... [--force]
 ~~~
 
 **OPTIONS**
@@ -141,22 +141,22 @@ wp comment delete <id>... [--force]
 **EXAMPLES**
 
     # Delete comment.
-    $ wp comment delete 1337 --force
+    $ fp comment delete 1337 --force
     Success: Deleted comment 1337.
 
     # Delete multiple comments.
-    $ wp comment delete 1337 2341 --force
+    $ fp comment delete 1337 2341 --force
     Success: Deleted comment 1337.
     Success: Deleted comment 2341.
 
 
 
-### wp comment exists
+### fp comment exists
 
 Verifies whether a comment exists.
 
 ~~~
-wp comment exists <id>
+fp comment exists <id>
 ~~~
 
 Displays a success message if the comment does exist.
@@ -169,17 +169,17 @@ Displays a success message if the comment does exist.
 **EXAMPLES**
 
     # Check whether comment exists.
-    $ wp comment exists 1337
+    $ fp comment exists 1337
     Success: Comment with ID 1337 exists.
 
 
 
-### wp comment generate
+### fp comment generate
 
 Generates some number of new dummy comments.
 
 ~~~
-wp comment generate [--count=<number>] [--post_id=<post-id>] [--format=<format>]
+fp comment generate [--count=<number>] [--post_id=<post-id>] [--format=<format>]
 ~~~
 
 Creates a specified number of new comments with dummy data.
@@ -207,23 +207,23 @@ Creates a specified number of new comments with dummy data.
 **EXAMPLES**
 
     # Generate comments for the given post.
-    $ wp comment generate --format=ids --count=3 --post_id=123
+    $ fp comment generate --format=ids --count=3 --post_id=123
     138 139 140
 
     # Add meta to every generated comment.
-    $ wp comment generate --format=ids --count=3 | xargs -d ' ' -I % wp comment meta add % foo bar
+    $ fp comment generate --format=ids --count=3 | xargs -d ' ' -I % fp comment meta add % foo bar
     Success: Added custom field.
     Success: Added custom field.
     Success: Added custom field.
 
 
 
-### wp comment get
+### fp comment get
 
 Gets the data of a single comment.
 
 ~~~
-wp comment get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp comment get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -251,26 +251,26 @@ wp comment get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
 **EXAMPLES**
 
     # Get comment.
-    $ wp comment get 21 --field=content
+    $ fp comment get 21 --field=content
     Thanks for all the comments, everyone!
 
 
 
-### wp comment list
+### fp comment list
 
 Gets a list of comments.
 
 ~~~
-wp comment list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp comment list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 Display comments based on all arguments supported by
-[WP_Comment_Query()](https://developer.wordpress.org/reference/classes/WP_Comment_Query/__construct/).
+[FP_Comment_Query()](https://developer.finpress.org/reference/classes/FP_Comment_Query/__construct/).
 
 **OPTIONS**
 
 	[--<field>=<value>]
-		One or more args to pass to WP_Comment_Query.
+		One or more args to pass to FP_Comment_Query.
 
 	[--field=<field>]
 		Prints the value of a single field for each comment.
@@ -318,41 +318,41 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List comment IDs.
-    $ wp comment list --field=ID
+    $ fp comment list --field=ID
     22
     23
     24
 
     # List comments of a post.
-    $ wp comment list --post_id=1 --fields=ID,comment_date,comment_author
+    $ fp comment list --post_id=1 --fields=ID,comment_date,comment_author
     +------------+---------------------+----------------+
     | comment_ID | comment_date        | comment_author |
     +------------+---------------------+----------------+
-    | 1          | 2015-06-20 09:00:10 | Mr WordPress   |
+    | 1          | 2015-06-20 09:00:10 | Mr FinPress   |
     +------------+---------------------+----------------+
 
     # List approved comments.
-    $ wp comment list --number=3 --status=approve --fields=ID,comment_date,comment_author
+    $ fp comment list --number=3 --status=approve --fields=ID,comment_date,comment_author
     +------------+---------------------+----------------+
     | comment_ID | comment_date        | comment_author |
     +------------+---------------------+----------------+
-    | 1          | 2015-06-20 09:00:10 | Mr WordPress   |
+    | 1          | 2015-06-20 09:00:10 | Mr FinPress   |
     | 30         | 2013-03-14 12:35:07 | John Doe       |
     | 29         | 2013-03-14 11:56:08 | Jane Doe       |
     +------------+---------------------+----------------+
 
     # List unapproved comments.
-    $ wp comment list --number=3 --status=hold --fields=ID,comment_date,comment_author
+    $ fp comment list --number=3 --status=hold --fields=ID,comment_date,comment_author
     +------------+---------------------+----------------+
     | comment_ID | comment_date        | comment_author |
     +------------+---------------------+----------------+
     | 8          | 2023-11-10 13:13:06 | John Doe       |
-    | 7          | 2023-11-10 13:09:55 | Mr WordPress   |
+    | 7          | 2023-11-10 13:09:55 | Mr FinPress   |
     | 9          | 2023-11-10 11:22:31 | Jane Doe       |
     +------------+---------------------+----------------+
 
     # List comments marked as spam.
-    $ wp comment list --status=spam --fields=ID,comment_date,comment_author
+    $ fp comment list --status=spam --fields=ID,comment_date,comment_author
     +------------+---------------------+----------------+
     | comment_ID | comment_date        | comment_author |
     +------------+---------------------+----------------+
@@ -360,7 +360,7 @@ These fields are optionally available:
     +------------+---------------------+----------------+
 
     # List comments in trash.
-    $ wp comment list --status=trash --fields=ID,comment_date,comment_author
+    $ fp comment list --status=trash --fields=ID,comment_date,comment_author
     +------------+---------------------+----------------+
     | comment_ID | comment_date        | comment_author |
     +------------+---------------------+----------------+
@@ -369,42 +369,42 @@ These fields are optionally available:
 
 
 
-### wp comment meta
+### fp comment meta
 
 Adds, updates, deletes, and lists comment custom fields.
 
 ~~~
-wp comment meta
+fp comment meta
 ~~~
 
 **EXAMPLES**
 
     # Set comment meta
-    $ wp comment meta set 123 description "Mary is a WordPress developer."
+    $ fp comment meta set 123 description "Mary is a FinPress developer."
     Success: Updated custom field 'description'.
 
     # Get comment meta
-    $ wp comment meta get 123 description
-    Mary is a WordPress developer.
+    $ fp comment meta get 123 description
+    Mary is a FinPress developer.
 
     # Update comment meta
-    $ wp comment meta update 123 description "Mary is an awesome WordPress developer."
+    $ fp comment meta update 123 description "Mary is an awesome FinPress developer."
     Success: Updated custom field 'description'.
 
     # Delete comment meta
-    $ wp comment meta delete 123 description
+    $ fp comment meta delete 123 description
     Success: Deleted custom field.
 
 
 
 
 
-### wp comment meta add
+### fp comment meta add
 
 Add a meta field.
 
 ~~~
-wp comment meta add <id> <key> [<value>] [--format=<format>]
+fp comment meta add <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -429,12 +429,12 @@ wp comment meta add <id> <key> [<value>] [--format=<format>]
 
 
 
-### wp comment meta delete
+### fp comment meta delete
 
 Delete a meta field.
 
 ~~~
-wp comment meta delete <id> [<key>] [<value>] [--all]
+fp comment meta delete <id> [<key>] [<value>] [--all]
 ~~~
 
 **OPTIONS**
@@ -453,12 +453,12 @@ wp comment meta delete <id> [<key>] [<value>] [--all]
 
 
 
-### wp comment meta get
+### fp comment meta get
 
 Get meta field value.
 
 ~~~
-wp comment meta get <id> <key> [--format=<format>]
+fp comment meta get <id> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -481,12 +481,12 @@ wp comment meta get <id> <key> [--format=<format>]
 
 
 
-### wp comment meta list
+### fp comment meta list
 
 List all metadata associated with an object.
 
 ~~~
-wp comment meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fp comment meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -536,12 +536,12 @@ wp comment meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>
 
 
 
-### wp comment meta patch
+### fp comment meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-wp comment meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fp comment meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -578,12 +578,12 @@ wp comment meta patch <action> <id> <key> <key-path>... [<value>] [--format=<for
 
 
 
-### wp comment meta pluck
+### fp comment meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-wp comment meta pluck <id> <key> <key-path>... [--format=<format>]
+fp comment meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -608,12 +608,12 @@ wp comment meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### wp comment meta update
+### fp comment meta update
 
 Update a meta field.
 
 ~~~
-wp comment meta update <id> <key> [<value>] [--format=<format>]
+fp comment meta update <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -638,12 +638,12 @@ wp comment meta update <id> <key> [<value>] [--format=<format>]
 
 
 
-### wp comment recount
+### fp comment recount
 
 Recalculates the comment_count value for one or more posts.
 
 ~~~
-wp comment recount <id>...
+fp comment recount <id>...
 ~~~
 
 **OPTIONS**
@@ -654,17 +654,17 @@ wp comment recount <id>...
 **EXAMPLES**
 
     # Recount comment for the post.
-    $ wp comment recount 123
+    $ fp comment recount 123
     Updated post 123 comment count to 67.
 
 
 
-### wp comment spam
+### fp comment spam
 
 Marks a comment as spam.
 
 ~~~
-wp comment spam <id>...
+fp comment spam <id>...
 ~~~
 
 **OPTIONS**
@@ -675,17 +675,17 @@ wp comment spam <id>...
 **EXAMPLES**
 
     # Spam comment.
-    $ wp comment spam 1337
+    $ fp comment spam 1337
     Success: Marked as spam comment 1337.
 
 
 
-### wp comment status
+### fp comment status
 
 Gets the status of a comment.
 
 ~~~
-wp comment status <id>
+fp comment status <id>
 ~~~
 
 **OPTIONS**
@@ -696,17 +696,17 @@ wp comment status <id>
 **EXAMPLES**
 
     # Get status of comment.
-    $ wp comment status 1337
+    $ fp comment status 1337
     approved
 
 
 
-### wp comment trash
+### fp comment trash
 
 Trashes a comment.
 
 ~~~
-wp comment trash <id>...
+fp comment trash <id>...
 ~~~
 
 **OPTIONS**
@@ -717,17 +717,17 @@ wp comment trash <id>...
 **EXAMPLES**
 
     # Trash comment.
-    $ wp comment trash 1337
+    $ fp comment trash 1337
     Success: Trashed comment 1337.
 
 
 
-### wp comment unapprove
+### fp comment unapprove
 
 Unapproves a comment.
 
 ~~~
-wp comment unapprove <id>...
+fp comment unapprove <id>...
 ~~~
 
 **OPTIONS**
@@ -738,17 +738,17 @@ wp comment unapprove <id>...
 **EXAMPLES**
 
     # Unapprove comment.
-    $ wp comment unapprove 1337
+    $ fp comment unapprove 1337
     Success: Unapproved comment 1337.
 
 
 
-### wp comment unspam
+### fp comment unspam
 
 Unmarks a comment as spam.
 
 ~~~
-wp comment unspam <id>...
+fp comment unspam <id>...
 ~~~
 
 **OPTIONS**
@@ -759,17 +759,17 @@ wp comment unspam <id>...
 **EXAMPLES**
 
     # Unspam comment.
-    $ wp comment unspam 1337
+    $ fp comment unspam 1337
     Success: Unspammed comment 1337.
 
 
 
-### wp comment untrash
+### fp comment untrash
 
 Untrashes a comment.
 
 ~~~
-wp comment untrash <id>...
+fp comment untrash <id>...
 ~~~
 
 **OPTIONS**
@@ -780,17 +780,17 @@ wp comment untrash <id>...
 **EXAMPLES**
 
     # Untrash comment.
-    $ wp comment untrash 1337
+    $ fp comment untrash 1337
     Success: Untrashed comment 1337.
 
 
 
-### wp comment update
+### fp comment update
 
 Updates one or more comments.
 
 ~~~
-wp comment update <id>... --<field>=<value>
+fp comment update <id>... --<field>=<value>
 ~~~
 
 **OPTIONS**
@@ -799,34 +799,34 @@ wp comment update <id>... --<field>=<value>
 		One or more IDs of comments to update.
 
 	--<field>=<value>
-		One or more fields to update. See wp_update_comment().
+		One or more fields to update. See fp_update_comment().
 
 **EXAMPLES**
 
     # Update comment.
-    $ wp comment update 123 --comment_author='That Guy'
+    $ fp comment update 123 --comment_author='That Guy'
     Success: Updated comment 123.
 
 
 
-### wp menu
+### fp menu
 
 Lists, creates, assigns, and deletes the active theme's navigation menus.
 
 ~~~
-wp menu
+fp menu
 ~~~
 
-See the [Navigation Menus](https://developer.wordpress.org/themes/functionality/navigation-menus/) reference in the Theme Handbook.
+See the [Navigation Menus](https://developer.finpress.org/themes/functionality/navigation-menus/) reference in the Theme Handbook.
 
 **EXAMPLES**
 
     # Create a new menu
-    $ wp menu create "My Menu"
+    $ fp menu create "My Menu"
     Success: Created menu 200.
 
     # List existing menus
-    $ wp menu list
+    $ fp menu list
     +---------+----------+----------+-----------+-------+
     | term_id | name     | slug     | locations | count |
     +---------+----------+----------+-----------+-------+
@@ -835,21 +835,21 @@ See the [Navigation Menus](https://developer.wordpress.org/themes/functionality/
     +---------+----------+----------+-----------+-------+
 
     # Create a new menu link item
-    $ wp menu item add-custom my-menu Apple http://apple.com --porcelain
+    $ fp menu item add-custom my-menu Apple http://apple.com --porcelain
     1922
 
     # Assign the 'my-menu' menu to the 'primary' location
-    $ wp menu location assign my-menu primary
+    $ fp menu location assign my-menu primary
     Success: Assigned location primary to menu my-menu.
 
 
 
-### wp menu create
+### fp menu create
 
 Creates a new menu.
 
 ~~~
-wp menu create <menu-name> [--porcelain]
+fp menu create <menu-name> [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -862,17 +862,17 @@ wp menu create <menu-name> [--porcelain]
 
 **EXAMPLES**
 
-    $ wp menu create "My Menu"
+    $ fp menu create "My Menu"
     Success: Created menu 200.
 
 
 
-### wp menu delete
+### fp menu delete
 
 Deletes one or more menus.
 
 ~~~
-wp menu delete <menu>...
+fp menu delete <menu>...
 ~~~
 
 **OPTIONS**
@@ -882,44 +882,44 @@ wp menu delete <menu>...
 
 **EXAMPLES**
 
-    $ wp menu delete "My Menu"
+    $ fp menu delete "My Menu"
     Deleted menu 'My Menu'.
     Success: Deleted 1 of 1 menus.
 
 
 
-### wp menu item
+### fp menu item
 
 List, add, and delete items associated with a menu.
 
 ~~~
-wp menu item
+fp menu item
 ~~~
 
 **EXAMPLES**
 
     # Add an existing post to an existing menu
-    $ wp menu item add-post sidebar-menu 33 --title="Custom Test Post"
+    $ fp menu item add-post sidebar-menu 33 --title="Custom Test Post"
     Success: Menu item added.
 
     # Create a new menu link item
-    $ wp menu item add-custom sidebar-menu Apple http://apple.com
+    $ fp menu item add-custom sidebar-menu Apple http://apple.com
     Success: Menu item added.
 
     # Delete menu item
-    $ wp menu item delete 45
+    $ fp menu item delete 45
     Success: Deleted 1 of 1 menu items.
 
 
 
 
 
-### wp menu item add-custom
+### fp menu item add-custom
 
 Adds a custom menu item.
 
 ~~~
-wp menu item add-custom <menu> <title> <link> [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
+fp menu item add-custom <menu> <title> <link> [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -956,17 +956,17 @@ wp menu item add-custom <menu> <title> <link> [--description=<description>] [--a
 
 **EXAMPLES**
 
-    $ wp menu item add-custom sidebar-menu Apple http://apple.com
+    $ fp menu item add-custom sidebar-menu Apple http://apple.com
     Success: Menu item added.
 
 
 
-### wp menu item add-post
+### fp menu item add-post
 
 Adds a post as a menu item.
 
 ~~~
-wp menu item add-post <menu> <post-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
+fp menu item add-post <menu> <post-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -1006,17 +1006,17 @@ wp menu item add-post <menu> <post-id> [--title=<title>] [--link=<link>] [--desc
 
 **EXAMPLES**
 
-    $ wp menu item add-post sidebar-menu 33 --title="Custom Test Post"
+    $ fp menu item add-post sidebar-menu 33 --title="Custom Test Post"
     Success: Menu item added.
 
 
 
-### wp menu item add-term
+### fp menu item add-term
 
 Adds a taxonomy term as a menu item.
 
 ~~~
-wp menu item add-term <menu> <taxonomy> <term-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
+fp menu item add-term <menu> <taxonomy> <term-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -1059,17 +1059,17 @@ wp menu item add-term <menu> <taxonomy> <term-id> [--title=<title>] [--link=<lin
 
 **EXAMPLES**
 
-    $ wp menu item add-term sidebar-menu post_tag 24
+    $ fp menu item add-term sidebar-menu post_tag 24
     Success: Menu item added.
 
 
 
-### wp menu item delete
+### fp menu item delete
 
 Deletes one or more items from a menu.
 
 ~~~
-wp menu item delete <db-id>...
+fp menu item delete <db-id>...
 ~~~
 
 **OPTIONS**
@@ -1079,17 +1079,17 @@ wp menu item delete <db-id>...
 
 **EXAMPLES**
 
-    $ wp menu item delete 45
+    $ fp menu item delete 45
     Success: Deleted 1 of 1 menu items.
 
 
 
-### wp menu item list
+### fp menu item list
 
 Gets a list of items associated with a menu.
 
 ~~~
-wp menu item list <menu> [--fields=<fields>] [--format=<format>]
+fp menu item list <menu> [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1138,7 +1138,7 @@ These fields are optionally available:
 
 **EXAMPLES**
 
-    $ wp menu item list main-menu
+    $ fp menu item list main-menu
     +-------+-----------+-------------+---------------------------------+----------+
     | db_id | type      | title       | link                            | position |
     +-------+-----------+-------------+---------------------------------+----------+
@@ -1148,12 +1148,12 @@ These fields are optionally available:
 
 
 
-### wp menu item update
+### fp menu item update
 
 Updates a menu item.
 
 ~~~
-wp menu item update <db-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>]
+fp menu item update <db-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>]
 ~~~
 
 **OPTIONS**
@@ -1187,17 +1187,17 @@ wp menu item update <db-id> [--title=<title>] [--link=<link>] [--description=<de
 
 **EXAMPLES**
 
-    $ wp menu item update 45 --title=WordPress --link='http://wordpress.org' --target=_blank --position=2
+    $ fp menu item update 45 --title=FinPress --link='http://finpress.org' --target=_blank --position=2
     Success: Menu item updated.
 
 
 
-### wp menu list
+### fp menu list
 
 Gets a list of menus.
 
 ~~~
-wp menu list [--fields=<fields>] [--format=<format>]
+fp menu list [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1238,7 +1238,7 @@ These fields are optionally available:
 
 **EXAMPLES**
 
-    $ wp menu list
+    $ fp menu list
     +---------+----------+----------+-----------+-------+
     | term_id | name     | slug     | locations | count |
     +---------+----------+----------+-----------+-------+
@@ -1248,18 +1248,18 @@ These fields are optionally available:
 
 
 
-### wp menu location
+### fp menu location
 
 Assigns, removes, and lists a menu's locations.
 
 ~~~
-wp menu location
+fp menu location
 ~~~
 
 **EXAMPLES**
 
     # List available menu locations
-    $ wp menu location list
+    $ fp menu location list
     +----------+-------------------+
     | location | description       |
     +----------+-------------------+
@@ -1268,23 +1268,23 @@ wp menu location
     +----------+-------------------+
 
     # Assign the 'primary-menu' menu to the 'primary' location
-    $ wp menu location assign primary-menu primary
+    $ fp menu location assign primary-menu primary
     Success: Assigned location primary to menu primary-menu.
 
     # Remove the 'primary-menu' menu from the 'primary' location
-    $ wp menu location remove primary-menu primary
+    $ fp menu location remove primary-menu primary
     Success: Removed location from menu.
 
 
 
 
 
-### wp menu location assign
+### fp menu location assign
 
 Assigns a location to a menu.
 
 ~~~
-wp menu location assign <menu> <location>
+fp menu location assign <menu> <location>
 ~~~
 
 **OPTIONS**
@@ -1297,17 +1297,17 @@ wp menu location assign <menu> <location>
 
 **EXAMPLES**
 
-    $ wp menu location assign primary-menu primary
+    $ fp menu location assign primary-menu primary
     Success: Assigned location primary to menu primary-menu.
 
 
 
-### wp menu location list
+### fp menu location list
 
 Lists locations for the current theme.
 
 ~~~
-wp menu location list [--format=<format>]
+fp menu location list [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1334,7 +1334,7 @@ These fields will be displayed by default for each location:
 
 **EXAMPLES**
 
-    $ wp menu location list
+    $ fp menu location list
     +----------+-------------------+
     | location | description       |
     +----------+-------------------+
@@ -1344,12 +1344,12 @@ These fields will be displayed by default for each location:
 
 
 
-### wp menu location remove
+### fp menu location remove
 
 Removes a location from a menu.
 
 ~~~
-wp menu location remove <menu> <location>
+fp menu location remove <menu> <location>
 ~~~
 
 **OPTIONS**
@@ -1362,35 +1362,35 @@ wp menu location remove <menu> <location>
 
 **EXAMPLES**
 
-    $ wp menu location remove primary-menu primary
+    $ fp menu location remove primary-menu primary
     Success: Removed location from menu.
 
 
 
-### wp network meta
+### fp network meta
 
 Gets, adds, updates, deletes, and lists network custom fields.
 
 ~~~
-wp network meta
+fp network meta
 ~~~
 
 **EXAMPLES**
 
     # Get a list of super-admins
-    $ wp network meta get 1 site_admins
+    $ fp network meta get 1 site_admins
     array (
       0 => 'supervisor',
     )
 
 
 
-### wp network meta add
+### fp network meta add
 
 Add a meta field.
 
 ~~~
-wp network meta add <id> <key> [<value>] [--format=<format>]
+fp network meta add <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1415,12 +1415,12 @@ wp network meta add <id> <key> [<value>] [--format=<format>]
 
 
 
-### wp network meta delete
+### fp network meta delete
 
 Delete a meta field.
 
 ~~~
-wp network meta delete <id> [<key>] [<value>] [--all]
+fp network meta delete <id> [<key>] [<value>] [--all]
 ~~~
 
 **OPTIONS**
@@ -1439,12 +1439,12 @@ wp network meta delete <id> [<key>] [<value>] [--all]
 
 
 
-### wp network meta get
+### fp network meta get
 
 Get meta field value.
 
 ~~~
-wp network meta get <id> <key> [--format=<format>]
+fp network meta get <id> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1467,12 +1467,12 @@ wp network meta get <id> <key> [--format=<format>]
 
 
 
-### wp network meta list
+### fp network meta list
 
 List all metadata associated with an object.
 
 ~~~
-wp network meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fp network meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -1522,12 +1522,12 @@ wp network meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>
 
 
 
-### wp network meta patch
+### fp network meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-wp network meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fp network meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1564,12 +1564,12 @@ wp network meta patch <action> <id> <key> <key-path>... [<value>] [--format=<for
 
 
 
-### wp network meta pluck
+### fp network meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-wp network meta pluck <id> <key> <key-path>... [--format=<format>]
+fp network meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1594,12 +1594,12 @@ wp network meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### wp network meta update
+### fp network meta update
 
 Update a meta field.
 
 ~~~
-wp network meta update <id> <key> [<value>] [--format=<format>]
+fp network meta update <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1624,42 +1624,42 @@ wp network meta update <id> <key> [<value>] [--format=<format>]
 
 
 
-### wp option
+### fp option
 
-Retrieves and sets site options, including plugin and WordPress settings.
+Retrieves and sets site options, including plugin and FinPress settings.
 
 ~~~
-wp option
+fp option
 ~~~
 
-See the [Plugin Settings API](https://developer.wordpress.org/plugins/settings/settings-api/) and the [Theme Options](https://developer.wordpress.org/themes/customize-api/) for more information on adding customized options.
+See the [Plugin Settings API](https://developer.finpress.org/plugins/settings/settings-api/) and the [Theme Options](https://developer.finpress.org/themes/customize-api/) for more information on adding customized options.
 
 **EXAMPLES**
 
     # Get site URL.
-    $ wp option get siteurl
+    $ fp option get siteurl
     http://example.com
 
     # Add option.
-    $ wp option add my_option foobar
+    $ fp option add my_option foobar
     Success: Added 'my_option' option.
 
     # Update option.
-    $ wp option update my_option '{"foo": "bar"}' --format=json
+    $ fp option update my_option '{"foo": "bar"}' --format=json
     Success: Updated 'my_option' option.
 
     # Delete option.
-    $ wp option delete my_option
+    $ fp option delete my_option
     Success: Deleted 'my_option' option.
 
 
 
-### wp option add
+### fp option add
 
 Adds a new option value.
 
 ~~~
-wp option add <key> [<value>] [--format=<format>] [--autoload=<autoload>]
+fp option add <key> [<value>] [--format=<format>] [--autoload=<autoload>]
 ~~~
 
 Errors if the option already exists.
@@ -1694,17 +1694,17 @@ Errors if the option already exists.
 **EXAMPLES**
 
     # Create an option by reading a JSON file.
-    $ wp option add my_option --format=json < config.json
+    $ fp option add my_option --format=json < config.json
     Success: Added 'my_option' option.
 
 
 
-### wp option delete
+### fp option delete
 
 Deletes an option.
 
 ~~~
-wp option delete <key>...
+fp option delete <key>...
 ~~~
 
 **OPTIONS**
@@ -1715,23 +1715,23 @@ wp option delete <key>...
 **EXAMPLES**
 
     # Delete an option.
-    $ wp option delete my_option
+    $ fp option delete my_option
     Success: Deleted 'my_option' option.
 
     # Delete multiple options.
-    $ wp option delete option_one option_two option_three
+    $ fp option delete option_one option_two option_three
     Success: Deleted 'option_one' option.
     Success: Deleted 'option_two' option.
     Warning: Could not delete 'option_three' option. Does it exist?
 
 
 
-### wp option get
+### fp option get
 
 Gets the value for an option.
 
 ~~~
-wp option get <key> [--format=<format>]
+fp option get <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1752,33 +1752,33 @@ wp option get <key> [--format=<format>]
 **EXAMPLES**
 
     # Get option.
-    $ wp option get home
+    $ fp option get home
     http://example.com
 
     # Get blog description.
-    $ wp option get blogdescription
+    $ fp option get blogdescription
     A random blog description
 
     # Get blog name
-    $ wp option get blogname
+    $ fp option get blogname
     A random blog name
 
     # Get admin email.
-    $ wp option get admin_email
+    $ fp option get admin_email
     someone@example.com
 
     # Get option in JSON format.
-    $ wp option get active_plugins --format=json
-    {"0":"dynamically-dynamic-sidebar\/dynamically-dynamic-sidebar.php","1":"monster-widget\/monster-widget.php","2":"show-current-template\/show-current-template.php","3":"theme-check\/theme-check.php","5":"wordpress-importer\/wordpress-importer.php"}
+    $ fp option get active_plugins --format=json
+    {"0":"dynamically-dynamic-sidebar\/dynamically-dynamic-sidebar.php","1":"monster-widget\/monster-widget.php","2":"show-current-template\/show-current-template.php","3":"theme-check\/theme-check.php","5":"finpress-importer\/finpress-importer.php"}
 
 
 
-### wp option list
+### fp option list
 
 Lists options and their values.
 
 ~~~
-wp option list [--search=<pattern>] [--exclude=<pattern>] [--autoload=<value>] [--transients] [--unserialize] [--field=<field>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>]
+fp option list [--search=<pattern>] [--exclude=<pattern>] [--autoload=<value>] [--transients] [--unserialize] [--field=<field>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>]
 ~~~
 
 **OPTIONS**
@@ -1851,11 +1851,11 @@ These fields are optionally available:
 **EXAMPLES**
 
     # Get the total size of all autoload options.
-    $ wp option list --autoload=on --format=total_bytes
+    $ fp option list --autoload=on --format=total_bytes
     33198
 
     # Find biggest transients.
-    $ wp option list --search="*_transient_*" --fields=option_name,size_bytes | sort -n -k 2 | tail
+    $ fp option list --search="*_transient_*" --fields=option_name,size_bytes | sort -n -k 2 | tail
     option_name size_bytes
     _site_transient_timeout_theme_roots 10
     _site_transient_theme_roots 76
@@ -1864,7 +1864,7 @@ These fields are optionally available:
     _site_transient_update_plugins  6645
 
     # List all options beginning with "i2f_".
-    $ wp option list --search="i2f_*"
+    $ fp option list --search="i2f_*"
     +-------------+--------------+
     | option_name | option_value |
     +-------------+--------------+
@@ -1872,19 +1872,19 @@ These fields are optionally available:
     +-------------+--------------+
 
     # Delete all options beginning with "theme_mods_".
-    $ wp option list --search="theme_mods_*" --field=option_name | xargs -I % wp option delete %
+    $ fp option list --search="theme_mods_*" --field=option_name | xargs -I % fp option delete %
     Success: Deleted 'theme_mods_twentysixteen' option.
     Success: Deleted 'theme_mods_twentyfifteen' option.
     Success: Deleted 'theme_mods_twentyfourteen' option.
 
 
 
-### wp option patch
+### fp option patch
 
 Updates a nested value in an option.
 
 ~~~
-wp option patch <action> <key> <key-path>... [<value>] [--format=<format>]
+fp option patch <action> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1919,37 +1919,37 @@ wp option patch <action> <key> <key-path>... [<value>] [--format=<format>]
 **EXAMPLES**
 
     # Add 'bar' to the 'foo' key on an option with name 'option_name'
-    $ wp option patch insert option_name foo bar
+    $ fp option patch insert option_name foo bar
     Success: Updated 'option_name' option.
 
     # Update the value of 'foo' key to 'new' on an option with name 'option_name'
-    $ wp option patch update option_name foo new
+    $ fp option patch update option_name foo new
     Success: Updated 'option_name' option.
 
     # Set nested value of 'bar' key to value we have in the patch file on an option with name 'option_name'.
-    $ wp option patch update option_name foo bar < patch
+    $ fp option patch update option_name foo bar < patch
     Success: Updated 'option_name' option.
 
     # Update the value for the key 'not-a-key' which is not exist on an option with name 'option_name'.
-    $ wp option patch update option_name foo not-a-key new-value
+    $ fp option patch update option_name foo not-a-key new-value
     Error: No data exists for key "not-a-key"
 
     # Update the value for the key 'foo' without passing value on an option with name 'option_name'.
-    $ wp option patch update option_name foo
+    $ fp option patch update option_name foo
     Error: Please provide value to update.
 
     # Delete the nested key 'bar' under 'foo' key on an option with name 'option_name'.
-    $ wp option patch delete option_name foo bar
+    $ fp option patch delete option_name foo bar
     Success: Updated 'option_name' option.
 
 
 
-### wp option pluck
+### fp option pluck
 
 Gets a nested value from an option.
 
 ~~~
-wp option pluck <key> <key-path>... [--format=<format>]
+fp option pluck <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1972,12 +1972,12 @@ wp option pluck <key> <key-path>... [--format=<format>]
 
 
 
-### wp option update
+### fp option update
 
 Updates an option value.
 
 ~~~
-wp option update <key> [<value>] [--autoload=<autoload>] [--format=<format>]
+fp option update <key> [<value>] [--autoload=<autoload>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1989,7 +1989,7 @@ wp option update <key> [<value>] [--autoload=<autoload>] [--format=<format>]
 		The new value. If omitted, the value is read from STDIN.
 
 	[--autoload=<autoload>]
-		Requires WP 4.2. Should this option be automatically loaded.
+		Requires FP 4.2. Should this option be automatically loaded.
 		---
 		options:
 		  - 'on'
@@ -2010,42 +2010,42 @@ wp option update <key> [<value>] [--autoload=<autoload>] [--format=<format>]
 **EXAMPLES**
 
     # Update an option by reading from a file.
-    $ wp option update my_option < value.txt
+    $ fp option update my_option < value.txt
     Success: Updated 'my_option' option.
 
     # Update one option on multiple sites using xargs.
-    $ wp site list --field=url | xargs -n1 -I {} sh -c 'wp --url={} option update my_option my_value'
+    $ fp site list --field=url | xargs -n1 -I {} sh -c 'fp --url={} option update my_option my_value'
     Success: Updated 'my_option' option.
     Success: Updated 'my_option' option.
 
     # Update site blog name.
-    $ wp option update blogname "Random blog name"
+    $ fp option update blogname "Random blog name"
     Success: Updated 'blogname' option.
 
     # Update site blog description.
-    $ wp option update blogdescription "Some random blog description"
+    $ fp option update blogdescription "Some random blog description"
     Success: Updated 'blogdescription' option.
 
     # Update admin email address.
-    $ wp option update admin_email someone@example.com
+    $ fp option update admin_email someone@example.com
     Success: Updated 'admin_email' option.
 
     # Set the default role.
-    $ wp option update default_role author
+    $ fp option update default_role author
     Success: Updated 'default_role' option.
 
     # Set the timezone string.
-    $ wp option update timezone_string "America/New_York"
+    $ fp option update timezone_string "America/New_York"
     Success: Updated 'timezone_string' option.
 
 
 
-### wp option set-autoload
+### fp option set-autoload
 
 Sets the 'autoload' value for an option.
 
 ~~~
-wp option set-autoload <key> <autoload>
+fp option set-autoload <key> <autoload>
 ~~~
 
 **OPTIONS**
@@ -2066,17 +2066,17 @@ wp option set-autoload <key> <autoload>
 **EXAMPLES**
 
     # Set the 'autoload' value for an option.
-    $ wp option set-autoload abc_options no
+    $ fp option set-autoload abc_options no
     Success: Updated autoload value for 'abc_options' option.
 
 
 
-### wp option get-autoload
+### fp option get-autoload
 
 Gets the 'autoload' value for an option.
 
 ~~~
-wp option get-autoload <key>
+fp option get-autoload <key>
 ~~~
 
 **OPTIONS**
@@ -2087,41 +2087,41 @@ wp option get-autoload <key>
 **EXAMPLES**
 
     # Get the 'autoload' value for an option.
-    $ wp option get-autoload blogname
+    $ fp option get-autoload blogname
     yes
 
 
 
-### wp post
+### fp post
 
 Manages posts, content, and meta.
 
 ~~~
-wp post
+fp post
 ~~~
 
 **EXAMPLES**
 
     # Create a new post.
-    $ wp post create --post_type=post --post_title='A sample post'
+    $ fp post create --post_type=post --post_title='A sample post'
     Success: Created post 123.
 
     # Update an existing post.
-    $ wp post update 123 --post_status=draft
+    $ fp post update 123 --post_status=draft
     Success: Updated post 123.
 
     # Delete an existing post.
-    $ wp post delete 123
+    $ fp post delete 123
     Success: Trashed post 123.
 
 
 
-### wp post create
+### fp post create
 
 Creates a new post.
 
 ~~~
-wp post create [--post_author=<post_author>] [--post_date=<post_date>] [--post_date_gmt=<post_date_gmt>] [--post_content=<post_content>] [--post_content_filtered=<post_content_filtered>] [--post_title=<post_title>] [--post_excerpt=<post_excerpt>] [--post_status=<post_status>] [--post_type=<post_type>] [--comment_status=<comment_status>] [--ping_status=<ping_status>] [--post_password=<post_password>] [--post_name=<post_name>] [--from-post=<post_id>] [--to_ping=<to_ping>] [--pinged=<pinged>] [--post_modified=<post_modified>] [--post_modified_gmt=<post_modified_gmt>] [--post_parent=<post_parent>] [--menu_order=<menu_order>] [--post_mime_type=<post_mime_type>] [--guid=<guid>] [--post_category=<post_category>] [--tags_input=<tags_input>] [--tax_input=<tax_input>] [--meta_input=<meta_input>] [<file>] [--<field>=<value>] [--edit] [--porcelain]
+fp post create [--post_author=<post_author>] [--post_date=<post_date>] [--post_date_gmt=<post_date_gmt>] [--post_content=<post_content>] [--post_content_filtered=<post_content_filtered>] [--post_title=<post_title>] [--post_excerpt=<post_excerpt>] [--post_status=<post_status>] [--post_type=<post_type>] [--comment_status=<comment_status>] [--ping_status=<ping_status>] [--post_password=<post_password>] [--post_name=<post_name>] [--from-post=<post_id>] [--to_ping=<to_ping>] [--pinged=<pinged>] [--post_modified=<post_modified>] [--post_modified_gmt=<post_modified_gmt>] [--post_parent=<post_parent>] [--menu_order=<menu_order>] [--post_mime_type=<post_mime_type>] [--guid=<guid>] [--post_category=<post_category>] [--tags_input=<tags_input>] [--tax_input=<tax_input>] [--meta_input=<meta_input>] [<file>] [--<field>=<value>] [--edit] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -2212,7 +2212,7 @@ wp post create [--post_author=<post_author>] [--post_date=<post_date>] [--post_d
   be read from STDIN.
 
 	[--<field>=<value>]
-		Associative args for the new post. See wp_insert_post().
+		Associative args for the new post. See fp_insert_post().
 
 	[--edit]
 		Immediately open system's editor to write or edit post content.
@@ -2227,29 +2227,29 @@ wp post create [--post_author=<post_author>] [--post_date=<post_date>] [--post_d
 **EXAMPLES**
 
     # Create post and schedule for future
-    $ wp post create --post_type=post --post_title='A future post' --post_status=future --post_date='2030-12-01 07:00:00'
+    $ fp post create --post_type=post --post_title='A future post' --post_status=future --post_date='2030-12-01 07:00:00'
     Success: Created post 1921.
 
     # Create post with content from given file
-    $ wp post create ./post-content.txt --post_category=201,345 --post_title='Post from file'
+    $ fp post create ./post-content.txt --post_category=201,345 --post_title='Post from file'
     Success: Created post 1922.
 
     # Create a post with multiple meta values.
-    $ wp post create --post_title='A post' --post_content='Just a small post.' --meta_input='{"key1":"value1","key2":"value2"}'
+    $ fp post create --post_title='A post' --post_content='Just a small post.' --meta_input='{"key1":"value1","key2":"value2"}'
     Success: Created post 1923.
 
     # Create a duplicate post from existing posts.
-    $ wp post create --from-post=123 --post_title='Different Title'
+    $ fp post create --from-post=123 --post_title='Different Title'
     Success: Created post 2350.
 
 
 
-### wp post delete
+### fp post delete
 
 Deletes an existing post.
 
 ~~~
-wp post delete <id>... [--force] [--defer-term-counting]
+fp post delete <id>... [--force] [--defer-term-counting]
 ~~~
 
 **OPTIONS**
@@ -2266,33 +2266,33 @@ wp post delete <id>... [--force] [--defer-term-counting]
 **EXAMPLES**
 
     # Delete post skipping trash
-    $ wp post delete 123 --force
+    $ fp post delete 123 --force
     Success: Deleted post 123.
 
     # Delete multiple posts
-    $ wp post delete 123 456 789
+    $ fp post delete 123 456 789
     Success: Trashed post 123.
     Success: Trashed post 456.
     Success: Trashed post 789.
 
     # Delete all pages
-    $ wp post delete $(wp post list --post_type='page' --format=ids)
+    $ fp post delete $(fp post list --post_type='page' --format=ids)
     Success: Trashed post 1164.
     Success: Trashed post 1186.
 
     # Delete all posts in the trash
-    $ wp post delete $(wp post list --post_status=trash --format=ids)
+    $ fp post delete $(fp post list --post_status=trash --format=ids)
     Success: Deleted post 1268.
     Success: Deleted post 1294.
 
 
 
-### wp post edit
+### fp post edit
 
 Launches system editor to edit post content.
 
 ~~~
-wp post edit <id>
+fp post edit <id>
 ~~~
 
 **OPTIONS**
@@ -2303,16 +2303,16 @@ wp post edit <id>
 **EXAMPLES**
 
     # Launch system editor to edit post
-    $ wp post edit 123
+    $ fp post edit 123
 
 
 
-### wp post exists
+### fp post exists
 
 Verifies whether a post exists.
 
 ~~~
-wp post exists <id>
+fp post exists <id>
 ~~~
 
 Displays a success message if the post does exist.
@@ -2325,24 +2325,24 @@ Displays a success message if the post does exist.
 **EXAMPLES**
 
     # The post exists.
-    $ wp post exists 1337
+    $ fp post exists 1337
     Success: Post with ID 1337 exists.
     $ echo $?
     0
 
     # The post does not exist.
-    $ wp post exists 10000
+    $ fp post exists 10000
     $ echo $?
     1
 
 
 
-### wp post generate
+### fp post generate
 
 Generates some posts.
 
 ~~~
-wp post generate [--count=<number>] [--post_type=<type>] [--post_status=<status>] [--post_title=<post_title>] [--post_author=<login>] [--post_date=<yyyy-mm-dd-hh-ii-ss>] [--post_date_gmt=<yyyy-mm-dd-hh-ii-ss>] [--post_content] [--max_depth=<number>] [--format=<format>]
+fp post generate [--count=<number>] [--post_type=<type>] [--post_status=<status>] [--post_title=<post_title>] [--post_author=<login>] [--post_date=<yyyy-mm-dd-hh-ii-ss>] [--post_date_gmt=<yyyy-mm-dd-hh-ii-ss>] [--post_content] [--max_depth=<number>] [--format=<format>]
 ~~~
 
 Creates a specified number of new posts with dummy data.
@@ -2406,30 +2406,30 @@ Creates a specified number of new posts with dummy data.
 **EXAMPLES**
 
     # Generate posts.
-    $ wp post generate --count=10 --post_type=page --post_date=1999-01-04
+    $ fp post generate --count=10 --post_type=page --post_date=1999-01-04
     Generating posts  100% [================================================] 0:01 / 0:04
 
     # Generate posts with fetched content.
-    $ curl -N https://loripsum.net/api/5 | wp post generate --post_content --count=10
+    $ curl -N https://loripsum.net/api/5 | fp post generate --post_content --count=10
       % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                      Dload  Upload   Total   Spent    Left  Speed
     100  2509  100  2509    0     0    616      0  0:00:04  0:00:04 --:--:--   616
     Generating posts  100% [================================================] 0:01 / 0:04
 
     # Add meta to every generated posts.
-    $ wp post generate --format=ids | xargs -d ' ' -I % wp post meta add % foo bar
+    $ fp post generate --format=ids | xargs -d ' ' -I % fp post meta add % foo bar
     Success: Added custom field.
     Success: Added custom field.
     Success: Added custom field.
 
 
 
-### wp post get
+### fp post get
 
 Gets details about a post.
 
 ~~~
-wp post get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp post get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2457,25 +2457,25 @@ wp post get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
 **EXAMPLES**
 
     # Save the post content to a file
-    $ wp post get 123 --field=content > file.txt
+    $ fp post get 123 --field=content > file.txt
 
 
 
-### wp post list
+### fp post list
 
 Gets a list of posts.
 
 ~~~
-wp post list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp post list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
-Display posts based on all arguments supported by [WP_Query()](https://developer.wordpress.org/reference/classes/wp_query/).
+Display posts based on all arguments supported by [FP_Query()](https://developer.finpress.org/reference/classes/fp_query/).
 Only shows post types marked as post by default.
 
 **OPTIONS**
 
 	[--<field>=<value>]
-		One or more args to pass to WP_Query.
+		One or more args to pass to FP_Query.
 
 	[--field=<field>]
 		Prints the value of a single field for each post.
@@ -2532,18 +2532,18 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List post
-    $ wp post list --field=ID
+    $ fp post list --field=ID
     568
     829
     1329
     1695
 
     # List posts in JSON
-    $ wp post list --post_type=post --posts_per_page=5 --format=json
+    $ fp post list --post_type=post --posts_per_page=5 --format=json
     [{"ID":1,"post_title":"Hello world!","post_name":"hello-world","post_date":"2015-06-20 09:00:10","post_status":"publish"},{"ID":1178,"post_title":"Markup: HTML Tags and Formatting","post_name":"markup-html-tags-and-formatting","post_date":"2013-01-11 20:22:19","post_status":"draft"}]
 
     # List all pages
-    $ wp post list --post_type=page --fields=post_title,post_status
+    $ fp post list --post_type=page --fields=post_title,post_status
     +-------------+-------------+
     | post_title  | post_status |
     +-------------+-------------+
@@ -2551,11 +2551,11 @@ These fields are optionally available:
     +-------------+-------------+
 
     # List ids of all pages and posts
-    $ wp post list --post_type=page,post --format=ids
+    $ fp post list --post_type=page,post --format=ids
     15 25 34 37 198
 
     # List given posts
-    $ wp post list --post__in=1,3
+    $ fp post list --post__in=1,3
     +----+--------------+-------------+---------------------+-------------+
     | ID | post_title   | post_name   | post_date           | post_status |
     +----+--------------+-------------+---------------------+-------------+
@@ -2564,7 +2564,7 @@ These fields are optionally available:
     +----+--------------+-------------+---------------------+-------------+
 
     # List given post by a specific author
-    $ wp post list --author=2
+    $ fp post list --author=2
     +----+-------------------+-------------------+---------------------+-------------+
     | ID | post_title        | post_name         | post_date           | post_status |
     +----+-------------------+-------------------+---------------------+-------------+
@@ -2573,42 +2573,42 @@ These fields are optionally available:
 
 
 
-### wp post meta
+### fp post meta
 
 Adds, updates, deletes, and lists post custom fields.
 
 ~~~
-wp post meta
+fp post meta
 ~~~
 
 **EXAMPLES**
 
     # Set post meta
-    $ wp post meta set 123 _wp_page_template about.php
-    Success: Updated custom field '_wp_page_template'.
+    $ fp post meta set 123 _fp_page_template about.php
+    Success: Updated custom field '_fp_page_template'.
 
     # Get post meta
-    $ wp post meta get 123 _wp_page_template
+    $ fp post meta get 123 _fp_page_template
     about.php
 
     # Update post meta
-    $ wp post meta update 123 _wp_page_template contact.php
-    Success: Updated custom field '_wp_page_template'.
+    $ fp post meta update 123 _fp_page_template contact.php
+    Success: Updated custom field '_fp_page_template'.
 
     # Delete post meta
-    $ wp post meta delete 123 _wp_page_template
+    $ fp post meta delete 123 _fp_page_template
     Success: Deleted custom field.
 
 
 
 
 
-### wp post meta add
+### fp post meta add
 
 Add a meta field.
 
 ~~~
-wp post meta add <id> <key> [<value>] [--format=<format>]
+fp post meta add <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2633,12 +2633,12 @@ wp post meta add <id> <key> [<value>] [--format=<format>]
 
 
 
-### wp post meta clean-duplicates
+### fp post meta clean-duplicates
 
 Cleans up duplicate post meta values on a post.
 
 ~~~
-wp post meta clean-duplicates <id> <key>
+fp post meta clean-duplicates <id> <key>
 ~~~
 
 **OPTIONS**
@@ -2652,17 +2652,17 @@ wp post meta clean-duplicates <id> <key>
 **EXAMPLES**
 
     # Delete duplicate post meta.
-    wp post meta clean-duplicates 1234 enclosure
+    fp post meta clean-duplicates 1234 enclosure
     Success: Cleaned up duplicate 'enclosure' meta values.
 
 
 
-### wp post meta delete
+### fp post meta delete
 
 Delete a meta field.
 
 ~~~
-wp post meta delete <id> [<key>] [<value>] [--all]
+fp post meta delete <id> [<key>] [<value>] [--all]
 ~~~
 
 **OPTIONS**
@@ -2681,12 +2681,12 @@ wp post meta delete <id> [<key>] [<value>] [--all]
 
 
 
-### wp post meta get
+### fp post meta get
 
 Get meta field value.
 
 ~~~
-wp post meta get <id> <key> [--format=<format>]
+fp post meta get <id> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2709,12 +2709,12 @@ wp post meta get <id> <key> [--format=<format>]
 
 
 
-### wp post meta list
+### fp post meta list
 
 List all metadata associated with an object.
 
 ~~~
-wp post meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fp post meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -2764,12 +2764,12 @@ wp post meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [
 
 
 
-### wp post meta patch
+### fp post meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-wp post meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fp post meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2806,12 +2806,12 @@ wp post meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format
 
 
 
-### wp post meta pluck
+### fp post meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-wp post meta pluck <id> <key> <key-path>... [--format=<format>]
+fp post meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2836,12 +2836,12 @@ wp post meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### wp post meta update
+### fp post meta update
 
 Update a meta field.
 
 ~~~
-wp post meta update <id> <key> [<value>] [--format=<format>]
+fp post meta update <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2866,26 +2866,26 @@ wp post meta update <id> <key> [<value>] [--format=<format>]
 
 
 
-### wp post term
+### fp post term
 
 Adds, updates, removes, and lists post terms.
 
 ~~~
-wp post term
+fp post term
 ~~~
 
 **EXAMPLES**
 
     # Set category post term `test` to the post ID 123
-    $ wp post term set 123 test category
+    $ fp post term set 123 test category
     Success: Set term.
 
     # Set category post terms `test` and `apple` to the post ID 123
-    $ wp post term set 123 test apple category
+    $ fp post term set 123 test apple category
     Success: Set terms.
 
     # List category post terms for the post ID 123
-    $ wp post term list 123 category --fields=term_id,slug
+    $ fp post term list 123 category --fields=term_id,slug
     +---------+-------+
     | term_id | slug  |
     +---------+-------+
@@ -2894,19 +2894,19 @@ wp post term
     +----------+------+
 
     # Remove category post terms `test` and `apple` for the post ID 123
-    $ wp post term remove 123 category test apple
+    $ fp post term remove 123 category test apple
     Success: Removed terms.
 
 
 
 
 
-### wp post term add
+### fp post term add
 
 Add a term to an object.
 
 ~~~
-wp post term add <id> <taxonomy> <term>... [--by=<field>]
+fp post term add <id> <taxonomy> <term>... [--by=<field>]
 ~~~
 
 Append the term to the existing set of terms on the object.
@@ -2933,12 +2933,12 @@ Append the term to the existing set of terms on the object.
 
 
 
-### wp post term list
+### fp post term list
 
 List all terms associated with an object.
 
 ~~~
-wp post term list <id> <taxonomy>... [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp post term list <id> <taxonomy>... [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2987,12 +2987,12 @@ These fields are optionally available:
 
 
 
-### wp post term remove
+### fp post term remove
 
 Remove a term from an object.
 
 ~~~
-wp post term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
+fp post term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
 ~~~
 
 **OPTIONS**
@@ -3020,12 +3020,12 @@ wp post term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
 
 
 
-### wp post term set
+### fp post term set
 
 Set object terms.
 
 ~~~
-wp post term set <id> <taxonomy> <term>... [--by=<field>]
+fp post term set <id> <taxonomy> <term>... [--by=<field>]
 ~~~
 
 Replaces existing terms on the object.
@@ -3052,12 +3052,12 @@ Replaces existing terms on the object.
 
 
 
-### wp post update
+### fp post update
 
 Updates one or more existing posts.
 
 ~~~
-wp post update <id>... [--post_author=<post_author>] [--post_date=<post_date>] [--post_date_gmt=<post_date_gmt>] [--post_content=<post_content>] [--post_content_filtered=<post_content_filtered>] [--post_title=<post_title>] [--post_excerpt=<post_excerpt>] [--post_status=<post_status>] [--post_type=<post_type>] [--comment_status=<comment_status>] [--ping_status=<ping_status>] [--post_password=<post_password>] [--post_name=<post_name>] [--to_ping=<to_ping>] [--pinged=<pinged>] [--post_modified=<post_modified>] [--post_modified_gmt=<post_modified_gmt>] [--post_parent=<post_parent>] [--menu_order=<menu_order>] [--post_mime_type=<post_mime_type>] [--guid=<guid>] [--post_category=<post_category>] [--tags_input=<tags_input>] [--tax_input=<tax_input>] [--meta_input=<meta_input>] [<file>] --<field>=<value> [--defer-term-counting]
+fp post update <id>... [--post_author=<post_author>] [--post_date=<post_date>] [--post_date_gmt=<post_date_gmt>] [--post_content=<post_content>] [--post_content_filtered=<post_content_filtered>] [--post_title=<post_title>] [--post_excerpt=<post_excerpt>] [--post_status=<post_status>] [--post_type=<post_type>] [--comment_status=<comment_status>] [--ping_status=<ping_status>] [--post_password=<post_password>] [--post_name=<post_name>] [--to_ping=<to_ping>] [--pinged=<pinged>] [--post_modified=<post_modified>] [--post_modified_gmt=<post_modified_gmt>] [--post_parent=<post_parent>] [--menu_order=<menu_order>] [--post_mime_type=<post_mime_type>] [--guid=<guid>] [--post_category=<post_category>] [--tags_input=<tags_input>] [--tax_input=<tax_input>] [--meta_input=<meta_input>] [<file>] --<field>=<value> [--defer-term-counting]
 ~~~
 
 **OPTIONS**
@@ -3148,38 +3148,38 @@ wp post update <id>... [--post_author=<post_author>] [--post_date=<post_date>] [
   be read from STDIN.
 
 	--<field>=<value>
-		One or more fields to update. See wp_insert_post().
+		One or more fields to update. See fp_insert_post().
 
 	[--defer-term-counting]
 		Recalculate term count in batch, for a performance boost.
 
 **EXAMPLES**
 
-    $ wp post update 123 --post_name=something --post_status=draft
+    $ fp post update 123 --post_name=something --post_status=draft
     Success: Updated post 123.
 
     # Update a post with multiple meta values.
-    $ wp post update 123 --meta_input='{"key1":"value1","key2":"value2"}'
+    $ fp post update 123 --meta_input='{"key1":"value1","key2":"value2"}'
     Success: Updated post 123.
 
     # Update multiple posts at once.
-    $ wp post update 123 456 --post_author=789
+    $ fp post update 123 456 --post_author=789
     Success: Updated post 123.
     Success: Updated post 456.
 
     # Update all posts of a given post type at once.
-    $ wp post update $(wp post list --post_type=page --format=ids) --post_author=123
+    $ fp post update $(fp post list --post_type=page --format=ids) --post_author=123
     Success: Updated post 123.
     Success: Updated post 456.
 
 
 
-### wp post url-to-id
+### fp post url-to-id
 
 Gets the post ID for a given URL.
 
 ~~~
-wp post url-to-id <url>
+fp post url-to-id <url>
 ~~~
 
 **OPTIONS**
@@ -3190,29 +3190,29 @@ wp post url-to-id <url>
 **EXAMPLES**
 
     # Get post ID by URL
-    $ wp post url-to-id https://example.com/?p=1
+    $ fp post url-to-id https://example.com/?p=1
     1
 
 
 
-### wp post-type
+### fp post-type
 
 Retrieves details on the site's registered post types.
 
 ~~~
-wp post-type
+fp post-type
 ~~~
 
-Get information on WordPress' built-in and the site's [custom post types](https://developer.wordpress.org/plugins/post-types/).
+Get information on FinPress' built-in and the site's [custom post types](https://developer.finpress.org/plugins/post-types/).
 
 **EXAMPLES**
 
     # Get details about a post type
-    $ wp post-type get page --fields=name,label,hierarchical --format=json
+    $ fp post-type get page --fields=name,label,hierarchical --format=json
     {"name":"page","label":"Pages","hierarchical":true}
 
     # List post types with 'post' capability type
-    $ wp post-type list --capability_type=post --fields=name,public
+    $ fp post-type list --capability_type=post --fields=name,public
     +---------------+--------+
     | name          | public |
     +---------------+--------+
@@ -3224,12 +3224,12 @@ Get information on WordPress' built-in and the site's [custom post types](https:
 
 
 
-### wp post-type get
+### fp post-type get
 
 Gets details about a registered post type.
 
 ~~~
-wp post-type get <post-type> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp post-type get <post-type> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3275,17 +3275,17 @@ These fields are optionally available:
 **EXAMPLES**
 
     # Get details about the 'page' post type.
-    $ wp post-type get page --fields=name,label,hierarchical --format=json
+    $ fp post-type get page --fields=name,label,hierarchical --format=json
     {"name":"page","label":"Pages","hierarchical":true}
 
 
 
-### wp post-type list
+### fp post-type list
 
 Lists registered post types.
 
 ~~~
-wp post-type list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp post-type list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3329,7 +3329,7 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List registered post types
-    $ wp post-type list --format=csv
+    $ fp post-type list --format=csv
     name,label,description,hierarchical,public,capability_type
     post,Posts,,,1,post
     page,Pages,,1,1,page
@@ -3338,7 +3338,7 @@ These fields are optionally available:
     nav_menu_item,"Navigation Menu Items",,,,post
 
     # List post types with 'post' capability type
-    $ wp post-type list --capability_type=post --fields=name,public
+    $ fp post-type list --capability_type=post --fields=name,public
     +---------------+--------+
     | name          | public |
     +---------------+--------+
@@ -3350,38 +3350,38 @@ These fields are optionally available:
 
 
 
-### wp site
+### fp site
 
 Creates, deletes, empties, moderates, and lists one or more sites on a multisite installation.
 
 ~~~
-wp site
+fp site
 ~~~
 
 **EXAMPLES**
 
     # Create site
-    $ wp site create --slug=example
+    $ fp site create --slug=example
     Success: Site 3 created: www.example.com/example/
 
     # Output a simple list of site URLs
-    $ wp site list --field=url
+    $ fp site list --field=url
     http://www.example.com/
     http://www.example.com/subdir/
 
     # Delete site
-    $ wp site delete 123
+    $ fp site delete 123
     Are you sure you want to delete the 'http://www.example.com/example' site? [y/n] y
     Success: The site at 'http://www.example.com/example' was deleted.
 
 
 
-### wp site activate
+### fp site activate
 
 Activates one or more sites.
 
 ~~~
-wp site activate [<id>...] [--slug=<slug>]
+fp site activate [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -3394,20 +3394,20 @@ wp site activate [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ wp site activate 123
+    $ fp site activate 123
     Success: Site 123 activated.
 
-     $ wp site activate --slug=demo
+     $ fp site activate --slug=demo
      Success: Site 123 marked as activated.
 
 
 
-### wp site archive
+### fp site archive
 
 Archives one or more sites.
 
 ~~~
-wp site archive [<id>...] [--slug=<slug>]
+fp site archive [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -3420,20 +3420,20 @@ wp site archive [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ wp site archive 123
+    $ fp site archive 123
     Success: Site 123 archived.
 
-    $ wp site archive --slug=demo
+    $ fp site archive --slug=demo
     Success: Site 123 archived.
 
 
 
-### wp site create
+### fp site create
 
 Creates a site in a multisite installation.
 
 ~~~
-wp site create --slug=<slug> [--title=<title>] [--email=<email>] [--network_id=<network-id>] [--private] [--porcelain]
+fp site create --slug=<slug> [--title=<title>] [--email=<email>] [--network_id=<network-id>] [--private] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -3458,17 +3458,17 @@ wp site create --slug=<slug> [--title=<title>] [--email=<email>] [--network_id=<
 
 **EXAMPLES**
 
-    $ wp site create --slug=example
+    $ fp site create --slug=example
     Success: Site 3 created: http://www.example.com/example/
 
 
 
-### wp site generate
+### fp site generate
 
 Generate some sites.
 
 ~~~
-wp site generate [--count=<number>] [--slug=<slug>] [--email=<email>] [--network_id=<network-id>] [--private] [--format=<format>]
+fp site generate [--count=<number>] [--slug=<slug>] [--email=<email>] [--network_id=<network-id>] [--private] [--format=<format>]
 ~~~
 
 Creates a specified number of new sites.
@@ -3505,17 +3505,17 @@ Creates a specified number of new sites.
 **EXAMPLES**
 
    # Generate 10 sites.
-   $ wp site generate --count=10
+   $ fp site generate --count=10
    Generating sites  100% [================================================] 0:01 / 0:04
 
 
 
-### wp site deactivate
+### fp site deactivate
 
 Deactivates one or more sites.
 
 ~~~
-wp site deactivate [<id>...] [--slug=<slug>]
+fp site deactivate [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -3528,20 +3528,20 @@ wp site deactivate [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ wp site deactivate 123
+    $ fp site deactivate 123
     Success: Site 123 deactivated.
 
-    $ wp site deactivate --slug=demo
+    $ fp site deactivate --slug=demo
     Success: Site 123 deactivated.
 
 
 
-### wp site delete
+### fp site delete
 
 Deletes a site in a multisite installation.
 
 ~~~
-wp site delete [<site-id>] [--slug=<slug>] [--yes] [--keep-tables]
+fp site delete [<site-id>] [--slug=<slug>] [--yes] [--keep-tables]
 ~~~
 
 **OPTIONS**
@@ -3560,18 +3560,18 @@ wp site delete [<site-id>] [--slug=<slug>] [--yes] [--keep-tables]
 
 **EXAMPLES**
 
-    $ wp site delete 123
+    $ fp site delete 123
     Are you sure you want to delete the http://www.example.com/example site? [y/n] y
     Success: The site at 'http://www.example.com/example' was deleted.
 
 
 
-### wp site empty
+### fp site empty
 
 Empties a site of its content (posts, comments, terms, and meta).
 
 ~~~
-wp site empty [--uploads] [--yes]
+fp site empty [--uploads] [--yes]
 ~~~
 
 Truncates posts, comments, and terms tables to empty a site of its
@@ -3584,11 +3584,11 @@ To also empty custom database tables, you'll need to hook into command
 execution:
 
 ```
-WP_CLI::add_hook( 'after_invoke:site empty', function(){
-    global $wpdb;
+FP_CLI::add_hook( 'after_invoke:site empty', function(){
+    global $fpdb;
     foreach( array( 'p2p', 'p2pmeta' ) as $table ) {
-        $table = $wpdb->$table;
-        $wpdb->query( "TRUNCATE $table" );
+        $table = $fpdb->$table;
+        $fpdb->query( "TRUNCATE $table" );
     }
 });
 ```
@@ -3603,18 +3603,18 @@ WP_CLI::add_hook( 'after_invoke:site empty', function(){
 
 **EXAMPLES**
 
-    $ wp site empty
+    $ fp site empty
     Are you sure you want to empty the site at http://www.example.com of all posts, links, comments, and terms? [y/n] y
     Success: The site at 'http://www.example.com' was emptied.
 
 
 
-### wp site list
+### fp site list
 
 Lists all sites in a multisite installation.
 
 ~~~
-wp site list [--network=<id>] [--<field>=<value>] [--site__in=<value>] [--site_user=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp site list [--network=<id>] [--<field>=<value>] [--site__in=<value>] [--site_user=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3624,7 +3624,7 @@ wp site list [--network=<id>] [--<field>=<value>] [--site__in=<value>] [--site_u
 
 	[--<field>=<value>]
 		Filter by one or more fields (see "Available Fields" section). However,
-		'url' isn't an available filter, as it comes from 'home' in wp_options.
+		'url' isn't an available filter, as it comes from 'home' in fp_options.
 
 	[--site__in=<value>]
 		Only list the sites with these blog_id values (comma-separated).
@@ -3675,18 +3675,18 @@ These fields are optionally available:
 **EXAMPLES**
 
     # Output a simple list of site URLs
-    $ wp site list --field=url
+    $ fp site list --field=url
     http://www.example.com/
     http://www.example.com/subdir/
 
 
 
-### wp site mature
+### fp site mature
 
 Sets one or more sites as mature.
 
 ~~~
-wp site mature [<id>...] [--slug=<slug>]
+fp site mature [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -3699,50 +3699,50 @@ wp site mature [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ wp site mature 123
+    $ fp site mature 123
     Success: Site 123 marked as mature.
 
-    $ wp site mature --slug=demo
+    $ fp site mature --slug=demo
     Success: Site 123 marked as mature.
 
 
 
-### wp site meta
+### fp site meta
 
 Adds, updates, deletes, and lists site custom fields.
 
 ~~~
-wp site meta
+fp site meta
 ~~~
 
 **EXAMPLES**
 
     # Set site meta
-    $ wp site meta set 123 bio "Mary is a WordPress developer."
+    $ fp site meta set 123 bio "Mary is a FinPress developer."
     Success: Updated custom field 'bio'.
 
     # Get site meta
-    $ wp site meta get 123 bio
-    Mary is a WordPress developer.
+    $ fp site meta get 123 bio
+    Mary is a FinPress developer.
 
     # Update site meta
-    $ wp site meta update 123 bio "Mary is an awesome WordPress developer."
+    $ fp site meta update 123 bio "Mary is an awesome FinPress developer."
     Success: Updated custom field 'bio'.
 
     # Delete site meta
-    $ wp site meta delete 123 bio
+    $ fp site meta delete 123 bio
     Success: Deleted custom field.
 
 
 
 
 
-### wp site meta add
+### fp site meta add
 
 Add a meta field.
 
 ~~~
-wp site meta add <id> <key> [<value>] [--format=<format>]
+fp site meta add <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3767,12 +3767,12 @@ wp site meta add <id> <key> [<value>] [--format=<format>]
 
 
 
-### wp site meta delete
+### fp site meta delete
 
 Delete a meta field.
 
 ~~~
-wp site meta delete <id> [<key>] [<value>] [--all]
+fp site meta delete <id> [<key>] [<value>] [--all]
 ~~~
 
 **OPTIONS**
@@ -3791,12 +3791,12 @@ wp site meta delete <id> [<key>] [<value>] [--all]
 
 
 
-### wp site meta get
+### fp site meta get
 
 Get meta field value.
 
 ~~~
-wp site meta get <id> <key> [--format=<format>]
+fp site meta get <id> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3819,12 +3819,12 @@ wp site meta get <id> <key> [--format=<format>]
 
 
 
-### wp site meta list
+### fp site meta list
 
 List all metadata associated with an object.
 
 ~~~
-wp site meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fp site meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -3874,12 +3874,12 @@ wp site meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [
 
 
 
-### wp site meta patch
+### fp site meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-wp site meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fp site meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3916,12 +3916,12 @@ wp site meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format
 
 
 
-### wp site meta pluck
+### fp site meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-wp site meta pluck <id> <key> <key-path>... [--format=<format>]
+fp site meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3946,12 +3946,12 @@ wp site meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### wp site meta update
+### fp site meta update
 
 Update a meta field.
 
 ~~~
-wp site meta update <id> <key> [<value>] [--format=<format>]
+fp site meta update <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3976,42 +3976,42 @@ wp site meta update <id> <key> [<value>] [--format=<format>]
 
 
 
-### wp site option
+### fp site option
 
 Adds, updates, deletes, and lists site options in a multisite installation.
 
 ~~~
-wp site option
+fp site option
 ~~~
 
 **EXAMPLES**
 
     # Get site registration
-    $ wp site option get registration
+    $ fp site option get registration
     none
 
     # Add site option
-    $ wp site option add my_option foobar
+    $ fp site option add my_option foobar
     Success: Added 'my_option' site option.
 
     # Update site option
-    $ wp site option update my_option '{"foo": "bar"}' --format=json
+    $ fp site option update my_option '{"foo": "bar"}' --format=json
     Success: Updated 'my_option' site option.
 
     # Delete site option
-    $ wp site option delete my_option
+    $ fp site option delete my_option
     Success: Deleted 'my_option' site option.
 
 
 
 
 
-### wp site private
+### fp site private
 
 Sets one or more sites as private.
 
 ~~~
-wp site private [<id>...] [--slug=<slug>]
+fp site private [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4024,20 +4024,20 @@ wp site private [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ wp site private 123
+    $ fp site private 123
     Success: Site 123 marked as private.
 
-    $ wp site private --slug=demo
+    $ fp site private --slug=demo
     Success: Site 123 marked as private.
 
 
 
-### wp site public
+### fp site public
 
 Sets one or more sites as public.
 
 ~~~
-wp site public [<id>...] [--slug=<slug>]
+fp site public [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4050,20 +4050,20 @@ wp site public [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ wp site public 123
+    $ fp site public 123
     Success: Site 123 marked as public.
 
-     $ wp site public --slug=demo
+     $ fp site public --slug=demo
      Success: Site 123 marked as public.
 
 
 
-### wp site spam
+### fp site spam
 
 Marks one or more sites as spam.
 
 ~~~
-wp site spam [<id>...] [--slug=<slug>]
+fp site spam [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4076,17 +4076,17 @@ wp site spam [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ wp site spam 123
+    $ fp site spam 123
     Success: Site 123 marked as spam.
 
 
 
-### wp site unarchive
+### fp site unarchive
 
 Unarchives one or more sites.
 
 ~~~
-wp site unarchive [<id>...] [--slug=<slug>]
+fp site unarchive [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4099,20 +4099,20 @@ wp site unarchive [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ wp site unarchive 123
+    $ fp site unarchive 123
     Success: Site 123 unarchived.
 
-    $ wp site unarchive --slug=demo
+    $ fp site unarchive --slug=demo
     Success: Site 123 unarchived.
 
 
 
-### wp site unmature
+### fp site unmature
 
 Sets one or more sites as immature.
 
 ~~~
-wp site unmature [<id>...] [--slug=<slug>]
+fp site unmature [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4125,20 +4125,20 @@ wp site unmature [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ wp site unmature 123
+    $ fp site unmature 123
     Success: Site 123 marked as unmature.
 
-    $ wp site unmature --slug=demo
+    $ fp site unmature --slug=demo
     Success: Site 123 marked as unmature.
 
 
 
-### wp site unspam
+### fp site unspam
 
 Removes one or more sites from spam.
 
 ~~~
-wp site unspam [<id>...] [--slug=<slug>]
+fp site unspam [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4151,25 +4151,25 @@ wp site unspam [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ wp site unspam 123
+    $ fp site unspam 123
     Success: Site 123 removed from spam.
 
 
 
-### wp taxonomy
+### fp taxonomy
 
 Retrieves information about registered taxonomies.
 
 ~~~
-wp taxonomy
+fp taxonomy
 ~~~
 
-See references for [built-in taxonomies](https://developer.wordpress.org/themes/basics/categories-tags-custom-taxonomies/) and [custom taxonomies](https://developer.wordpress.org/plugins/taxonomies/working-with-custom-taxonomies/).
+See references for [built-in taxonomies](https://developer.finpress.org/themes/basics/categories-tags-custom-taxonomies/) and [custom taxonomies](https://developer.finpress.org/plugins/taxonomies/working-with-custom-taxonomies/).
 
 **EXAMPLES**
 
     # List all taxonomies with 'post' object type.
-    $ wp taxonomy list --object_type=post --fields=name,public
+    $ fp taxonomy list --object_type=post --fields=name,public
     +-------------+--------+
     | name        | public |
     +-------------+--------+
@@ -4179,17 +4179,17 @@ See references for [built-in taxonomies](https://developer.wordpress.org/themes/
     +-------------+--------+
 
     # Get capabilities of 'post_tag' taxonomy.
-    $ wp taxonomy get post_tag --field=cap
+    $ fp taxonomy get post_tag --field=cap
     {"manage_terms":"manage_categories","edit_terms":"manage_categories","delete_terms":"manage_categories","assign_terms":"edit_posts"}
 
 
 
-### wp taxonomy get
+### fp taxonomy get
 
 Gets details about a registered taxonomy.
 
 ~~~
-wp taxonomy get <taxonomy> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp taxonomy get <taxonomy> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4235,7 +4235,7 @@ These fields are optionally available:
 **EXAMPLES**
 
     # Get details of `category` taxonomy.
-    $ wp taxonomy get category --fields=name,label,object_type
+    $ fp taxonomy get category --fields=name,label,object_type
     +-------------+------------+
     | Field       | Value      |
     +-------------+------------+
@@ -4245,17 +4245,17 @@ These fields are optionally available:
     +-------------+------------+
 
     # Get capabilities of 'post_tag' taxonomy.
-    $ wp taxonomy get post_tag --field=cap
+    $ fp taxonomy get post_tag --field=cap
     {"manage_terms":"manage_categories","edit_terms":"manage_categories","delete_terms":"manage_categories","assign_terms":"edit_posts"}
 
 
 
-### wp taxonomy list
+### fp taxonomy list
 
 Lists registered taxonomies.
 
 ~~~
-wp taxonomy list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp taxonomy list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4300,7 +4300,7 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List all taxonomies.
-    $ wp taxonomy list --format=csv
+    $ fp taxonomy list --format=csv
     name,label,description,object_type,show_tagcloud,hierarchical,public
     category,Categories,,post,1,1,1
     post_tag,Tags,,post,1,,1
@@ -4309,7 +4309,7 @@ These fields are optionally available:
     post_format,Format,,post,,,1
 
     # List all taxonomies with 'post' object type.
-    $ wp taxonomy list --object_type=post --fields=name,public
+    $ fp taxonomy list --object_type=post --fields=name,public
     +-------------+--------+
     | name        | public |
     +-------------+--------+
@@ -4320,51 +4320,51 @@ These fields are optionally available:
 
 
 
-### wp term
+### fp term
 
 Manages taxonomy terms and term meta, with create, delete, and list commands.
 
 ~~~
-wp term
+fp term
 ~~~
 
-See reference for [taxonomies and their terms](https://codex.wordpress.org/Taxonomies).
+See reference for [taxonomies and their terms](https://codex.finpress.org/Taxonomies).
 
 **EXAMPLES**
 
     # Create a new term.
-    $ wp term create category Apple --description="A type of fruit"
+    $ fp term create category Apple --description="A type of fruit"
     Success: Created category 199.
 
     # Get details about a term.
-    $ wp term get category 199 --format=json --fields=term_id,name,slug,count
+    $ fp term get category 199 --format=json --fields=term_id,name,slug,count
     {"term_id":199,"name":"Apple","slug":"apple","count":1}
 
     # Update an existing term.
-    $ wp term update category 15 --name=Apple
+    $ fp term update category 15 --name=Apple
     Success: Term updated.
 
     # Get the term's URL.
-    $ wp term list post_tag --include=123 --field=url
+    $ fp term list post_tag --include=123 --field=url
     http://example.com/tag/tips-and-tricks
 
     # Delete post category
-    $ wp term delete category 15
+    $ fp term delete category 15
     Success: Deleted category 15.
 
     # Recount posts assigned to each categories and tags
-    $ wp term recount category post_tag
+    $ fp term recount category post_tag
     Success: Updated category term count
     Success: Updated post_tag term count
 
 
 
-### wp term create
+### fp term create
 
 Creates a new term.
 
 ~~~
-wp term create <taxonomy> <term> [--slug=<slug>] [--description=<description>] [--parent=<term-id>] [--porcelain]
+fp term create <taxonomy> <term> [--slug=<slug>] [--description=<description>] [--parent=<term-id>] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -4390,17 +4390,17 @@ wp term create <taxonomy> <term> [--slug=<slug>] [--description=<description>] [
 **EXAMPLES**
 
     # Create a new category "Apple" with a description.
-    $ wp term create category Apple --description="A type of fruit"
+    $ fp term create category Apple --description="A type of fruit"
     Success: Created category 199.
 
 
 
-### wp term delete
+### fp term delete
 
 Deletes an existing term.
 
 ~~~
-wp term delete <taxonomy> <term>... [--by=<field>]
+fp term delete <taxonomy> <term>... [--by=<field>]
 ~~~
 
 Errors if the term doesn't exist, or there was a problem in deleting it.
@@ -4425,17 +4425,17 @@ Errors if the term doesn't exist, or there was a problem in deleting it.
 **EXAMPLES**
 
     # Delete post category by id
-    $ wp term delete category 15
+    $ fp term delete category 15
     Deleted category 15.
     Success: Deleted 1 of 1 terms.
 
     # Delete post category by slug
-    $ wp term delete category apple --by=slug
+    $ fp term delete category apple --by=slug
     Deleted category 15.
     Success: Deleted 1 of 1 terms.
 
     # Delete all post tags
-    $ wp term list post_tag --field=term_id | xargs wp term delete post_tag
+    $ fp term list post_tag --field=term_id | xargs fp term delete post_tag
     Deleted post_tag 159.
     Deleted post_tag 160.
     Deleted post_tag 161.
@@ -4443,12 +4443,12 @@ Errors if the term doesn't exist, or there was a problem in deleting it.
 
 
 
-### wp term generate
+### fp term generate
 
 Generates some terms.
 
 ~~~
-wp term generate <taxonomy> [--count=<number>] [--max_depth=<number>] [--format=<format>]
+fp term generate <taxonomy> [--count=<number>] [--max_depth=<number>] [--format=<format>]
 ~~~
 
 Creates a specified number of new terms with dummy data.
@@ -4482,23 +4482,23 @@ Creates a specified number of new terms with dummy data.
 **EXAMPLES**
 
     # Generate post categories.
-    $ wp term generate category --count=10
+    $ fp term generate category --count=10
     Generating terms  100% [=========] 0:02 / 0:02
 
     # Add meta to every generated term.
-    $ wp term generate category --format=ids --count=3 | xargs -d ' ' -I % wp term meta add % foo bar
+    $ fp term generate category --format=ids --count=3 | xargs -d ' ' -I % fp term meta add % foo bar
     Success: Added custom field.
     Success: Added custom field.
     Success: Added custom field.
 
 
 
-### wp term get
+### fp term get
 
 Gets details about a term.
 
 ~~~
-wp term get <taxonomy> <term> [--by=<field>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp term get <taxonomy> <term> [--by=<field>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4538,21 +4538,21 @@ wp term get <taxonomy> <term> [--by=<field>] [--field=<field>] [--fields=<fields
 **EXAMPLES**
 
     # Get details about a category with id 199.
-    $ wp term get category 199 --format=json
+    $ fp term get category 199 --format=json
     {"term_id":199,"name":"Apple","slug":"apple","term_group":0,"term_taxonomy_id":199,"taxonomy":"category","description":"A type of fruit","parent":0,"count":0,"filter":"raw"}
 
     # Get details about a category with slug apple.
-    $ wp term get category apple --by=slug --format=json
+    $ fp term get category apple --by=slug --format=json
     {"term_id":199,"name":"Apple","slug":"apple","term_group":0,"term_taxonomy_id":199,"taxonomy":"category","description":"A type of fruit","parent":0,"count":0,"filter":"raw"}
 
 
 
-### wp term list
+### fp term list
 
 Lists terms in a taxonomy.
 
 ~~~
-wp term list <taxonomy>... [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp term list <taxonomy>... [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4601,7 +4601,7 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List post categories
-    $ wp term list category --format=csv
+    $ fp term list category --format=csv
     term_id,term_taxonomy_id,name,slug,description,parent,count
     2,2,aciform,aciform,,0,1
     3,3,antiquarianism,antiquarianism,,0,1
@@ -4609,7 +4609,7 @@ These fields are optionally available:
     5,5,asmodeus,asmodeus,,0,1
 
     # List post tags
-    $ wp term list post_tag --fields=name,slug
+    $ fp term list post_tag --fields=name,slug
     +-----------+-------------+
     | name      | slug        |
     +-----------+-------------+
@@ -4621,42 +4621,42 @@ These fields are optionally available:
 
 
 
-### wp term meta
+### fp term meta
 
 Adds, updates, deletes, and lists term custom fields.
 
 ~~~
-wp term meta
+fp term meta
 ~~~
 
 **EXAMPLES**
 
     # Set term meta
-    $ wp term meta set 123 bio "Mary is a WordPress developer."
+    $ fp term meta set 123 bio "Mary is a FinPress developer."
     Success: Updated custom field 'bio'.
 
     # Get term meta
-    $ wp term meta get 123 bio
-    Mary is a WordPress developer.
+    $ fp term meta get 123 bio
+    Mary is a FinPress developer.
 
     # Update term meta
-    $ wp term meta update 123 bio "Mary is an awesome WordPress developer."
+    $ fp term meta update 123 bio "Mary is an awesome FinPress developer."
     Success: Updated custom field 'bio'.
 
     # Delete term meta
-    $ wp term meta delete 123 bio
+    $ fp term meta delete 123 bio
     Success: Deleted custom field.
 
 
 
 
 
-### wp term meta add
+### fp term meta add
 
 Add a meta field.
 
 ~~~
-wp term meta add <id> <key> [<value>] [--format=<format>]
+fp term meta add <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4681,12 +4681,12 @@ wp term meta add <id> <key> [<value>] [--format=<format>]
 
 
 
-### wp term meta delete
+### fp term meta delete
 
 Delete a meta field.
 
 ~~~
-wp term meta delete <id> [<key>] [<value>] [--all]
+fp term meta delete <id> [<key>] [<value>] [--all]
 ~~~
 
 **OPTIONS**
@@ -4705,12 +4705,12 @@ wp term meta delete <id> [<key>] [<value>] [--all]
 
 
 
-### wp term meta get
+### fp term meta get
 
 Get meta field value.
 
 ~~~
-wp term meta get <id> <key> [--format=<format>]
+fp term meta get <id> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4733,12 +4733,12 @@ wp term meta get <id> <key> [--format=<format>]
 
 
 
-### wp term meta list
+### fp term meta list
 
 List all metadata associated with an object.
 
 ~~~
-wp term meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fp term meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -4788,12 +4788,12 @@ wp term meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [
 
 
 
-### wp term meta patch
+### fp term meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-wp term meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fp term meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4830,12 +4830,12 @@ wp term meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format
 
 
 
-### wp term meta pluck
+### fp term meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-wp term meta pluck <id> <key> <key-path>... [--format=<format>]
+fp term meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4860,12 +4860,12 @@ wp term meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### wp term meta update
+### fp term meta update
 
 Update a meta field.
 
 ~~~
-wp term meta update <id> <key> [<value>] [--format=<format>]
+fp term meta update <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4890,19 +4890,19 @@ wp term meta update <id> <key> [<value>] [--format=<format>]
 
 
 
-### wp term recount
+### fp term recount
 
 Recalculates number of posts assigned to each term.
 
 ~~~
-wp term recount <taxonomy>...
+fp term recount <taxonomy>...
 ~~~
 
 In instances where manual updates are made to the terms assigned to
 posts in the database, the number of posts associated with a term
 can become out-of-sync with the actual number of posts.
 
-This command runs wp_update_term_count() on the taxonomy's terms
+This command runs fp_update_term_count() on the taxonomy's terms
 to bring the count back to the correct value.
 
 **OPTIONS**
@@ -4913,12 +4913,12 @@ to bring the count back to the correct value.
 **EXAMPLES**
 
     # Recount posts assigned to each categories and tags
-    $ wp term recount category post_tag
+    $ fp term recount category post_tag
     Success: Updated category term count.
     Success: Updated post_tag term count.
 
     # Recount all listed taxonomies
-    $ wp taxonomy list --field=name | xargs wp term recount
+    $ fp taxonomy list --field=name | xargs fp term recount
     Success: Updated category term count.
     Success: Updated post_tag term count.
     Success: Updated nav_menu term count.
@@ -4927,12 +4927,12 @@ to bring the count back to the correct value.
 
 
 
-### wp term update
+### fp term update
 
 Updates an existing term.
 
 ~~~
-wp term update <taxonomy> <term> [--by=<field>] [--name=<name>] [--slug=<slug>] [--description=<description>] [--parent=<term-id>]
+fp term update <taxonomy> <term> [--by=<field>] [--name=<name>] [--slug=<slug>] [--description=<description>] [--parent=<term-id>]
 ~~~
 
 **OPTIONS**
@@ -4967,52 +4967,52 @@ wp term update <taxonomy> <term> [--by=<field>] [--name=<name>] [--slug=<slug>] 
 **EXAMPLES**
 
     # Change category with id 15 to use the name "Apple"
-    $ wp term update category 15 --name=Apple
+    $ fp term update category 15 --name=Apple
     Success: Term updated.
 
     # Change category with slug apple to use the name "Apple"
-    $ wp term update category apple --by=slug --name=Apple
+    $ fp term update category apple --by=slug --name=Apple
     Success: Term updated.
 
 
 
-### wp user
+### fp user
 
 Manages users, along with their roles, capabilities, and meta.
 
 ~~~
-wp user
+fp user
 ~~~
 
-See references for [Roles and Capabilities](https://codex.wordpress.org/Roles_and_Capabilities) and [WP User class](https://codex.wordpress.org/Class_Reference/WP_User).
+See references for [Roles and Capabilities](https://codex.finpress.org/Roles_and_Capabilities) and [FP User class](https://codex.finpress.org/Class_Reference/FP_User).
 
 **EXAMPLES**
 
     # List user IDs
-    $ wp user list --field=ID
+    $ fp user list --field=ID
     1
 
     # Create a new user.
-    $ wp user create bob bob@example.com --role=author
+    $ fp user create bob bob@example.com --role=author
     Success: Created user 3.
     Password: k9**&I4vNH(&
 
     # Update an existing user.
-    $ wp user update 123 --display_name=Mary --user_pass=marypass
+    $ fp user update 123 --display_name=Mary --user_pass=marypass
     Success: Updated user 123.
 
     # Delete user 123 and reassign posts to user 567
-    $ wp user delete 123 --reassign=567
+    $ fp user delete 123 --reassign=567
     Success: Removed user 123 from http://example.com.
 
 
 
-### wp user add-cap
+### fp user add-cap
 
 Adds a capability to a user.
 
 ~~~
-wp user add-cap <user> <cap>
+fp user add-cap <user> <cap>
 ~~~
 
 **OPTIONS**
@@ -5026,21 +5026,21 @@ wp user add-cap <user> <cap>
 **EXAMPLES**
 
     # Add a capability for a user
-    $ wp user add-cap john create_premium_item
+    $ fp user add-cap john create_premium_item
     Success: Added 'create_premium_item' capability for john (16).
 
     # Add a capability for a user
-    $ wp user add-cap 15 edit_product
+    $ fp user add-cap 15 edit_product
     Success: Added 'edit_product' capability for johndoe (15).
 
 
 
-### wp user add-role
+### fp user add-role
 
 Adds a role for a user.
 
 ~~~
-wp user add-role <user> [<role>...]
+fp user add-role <user> [<role>...]
 ~~~
 
 **OPTIONS**
@@ -5053,26 +5053,26 @@ wp user add-role <user> [<role>...]
 
 **EXAMPLES**
 
-    $ wp user add-role 12 author
+    $ fp user add-role 12 author
     Success: Added 'author' role for johndoe (12).
 
-    $ wp user add-role 12 author editor
+    $ fp user add-role 12 author editor
     Success: Added 'author', 'editor' roles for johndoe (12).
 
 
 
-### wp user application-password
+### fp user application-password
 
 Creates, updates, deletes, lists and retrieves application passwords.
 
 ~~~
-wp user application-password
+fp user application-password
 ~~~
 
 **EXAMPLES**
 
     # List user application passwords and only show app name and password hash
-    $ wp user application-password list 123 --fields=name,password
+    $ fp user application-password list 123 --fields=name,password
     +--------+------------------------------------+
     | name   | password                           |
     +--------+------------------------------------+
@@ -5080,7 +5080,7 @@ wp user application-password
     +--------+------------------------------------+
 
     # Get a specific application password and only show app name and created timestamp
-    $ wp user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
+    $ fp user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
     +--------+------------+
     | name   | created    |
     +--------+------------+
@@ -5088,42 +5088,42 @@ wp user application-password
     +--------+------------+
 
     # Create user application password
-    $ wp user application-password create 123 myapp
+    $ fp user application-password create 123 myapp
     Success: Created application password.
     Password: ZG1bxdxdzjTwhsY8vK8l1C65
 
     # Only print the password without any chrome
-    $ wp user application-password create 123 myapp --porcelain
+    $ fp user application-password create 123 myapp --porcelain
     ZG1bxdxdzjTwhsY8vK8l1C65
 
     # Update an existing application password
-    $ wp user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
+    $ fp user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
     Success: Updated application password.
 
     # Delete an existing application password
-    $ wp user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
+    $ fp user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
     Success: Deleted 1 of 1 application password.
 
     # Check if an application password for a given application exists
-    $ wp user application-password exists 123 myapp
+    $ fp user application-password exists 123 myapp
     $ echo $?
     1
 
     # Bash script for checking whether an application password exists and creating one if not
-    if ! wp user application-password exists 123 myapp; then
-        PASSWORD=$(wp user application-password create 123 myapp --porcelain)
+    if ! fp user application-password exists 123 myapp; then
+        PASSWORD=$(fp user application-password create 123 myapp --porcelain)
     fi
 
 
 
 
 
-### wp user application-password create
+### fp user application-password create
 
 Creates a new application password.
 
 ~~~
-wp user application-password create <user> <app-name> [--app-id=<app-id>] [--porcelain]
+fp user application-password create <user> <app-name> [--app-id=<app-id>] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -5143,26 +5143,26 @@ wp user application-password create <user> <app-name> [--app-id=<app-id>] [--por
 **EXAMPLES**
 
     # Create user application password
-    $ wp user application-password create 123 myapp
+    $ fp user application-password create 123 myapp
     Success: Created application password.
     Password: ZG1bxdxdzjTwhsY8vK8l1C65
 
     # Only print the password without any chrome
-    $ wp user application-password create 123 myapp --porcelain
+    $ fp user application-password create 123 myapp --porcelain
     ZG1bxdxdzjTwhsY8vK8l1C65
 
     # Create user application with a custom application ID for internal tracking
-    $ wp user application-password create 123 myapp --app-id=42 --porcelain
+    $ fp user application-password create 123 myapp --app-id=42 --porcelain
     ZG1bxdxdzjTwhsY8vK8l1C65
 
 
 
-### wp user application-password delete
+### fp user application-password delete
 
 Delete an existing application password.
 
 ~~~
-wp user application-password delete <user> [<uuid>...] [--all]
+fp user application-password delete <user> [<uuid>...] [--all]
 ~~~
 
 **OPTIONS**
@@ -5179,21 +5179,21 @@ wp user application-password delete <user> [<uuid>...] [--all]
 **EXAMPLES**
 
     # Delete an existing application password
-    $ wp user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
+    $ fp user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
     Success: Deleted 1 of 1 application password.
 
     # Delete all of the user's application passwords
-    $ wp user application-password delete 123 --all
+    $ fp user application-password delete 123 --all
     Success: Deleted all application passwords.
 
 
 
-### wp user application-password exists
+### fp user application-password exists
 
 Checks whether an application password for a given application exists.
 
 ~~~
-wp user application-password exists <user> <app-name>
+fp user application-password exists <user> <app-name>
 ~~~
 
 **OPTIONS**
@@ -5207,23 +5207,23 @@ wp user application-password exists <user> <app-name>
 **EXAMPLES**
 
     # Check if an application password for a given application exists
-    $ wp user application-password exists 123 myapp
+    $ fp user application-password exists 123 myapp
     $ echo $?
     1
 
     # Bash script for checking whether an application password exists and creating one if not
-    if ! wp user application-password exists 123 myapp; then
-        PASSWORD=$(wp user application-password create 123 myapp --porcelain)
+    if ! fp user application-password exists 123 myapp; then
+        PASSWORD=$(fp user application-password create 123 myapp --porcelain)
     fi
 
 
 
-### wp user application-password get
+### fp user application-password get
 
 Gets a specific application password.
 
 ~~~
-wp user application-password get <user> <uuid> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp user application-password get <user> <uuid> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -5254,7 +5254,7 @@ wp user application-password get <user> <uuid> [--field=<field>] [--fields=<fiel
 **EXAMPLES**
 
     # Get a specific application password and only show app name and created timestamp
-    $ wp user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
+    $ fp user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
     +--------+------------+
     | name   | created    |
     +--------+------------+
@@ -5263,12 +5263,12 @@ wp user application-password get <user> <uuid> [--field=<field>] [--fields=<fiel
 
 
 
-### wp user application-password list
+### fp user application-password list
 
 Lists all application passwords associated with a user.
 
 ~~~
-wp user application-password list <user> [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>]
+fp user application-password list <user> [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>]
 ~~~
 
 **OPTIONS**
@@ -5324,7 +5324,7 @@ wp user application-password list <user> [--<field>=<value>] [--field=<field>] [
 **EXAMPLES**
 
     # List user application passwords and only show app name and password hash
-    $ wp user application-password list 123 --fields=name,password
+    $ fp user application-password list 123 --fields=name,password
     +--------+------------------------------------+
     | name   | password                           |
     +--------+------------------------------------+
@@ -5333,12 +5333,12 @@ wp user application-password list <user> [--<field>=<value>] [--field=<field>] [
 
 
 
-### wp user application-password record-usage
+### fp user application-password record-usage
 
 Record usage of an application password.
 
 ~~~
-wp user application-password record-usage <user> <uuid>
+fp user application-password record-usage <user> <uuid>
 ~~~
 
 **OPTIONS**
@@ -5352,17 +5352,17 @@ wp user application-password record-usage <user> <uuid>
 **EXAMPLES**
 
     # Record usage of an application password
-    $ wp user application-password record-usage 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
+    $ fp user application-password record-usage 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
     Success: Recorded application password usage.
 
 
 
-### wp user application-password update
+### fp user application-password update
 
 Updates an existing application password.
 
 ~~~
-wp user application-password update <user> <uuid> [--<field>=<value>]
+fp user application-password update <user> <uuid> [--<field>=<value>]
 ~~~
 
 **OPTIONS**
@@ -5379,17 +5379,17 @@ wp user application-password update <user> <uuid> [--<field>=<value>]
 **EXAMPLES**
 
     # Update an existing application password
-    $ wp user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
+    $ fp user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
     Success: Updated application password.
 
 
 
-### wp user create
+### fp user create
 
 Creates a new user.
 
 ~~~
-wp user create <user-login> <user-email> [--role=<role>] [--user_pass=<password>] [--user_registered=<yyyy-mm-dd-hh-ii-ss>] [--display_name=<name>] [--user_nicename=<nice_name>] [--user_url=<url>] [--nickname=<nickname>] [--first_name=<first_name>] [--last_name=<last_name>] [--description=<description>] [--rich_editing=<rich_editing>] [--send-email] [--porcelain]
+fp user create <user-login> <user-email> [--role=<role>] [--user_pass=<password>] [--user_registered=<yyyy-mm-dd-hh-ii-ss>] [--display_name=<name>] [--user_nicename=<nice_name>] [--user_url=<url>] [--nickname=<nickname>] [--first_name=<first_name>] [--last_name=<last_name>] [--description=<description>] [--rich_editing=<rich_editing>] [--send-email] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -5443,25 +5443,25 @@ wp user create <user-login> <user-email> [--role=<role>] [--user_pass=<password>
 **EXAMPLES**
 
     # Create user
-    $ wp user create bob bob@example.com --role=author
+    $ fp user create bob bob@example.com --role=author
     Success: Created user 3.
     Password: k9**&I4vNH(&
 
     # Create user without showing password upon success
-    $ wp user create ann ann@example.com --porcelain
+    $ fp user create ann ann@example.com --porcelain
     4
 
 
 
-### wp user delete
+### fp user delete
 
 Deletes one or more users from the current site.
 
 ~~~
-wp user delete <user>... [--network] [--reassign=<user-id>] [--yes]
+fp user delete <user>... [--network] [--reassign=<user-id>] [--yes]
 ~~~
 
-On multisite, `wp user delete` only removes the user from the current
+On multisite, `fp user delete` only removes the user from the current
 site. Include `--network` to also remove the user from the database, but
 make sure to reassign their posts prior to deleting the user.
 
@@ -5482,25 +5482,25 @@ make sure to reassign their posts prior to deleting the user.
 **EXAMPLES**
 
     # Delete user 123 and reassign posts to user 567
-    $ wp user delete 123 --reassign=567
+    $ fp user delete 123 --reassign=567
     Success: Removed user 123 from http://example.com.
 
     # Delete all contributors and reassign their posts to user 2
-    $ wp user delete $(wp user list --role=contributor --field=ID) --reassign=2
+    $ fp user delete $(fp user list --role=contributor --field=ID) --reassign=2
     Success: Removed user 813 from http://example.com.
     Success: Removed user 578 from http://example.com.
 
-    # Delete all contributors in batches of 100 (avoid error: argument list too long: wp)
-    $ wp user delete $(wp user list --role=contributor --field=ID | head -n 100)
+    # Delete all contributors in batches of 100 (avoid error: argument list too long: fp)
+    $ fp user delete $(fp user list --role=contributor --field=ID | head -n 100)
 
 
 
-### wp user exists
+### fp user exists
 
 Verifies whether a user exists.
 
 ~~~
-wp user exists <id>
+fp user exists <id>
 ~~~
 
 Displays a success message if the user does exist.
@@ -5513,24 +5513,24 @@ Displays a success message if the user does exist.
 **EXAMPLES**
 
     # The user exists.
-    $ wp user exists 1337
+    $ fp user exists 1337
     Success: User with ID 1337 exists.
     $ echo $?
     0
 
     # The user does not exist.
-    $ wp user exists 10000
+    $ fp user exists 10000
     $ echo $?
     1
 
 
 
-### wp user generate
+### fp user generate
 
 Generates some users.
 
 ~~~
-wp user generate [--count=<number>] [--role=<role>] [--format=<format>]
+fp user generate [--count=<number>] [--role=<role>] [--format=<format>]
 ~~~
 
 Creates a specified number of new users with dummy data.
@@ -5544,7 +5544,7 @@ Creates a specified number of new users with dummy data.
 		---
 
 	[--role=<role>]
-		The role of the generated users. Default: default role from WP
+		The role of the generated users. Default: default role from FP
 
 	[--format=<format>]
 		Render output in a particular format.
@@ -5558,19 +5558,19 @@ Creates a specified number of new users with dummy data.
 **EXAMPLES**
 
     # Add meta to every generated users.
-    $ wp user generate --format=ids --count=3 | xargs -d ' ' -I % wp user meta add % foo bar
+    $ fp user generate --format=ids --count=3 | xargs -d ' ' -I % fp user meta add % foo bar
     Success: Added custom field.
     Success: Added custom field.
     Success: Added custom field.
 
 
 
-### wp user get
+### fp user get
 
 Gets details about a user.
 
 ~~~
-wp user get <user> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp user get <user> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -5598,20 +5598,20 @@ wp user get <user> [--field=<field>] [--fields=<fields>] [--format=<format>]
 **EXAMPLES**
 
     # Get user
-    $ wp user get 12 --field=login
+    $ fp user get 12 --field=login
     supervisor
 
     # Get user and export to JSON file
-    $ wp user get bob --format=json > bob.json
+    $ fp user get bob --format=json > bob.json
 
 
 
-### wp user import-csv
+### fp user import-csv
 
 Imports users from a CSV file.
 
 ~~~
-wp user import-csv <file> [--send-email] [--skip-update]
+fp user import-csv <file> [--send-email] [--skip-update]
 ~~~
 
 If the user already exists (matching the email address or login), then
@@ -5631,13 +5631,13 @@ the user is updated unless the `--skip-update` flag is used.
 **EXAMPLES**
 
     # Import users from local CSV file
-    $ wp user import-csv /path/to/users.csv
+    $ fp user import-csv /path/to/users.csv
     Success: bobjones created.
     Success: newuser1 created.
     Success: existinguser created.
 
     # Import users from remote CSV file
-    $ wp user import-csv http://example.com/users.csv
+    $ fp user import-csv http://example.com/users.csv
 
     Sample users.csv file:
 
@@ -5648,16 +5648,16 @@ the user is updated unless the `--skip-update` flag is used.
 
 
 
-### wp user list
+### fp user list
 
 Lists users.
 
 ~~~
-wp user list [--role=<role>] [--<field>=<value>] [--network] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp user list [--role=<role>] [--<field>=<value>] [--network] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
-Display WordPress users based on all arguments supported by
-[WP_User_Query()](https://developer.wordpress.org/reference/classes/wp_user_query/prepare_query/).
+Display FinPress users based on all arguments supported by
+[FP_User_Query()](https://developer.finpress.org/reference/classes/fp_user_query/prepare_query/).
 
 **OPTIONS**
 
@@ -5665,7 +5665,7 @@ Display WordPress users based on all arguments supported by
 		Only display users with a certain role.
 
 	[--<field>=<value>]
-		Control output by one or more arguments of WP_User_Query().
+		Control output by one or more arguments of FP_User_Query().
 
 	[--network]
 		List all users in the network for multisite.
@@ -5718,29 +5718,29 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List user IDs
-    $ wp user list --field=ID
+    $ fp user list --field=ID
     1
 
     # List users with administrator role
-    $ wp user list --role=administrator --format=csv
+    $ fp user list --role=administrator --format=csv
     ID,user_login,display_name,user_email,user_registered,roles
     1,supervisor,supervisor,supervisor@gmail.com,"2016-06-03 04:37:00",administrator
 
     # List users with only given fields
-    $ wp user list --fields=display_name,user_email --format=json
+    $ fp user list --fields=display_name,user_email --format=json
     [{"display_name":"supervisor","user_email":"supervisor@gmail.com"}]
 
     # List users ordered by the 'last_activity' meta value.
-    $ wp user list --meta_key=last_activity --orderby=meta_value_num
+    $ fp user list --meta_key=last_activity --orderby=meta_value_num
 
 
 
-### wp user list-caps
+### fp user list-caps
 
 Lists all capabilities for a user.
 
 ~~~
-wp user list-caps <user> [--format=<format>] [--origin=<origin>] [--exclude-role-names]
+fp user list-caps <user> [--format=<format>] [--origin=<origin>] [--exclude-role-names]
 ~~~
 
 **OPTIONS**
@@ -5776,54 +5776,54 @@ wp user list-caps <user> [--format=<format>] [--origin=<origin>] [--exclude-role
 
 **EXAMPLES**
 
-    $ wp user list-caps 21
+    $ fp user list-caps 21
     edit_product
     create_premium_item
 
 
 
-### wp user meta
+### fp user meta
 
 Adds, updates, deletes, and lists user custom fields.
 
 ~~~
-wp user meta
+fp user meta
 ~~~
 
 **EXAMPLES**
 
     # Add user meta
-    $ wp user meta add 123 bio "Mary is an WordPress developer."
+    $ fp user meta add 123 bio "Mary is an FinPress developer."
     Success: Added custom field.
 
     # List user meta
-    $ wp user meta list 123 --keys=nickname,description,wp_capabilities
+    $ fp user meta list 123 --keys=nickname,description,fp_capabilities
     +---------+-----------------+--------------------------------+
     | user_id | meta_key        | meta_value                     |
     +---------+-----------------+--------------------------------+
     | 123     | nickname        | supervisor                     |
-    | 123     | description     | Mary is a WordPress developer. |
-    | 123     | wp_capabilities | {"administrator":true}         |
+    | 123     | description     | Mary is a FinPress developer. |
+    | 123     | fp_capabilities | {"administrator":true}         |
     +---------+-----------------+--------------------------------+
 
     # Update user meta
-    $ wp user meta update 123 bio "Mary is an awesome WordPress developer."
+    $ fp user meta update 123 bio "Mary is an awesome FinPress developer."
     Success: Updated custom field 'bio'.
 
     # Delete user meta
-    $ wp user meta delete 123 bio
+    $ fp user meta delete 123 bio
     Success: Deleted custom field.
 
 
 
 
 
-### wp user meta add
+### fp user meta add
 
 Adds a meta field.
 
 ~~~
-wp user meta add <user> <key> <value> [--format=<format>]
+fp user meta add <user> <key> <value> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -5849,17 +5849,17 @@ wp user meta add <user> <key> <value> [--format=<format>]
 **EXAMPLES**
 
     # Add user meta
-    $ wp user meta add 123 bio "Mary is an WordPress developer."
+    $ fp user meta add 123 bio "Mary is an FinPress developer."
     Success: Added custom field.
 
 
 
-### wp user meta delete
+### fp user meta delete
 
 Deletes a meta field.
 
 ~~~
-wp user meta delete <user> <key> [<value>]
+fp user meta delete <user> <key> [<value>]
 ~~~
 
 **OPTIONS**
@@ -5876,17 +5876,17 @@ wp user meta delete <user> <key> [<value>]
 **EXAMPLES**
 
     # Delete user meta
-    $ wp user meta delete 123 bio
+    $ fp user meta delete 123 bio
     Success: Deleted custom field.
 
 
 
-### wp user meta get
+### fp user meta get
 
 Gets meta field value.
 
 ~~~
-wp user meta get <user> <key> [--format=<format>]
+fp user meta get <user> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -5911,21 +5911,21 @@ wp user meta get <user> <key> [--format=<format>]
 **EXAMPLES**
 
     # Get user meta
-    $ wp user meta get 123 bio
-    Mary is an WordPress developer.
+    $ fp user meta get 123 bio
+    Mary is an FinPress developer.
 
     # Get the primary site of a user (for multisite)
-    $ wp user meta get 2 primary_blog
+    $ fp user meta get 2 primary_blog
     3
 
 
 
-### wp user meta list
+### fp user meta list
 
 Lists all metadata associated with a user.
 
 ~~~
-wp user meta list <user> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fp user meta list <user> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -5976,23 +5976,23 @@ wp user meta list <user> [--keys=<keys>] [--fields=<fields>] [--format=<format>]
 **EXAMPLES**
 
     # List user meta
-    $ wp user meta list 123 --keys=nickname,description,wp_capabilities
+    $ fp user meta list 123 --keys=nickname,description,fp_capabilities
     +---------+-----------------+--------------------------------+
     | user_id | meta_key        | meta_value                     |
     +---------+-----------------+--------------------------------+
     | 123     | nickname        | supervisor                     |
-    | 123     | description     | Mary is a WordPress developer. |
-    | 123     | wp_capabilities | {"administrator":true}         |
+    | 123     | description     | Mary is a FinPress developer. |
+    | 123     | fp_capabilities | {"administrator":true}         |
     +---------+-----------------+--------------------------------+
 
 
 
-### wp user meta patch
+### fp user meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-wp user meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fp user meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -6029,12 +6029,12 @@ wp user meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format
 
 
 
-### wp user meta pluck
+### fp user meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-wp user meta pluck <id> <key> <key-path>... [--format=<format>]
+fp user meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -6059,12 +6059,12 @@ wp user meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### wp user meta update
+### fp user meta update
 
 Updates a meta field.
 
 ~~~
-wp user meta update <user> <key> <value> [--format=<format>]
+fp user meta update <user> <key> <value> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -6090,17 +6090,17 @@ wp user meta update <user> <key> <value> [--format=<format>]
 **EXAMPLES**
 
     # Update user meta
-    $ wp user meta update 123 bio "Mary is an awesome WordPress developer."
+    $ fp user meta update 123 bio "Mary is an awesome FinPress developer."
     Success: Updated custom field 'bio'.
 
 
 
-### wp user remove-cap
+### fp user remove-cap
 
 Removes a user's capability.
 
 ~~~
-wp user remove-cap <user> <cap>
+fp user remove-cap <user> <cap>
 ~~~
 
 **OPTIONS**
@@ -6113,23 +6113,23 @@ wp user remove-cap <user> <cap>
 
 **EXAMPLES**
 
-    $ wp user remove-cap 11 publish_newsletters
+    $ fp user remove-cap 11 publish_newsletters
     Success: Removed 'publish_newsletters' cap for supervisor (11).
 
-    $ wp user remove-cap 11 publish_posts
+    $ fp user remove-cap 11 publish_posts
     Error: The 'publish_posts' cap for supervisor (11) is inherited from a role.
 
-    $ wp user remove-cap 11 nonexistent_cap
+    $ fp user remove-cap 11 nonexistent_cap
     Error: No such 'nonexistent_cap' cap for supervisor (11).
 
 
 
-### wp user remove-role
+### fp user remove-role
 
 Removes a user's role.
 
 ~~~
-wp user remove-role <user> [<role>...]
+fp user remove-role <user> [<role>...]
 ~~~
 
 **OPTIONS**
@@ -6142,20 +6142,20 @@ wp user remove-role <user> [<role>...]
 
 **EXAMPLES**
 
-    $ wp user remove-role 12 author
+    $ fp user remove-role 12 author
     Success: Removed 'author' role for johndoe (12).
 
-    $ wp user remove-role 12 author editor
+    $ fp user remove-role 12 author editor
     Success: Removed 'author', 'editor' roles for johndoe (12).
 
 
 
-### wp user reset-password
+### fp user reset-password
 
 Resets the password for one or more users.
 
 ~~~
-wp user reset-password <user>... [--skip-email] [--show-password] [--porcelain]
+fp user reset-password <user>... [--skip-email] [--show-password] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -6175,64 +6175,64 @@ wp user reset-password <user>... [--skip-email] [--show-password] [--porcelain]
 **EXAMPLES**
 
     # Reset the password for two users and send them the change email.
-    $ wp user reset-password admin editor
+    $ fp user reset-password admin editor
     Reset password for admin.
     Reset password for editor.
     Success: Passwords reset for 2 users.
 
     # Reset and display the password.
-    $ wp user reset-password editor --show-password
+    $ fp user reset-password editor --show-password
     Reset password for editor.
     Password: N6hAau0fXZMN#rLCIirdEGOh
     Success: Password reset for 1 user.
 
     # Reset the password for one user, displaying only the new password, and not sending the change email.
-    $ wp user reset-password admin --skip-email --porcelain
+    $ fp user reset-password admin --skip-email --porcelain
     yV6BP*!d70wg
 
     # Reset password for all users.
-    $ wp user reset-password $(wp user list --format=ids)
+    $ fp user reset-password $(fp user list --format=ids)
     Reset password for admin.
     Reset password for editor.
     Reset password for subscriber.
     Success: Passwords reset for 3 users.
 
     # Reset password for all users with a particular role.
-    $ wp user reset-password $(wp user list --format=ids --role=administrator)
+    $ fp user reset-password $(fp user list --format=ids --role=administrator)
     Reset password for admin.
     Success: Password reset for 1 user.
 
 
 
-### wp user session
+### fp user session
 
 Destroys and lists a user's sessions.
 
 ~~~
-wp user session
+fp user session
 ~~~
 
 **EXAMPLES**
 
     # List a user's sessions.
-    $ wp user session list admin@example.com --format=csv
+    $ fp user session list admin@example.com --format=csv
     login_time,expiration_time,ip,ua
     "2016-01-01 12:34:56","2016-02-01 12:34:56",127.0.0.1,"Mozilla/5.0..."
 
     # Destroy the most recent session of the given user.
-    $ wp user session destroy admin
+    $ fp user session destroy admin
     Success: Destroyed session. 3 sessions remaining.
 
 
 
 
 
-### wp user session destroy
+### fp user session destroy
 
 Destroy a session for the given user.
 
 ~~~
-wp user session destroy <user> [<token>] [--all]
+fp user session destroy <user> [<token>] [--all]
 ~~~
 
 **OPTIONS**
@@ -6249,30 +6249,30 @@ wp user session destroy <user> [<token>] [--all]
 **EXAMPLES**
 
     # Destroy the most recent session of the given user.
-    $ wp user session destroy admin
+    $ fp user session destroy admin
     Success: Destroyed session. 3 sessions remaining.
 
     # Destroy a specific session of the given user.
-    $ wp user session destroy admin e073ad8540a9c2...
+    $ fp user session destroy admin e073ad8540a9c2...
     Success: Destroyed session. 2 sessions remaining.
 
     # Destroy all the sessions of the given user.
-    $ wp user session destroy admin --all
+    $ fp user session destroy admin --all
     Success: Destroyed all sessions.
 
     # Destroy all sessions for all users.
-    $ wp user list --field=ID | xargs -n 1 wp user session destroy --all
+    $ fp user list --field=ID | xargs -n 1 fp user session destroy --all
     Success: Destroyed all sessions.
     Success: Destroyed all sessions.
 
 
 
-### wp user session list
+### fp user session list
 
 List sessions for the given user.
 
 ~~~
-wp user session list <user> [--fields=<fields>] [--format=<format>]
+fp user session list <user> [--fields=<fields>] [--format=<format>]
 ~~~
 
 Note: The `token` field does not return the actual token, but a hash of
@@ -6318,18 +6318,18 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List a user's sessions.
-    $ wp user session list admin@example.com --format=csv
+    $ fp user session list admin@example.com --format=csv
     login_time,expiration_time,ip,ua
     "2016-01-01 12:34:56","2016-02-01 12:34:56",127.0.0.1,"Mozilla/5.0..."
 
 
 
-### wp user set-role
+### fp user set-role
 
 Sets the user role.
 
 ~~~
-wp user set-role <user> [<role>]
+fp user set-role <user> [<role>]
 ~~~
 
 **OPTIONS**
@@ -6343,23 +6343,23 @@ wp user set-role <user> [<role>]
 
 **EXAMPLES**
 
-    $ wp user set-role 12 author
+    $ fp user set-role 12 author
     Success: Added johndoe (12) to http://example.com as author.
 
 
 
-### wp user signup
+### fp user signup
 
 Manages signups on a multisite installation.
 
 ~~~
-wp user signup
+fp user signup
 ~~~
 
 **EXAMPLES**
 
     # List signups.
-    $ wp user signup list
+    $ fp user signup list
     +-----------+------------+---------------------+---------------------+--------+------------------+
     | signup_id | user_login | user_email          | registered          | active | activation_key   |
     +-----------+------------+---------------------+---------------------+--------+------------------+
@@ -6368,12 +6368,12 @@ wp user signup
     +-----------+------------+---------------------+---------------------+--------+------------------+
 
     # Activate signup.
-    $ wp user signup activate 2
+    $ fp user signup activate 2
     Signup 2 activated. Password: bZFSGsfzb9xs
     Success: Activated 1 of 1 signups.
 
     # Delete signup.
-    $ wp user signup delete 3
+    $ fp user signup delete 3
     Signup 3 deleted.
     Success: Deleted 1 of 1 signups.
 
@@ -6381,12 +6381,12 @@ wp user signup
 
 
 
-### wp user signup activate
+### fp user signup activate
 
 Activates one or more signups.
 
 ~~~
-wp user signup activate <signup>...
+fp user signup activate <signup>...
 ~~~
 
 **OPTIONS**
@@ -6397,18 +6397,18 @@ wp user signup activate <signup>...
 **EXAMPLES**
 
     # Activate signup.
-    $ wp user signup activate 2
+    $ fp user signup activate 2
     Signup 2 activated. Password: bZFSGsfzb9xs
     Success: Activated 1 of 1 signups.
 
 
 
-### wp user signup delete
+### fp user signup delete
 
 Deletes one or more signups.
 
 ~~~
-wp user signup delete [<signup>...] [--all]
+fp user signup delete [<signup>...] [--all]
 ~~~
 
 **OPTIONS**
@@ -6422,18 +6422,18 @@ wp user signup delete [<signup>...] [--all]
 **EXAMPLES**
 
     # Delete signup.
-    $ wp user signup delete 3
+    $ fp user signup delete 3
     Signup 3 deleted.
     Success: Deleted 1 of 1 signups.
 
 
 
-### wp user signup get
+### fp user signup get
 
 Gets details about a signup.
 
 ~~~
-wp user signup get <signup> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp user signup get <signup> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -6461,20 +6461,20 @@ wp user signup get <signup> [--field=<field>] [--fields=<fields>] [--format=<for
 **EXAMPLES**
 
     # Get signup.
-    $ wp user signup get 1 --field=user_login
+    $ fp user signup get 1 --field=user_login
     bobuser
 
     # Get signup and export to JSON file.
-    $ wp user signup get bobuser --format=json > bobuser.json
+    $ fp user signup get bobuser --format=json > bobuser.json
 
 
 
-### wp user signup list
+### fp user signup list
 
 Lists signups.
 
 ~~~
-wp user signup list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>] [--per_page=<per_page>]
+fp user signup list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>] [--per_page=<per_page>]
 ~~~
 
 	[--<field>=<value>]
@@ -6524,11 +6524,11 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List signup IDs.
-    $ wp user signup list --field=signup_id
+    $ fp user signup list --field=signup_id
     1
 
     # List all signups.
-    $ wp user signup list
+    $ fp user signup list
     +-----------+------------+---------------------+---------------------+--------+------------------+
     | signup_id | user_login | user_email          | registered          | active | activation_key   |
     +-----------+------------+---------------------+---------------------+--------+------------------+
@@ -6538,12 +6538,12 @@ These fields are optionally available:
 
 
 
-### wp user spam
+### fp user spam
 
 Marks one or more users as spam on multisite.
 
 ~~~
-wp user spam <user>...
+fp user spam <user>...
 ~~~
 
 **OPTIONS**
@@ -6554,36 +6554,36 @@ wp user spam <user>...
 **EXAMPLES**
 
     # Mark user as spam.
-    $ wp user spam 123
+    $ fp user spam 123
     User 123 marked as spam.
     Success: Spammed 1 of 1 users.
 
 
 
-### wp user term
+### fp user term
 
 Adds, updates, removes, and lists user terms.
 
 ~~~
-wp user term
+fp user term
 ~~~
 
 **EXAMPLES**
 
     # Set user terms
-    $ wp user term set 123 test category
+    $ fp user term set 123 test category
     Success: Set terms.
 
 
 
 
 
-### wp user term add
+### fp user term add
 
 Add a term to an object.
 
 ~~~
-wp user term add <id> <taxonomy> <term>... [--by=<field>]
+fp user term add <id> <taxonomy> <term>... [--by=<field>]
 ~~~
 
 Append the term to the existing set of terms on the object.
@@ -6610,12 +6610,12 @@ Append the term to the existing set of terms on the object.
 
 
 
-### wp user term list
+### fp user term list
 
 List all terms associated with an object.
 
 ~~~
-wp user term list <id> <taxonomy>... [--field=<field>] [--fields=<fields>] [--format=<format>]
+fp user term list <id> <taxonomy>... [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -6664,12 +6664,12 @@ These fields are optionally available:
 
 
 
-### wp user term remove
+### fp user term remove
 
 Remove a term from an object.
 
 ~~~
-wp user term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
+fp user term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
 ~~~
 
 **OPTIONS**
@@ -6697,12 +6697,12 @@ wp user term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
 
 
 
-### wp user term set
+### fp user term set
 
 Set object terms.
 
 ~~~
-wp user term set <id> <taxonomy> <term>... [--by=<field>]
+fp user term set <id> <taxonomy> <term>... [--by=<field>]
 ~~~
 
 Replaces existing terms on the object.
@@ -6729,12 +6729,12 @@ Replaces existing terms on the object.
 
 
 
-### wp user unspam
+### fp user unspam
 
 Removes one or more users from spam on multisite.
 
 ~~~
-wp user unspam <user>...
+fp user unspam <user>...
 ~~~
 
 **OPTIONS**
@@ -6745,18 +6745,18 @@ wp user unspam <user>...
 **EXAMPLES**
 
     # Remove user from spam.
-    $ wp user unspam 123
+    $ fp user unspam 123
     User 123 removed from spam.
     Success: Unspamed 1 of 1 users.
 
 
 
-### wp user update
+### fp user update
 
 Updates an existing user.
 
 ~~~
-wp user update <user>... [--user_pass=<password>] [--user_nicename=<nice_name>] [--user_url=<url>] [--user_email=<email>] [--display_name=<display_name>] [--nickname=<nickname>] [--first_name=<first_name>] [--last_name=<last_name>] [--description=<description>] [--rich_editing=<rich_editing>] [--user_registered=<yyyy-mm-dd-hh-ii-ss>] [--role=<role>] --<field>=<value> [--skip-email]
+fp user update <user>... [--user_pass=<password>] [--user_nicename=<nice_name>] [--user_url=<url>] [--user_email=<email>] [--display_name=<display_name>] [--nickname=<nickname>] [--first_name=<first_name>] [--last_name=<last_name>] [--description=<description>] [--rich_editing=<rich_editing>] [--user_registered=<yyyy-mm-dd-hh-ii-ss>] [--role=<role>] --<field>=<value> [--skip-email]
 ~~~
 
 **OPTIONS**
@@ -6801,7 +6801,7 @@ wp user update <user>... [--user_pass=<password>] [--user_nicename=<nice_name>] 
 		A string used to set the user's role.
 
 	--<field>=<value>
-		One or more fields to update. For accepted fields, see wp_update_user().
+		One or more fields to update. For accepted fields, see fp_update_user().
 
 	[--skip-email]
 		Don't send an email notification to the user.
@@ -6809,16 +6809,16 @@ wp user update <user>... [--user_pass=<password>] [--user_nicename=<nice_name>] 
 **EXAMPLES**
 
     # Update user
-    $ wp user update 123 --display_name=Mary --user_pass=marypass
+    $ fp user update 123 --display_name=Mary --user_pass=marypass
     Success: Updated user 123.
 
 ## Installing
 
-This package is included with WP-CLI itself, no additional installation necessary.
+This package is included with FP-CLI itself, no additional installation necessary.
 
-To install the latest version of this package over what's included in WP-CLI, run:
+To install the latest version of this package over what's included in FP-CLI, run:
 
-    wp package install git@github.com:wp-cli/entity-command.git
+    fp package install git@github.com:fp-cli/entity-command.git
 
 ## Contributing
 
@@ -6826,25 +6826,25 @@ We appreciate you taking the initiative to contribute to this project.
 
 Contributing isn’t limited to just code. We encourage you to contribute in the way that best fits your abilities, by writing tutorials, giving a demo at your local meetup, helping other users with their support questions, or revising our documentation.
 
-For a more thorough introduction, [check out WP-CLI's guide to contributing](https://make.wordpress.org/cli/handbook/contributing/). This package follows those policy and guidelines.
+For a more thorough introduction, [check out FP-CLI's guide to contributing](https://make.finpress.org/cli/handbook/contributing/). This package follows those policy and guidelines.
 
 ### Reporting a bug
 
 Think you’ve found a bug? We’d love for you to help us get it fixed.
 
-Before you create a new issue, you should [search existing issues](https://github.com/wp-cli/entity-command/issues?q=label%3Abug%20) to see if there’s an existing resolution to it, or if it’s already been fixed in a newer version.
+Before you create a new issue, you should [search existing issues](https://github.com/fp-cli/entity-command/issues?q=label%3Abug%20) to see if there’s an existing resolution to it, or if it’s already been fixed in a newer version.
 
-Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/wp-cli/entity-command/issues/new). Include as much detail as you can, and clear steps to reproduce if possible. For more guidance, [review our bug report documentation](https://make.wordpress.org/cli/handbook/bug-reports/).
+Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/fp-cli/entity-command/issues/new). Include as much detail as you can, and clear steps to reproduce if possible. For more guidance, [review our bug report documentation](https://make.finpress.org/cli/handbook/bug-reports/).
 
 ### Creating a pull request
 
-Want to contribute a new feature? Please first [open a new issue](https://github.com/wp-cli/entity-command/issues/new) to discuss whether the feature is a good fit for the project.
+Want to contribute a new feature? Please first [open a new issue](https://github.com/fp-cli/entity-command/issues/new) to discuss whether the feature is a good fit for the project.
 
-Once you've decided to commit the time to seeing your pull request through, [please follow our guidelines for creating a pull request](https://make.wordpress.org/cli/handbook/pull-requests/) to make sure it's a pleasant experience. See "[Setting up](https://make.wordpress.org/cli/handbook/pull-requests/#setting-up)" for details specific to working on this package locally.
+Once you've decided to commit the time to seeing your pull request through, [please follow our guidelines for creating a pull request](https://make.finpress.org/cli/handbook/pull-requests/) to make sure it's a pleasant experience. See "[Setting up](https://make.finpress.org/cli/handbook/pull-requests/#setting-up)" for details specific to working on this package locally.
 
 ## Support
 
-GitHub issues aren't for general support questions, but there are other venues you can try: https://wp-cli.org/#support
+GitHub issues aren't for general support questions, but there are other venues you can try: https://fp-cli.org/#support
 
 
-*This README.md is generated dynamically from the project's codebase using `wp scaffold package-readme` ([doc](https://github.com/wp-cli/scaffold-package-command#wp-scaffold-package-readme)). To suggest changes, please submit a pull request against the corresponding part of the codebase.*
+*This README.md is generated dynamically from the project's codebase using `fp scaffold package-readme` ([doc](https://github.com/fp-cli/scaffold-package-command#fp-scaffold-package-readme)). To suggest changes, please submit a pull request against the corresponding part of the codebase.*

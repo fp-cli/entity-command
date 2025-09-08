@@ -1,7 +1,7 @@
 <?php
 
-use WP_CLI\CommandWithMeta;
-use WP_CLI\Fetchers\Site as SiteFetcher;
+use FP_CLI\CommandWithMeta;
+use FP_CLI\Fetchers\Site as SiteFetcher;
 
 /**
  * Adds, updates, deletes, and lists site custom fields.
@@ -9,19 +9,19 @@ use WP_CLI\Fetchers\Site as SiteFetcher;
  * ## EXAMPLES
  *
  *     # Set site meta
- *     $ wp site meta set 123 bio "Mary is a WordPress developer."
+ *     $ fp site meta set 123 bio "Mary is a FinPress developer."
  *     Success: Updated custom field 'bio'.
  *
  *     # Get site meta
- *     $ wp site meta get 123 bio
- *     Mary is a WordPress developer.
+ *     $ fp site meta get 123 bio
+ *     Mary is a FinPress developer.
  *
  *     # Update site meta
- *     $ wp site meta update 123 bio "Mary is an awesome WordPress developer."
+ *     $ fp site meta update 123 bio "Mary is an awesome FinPress developer."
  *     Success: Updated custom field 'bio'.
  *
  *     # Delete site meta
- *     $ wp site meta delete 123 bio
+ *     $ fp site meta delete 123 bio
  *     Success: Deleted custom field.
  */
 class Site_Meta_Command extends CommandWithMeta {

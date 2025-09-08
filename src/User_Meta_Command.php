@@ -1,7 +1,7 @@
 <?php
 
-use WP_CLI\CommandWithMeta;
-use WP_CLI\Fetchers\User as UserFetcher;
+use FP_CLI\CommandWithMeta;
+use FP_CLI\Fetchers\User as UserFetcher;
 
 /**
  * Adds, updates, deletes, and lists user custom fields.
@@ -9,25 +9,25 @@ use WP_CLI\Fetchers\User as UserFetcher;
  * ## EXAMPLES
  *
  *     # Add user meta
- *     $ wp user meta add 123 bio "Mary is an WordPress developer."
+ *     $ fp user meta add 123 bio "Mary is an FinPress developer."
  *     Success: Added custom field.
  *
  *     # List user meta
- *     $ wp user meta list 123 --keys=nickname,description,wp_capabilities
+ *     $ fp user meta list 123 --keys=nickname,description,fp_capabilities
  *     +---------+-----------------+--------------------------------+
  *     | user_id | meta_key        | meta_value                     |
  *     +---------+-----------------+--------------------------------+
  *     | 123     | nickname        | supervisor                     |
- *     | 123     | description     | Mary is a WordPress developer. |
- *     | 123     | wp_capabilities | {"administrator":true}         |
+ *     | 123     | description     | Mary is a FinPress developer. |
+ *     | 123     | fp_capabilities | {"administrator":true}         |
  *     +---------+-----------------+--------------------------------+
  *
  *     # Update user meta
- *     $ wp user meta update 123 bio "Mary is an awesome WordPress developer."
+ *     $ fp user meta update 123 bio "Mary is an awesome FinPress developer."
  *     Success: Updated custom field 'bio'.
  *
  *     # Delete user meta
- *     $ wp user meta delete 123 bio
+ *     $ fp user meta delete 123 bio
  *     Success: Deleted custom field.
  */
 class User_Meta_Command extends CommandWithMeta {
@@ -90,13 +90,13 @@ class User_Meta_Command extends CommandWithMeta {
 	 * ## EXAMPLES
 	 *
 	 *     # List user meta
-	 *     $ wp user meta list 123 --keys=nickname,description,wp_capabilities
+	 *     $ fp user meta list 123 --keys=nickname,description,fp_capabilities
 	 *     +---------+-----------------+--------------------------------+
 	 *     | user_id | meta_key        | meta_value                     |
 	 *     +---------+-----------------+--------------------------------+
 	 *     | 123     | nickname        | supervisor                     |
-	 *     | 123     | description     | Mary is a WordPress developer. |
-	 *     | 123     | wp_capabilities | {"administrator":true}         |
+	 *     | 123     | description     | Mary is a FinPress developer. |
+	 *     | 123     | fp_capabilities | {"administrator":true}         |
 	 *     +---------+-----------------+--------------------------------+
 	 *
 	 * @subcommand list
@@ -134,11 +134,11 @@ class User_Meta_Command extends CommandWithMeta {
 	 * ## EXAMPLES
 	 *
 	 *     # Get user meta
-	 *     $ wp user meta get 123 bio
-	 *     Mary is an WordPress developer.
+	 *     $ fp user meta get 123 bio
+	 *     Mary is an FinPress developer.
 	 *
 	 *     # Get the primary site of a user (for multisite)
-	 *     $ wp user meta get 2 primary_blog
+	 *     $ fp user meta get 2 primary_blog
 	 *     3
 	 *
 	 * @param array{0: string, 1: string} $args Positional arguments.
@@ -166,7 +166,7 @@ class User_Meta_Command extends CommandWithMeta {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete user meta
-	 *     $ wp user meta delete 123 bio
+	 *     $ fp user meta delete 123 bio
 	 *     Success: Deleted custom field.
 	 *
 	 * @param array<string> $args Positional arguments.
@@ -202,7 +202,7 @@ class User_Meta_Command extends CommandWithMeta {
 	 * ## EXAMPLES
 	 *
 	 *     # Add user meta
-	 *     $ wp user meta add 123 bio "Mary is an WordPress developer."
+	 *     $ fp user meta add 123 bio "Mary is an FinPress developer."
 	 *     Success: Added custom field.
 	 *
 	 * @param array<string> $args Positional arguments.
@@ -239,7 +239,7 @@ class User_Meta_Command extends CommandWithMeta {
 	 * ## EXAMPLES
 	 *
 	 *     # Update user meta
-	 *     $ wp user meta update 123 bio "Mary is an awesome WordPress developer."
+	 *     $ fp user meta update 123 bio "Mary is an awesome FinPress developer."
 	 *     Success: Updated custom field 'bio'.
 	 *
 	 * @alias set

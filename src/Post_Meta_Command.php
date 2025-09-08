@@ -1,7 +1,7 @@
 <?php
 
-use WP_CLI\CommandWithMeta;
-use WP_CLI\Fetchers\Post as PostFetcher;
+use FP_CLI\CommandWithMeta;
+use FP_CLI\Fetchers\Post as PostFetcher;
 
 /**
  * Adds, updates, deletes, and lists post custom fields.
@@ -9,19 +9,19 @@ use WP_CLI\Fetchers\Post as PostFetcher;
  * ## EXAMPLES
  *
  *     # Set post meta
- *     $ wp post meta set 123 _wp_page_template about.php
- *     Success: Updated custom field '_wp_page_template'.
+ *     $ fp post meta set 123 _fp_page_template about.php
+ *     Success: Updated custom field '_fp_page_template'.
  *
  *     # Get post meta
- *     $ wp post meta get 123 _wp_page_template
+ *     $ fp post meta get 123 _fp_page_template
  *     about.php
  *
  *     # Update post meta
- *     $ wp post meta update 123 _wp_page_template contact.php
- *     Success: Updated custom field '_wp_page_template'.
+ *     $ fp post meta update 123 _fp_page_template contact.php
+ *     Success: Updated custom field '_fp_page_template'.
  *
  *     # Delete post meta
- *     $ wp post meta delete 123 _wp_page_template
+ *     $ fp post meta delete 123 _fp_page_template
  *     Success: Deleted custom field.
  */
 class Post_Meta_Command extends CommandWithMeta {
@@ -130,26 +130,26 @@ class Post_Meta_Command extends CommandWithMeta {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete duplicate post meta.
-	 *     wp post meta clean-duplicates 1234 enclosure
+	 *     fp post meta clean-duplicates 1234 enclosure
 	 *     Success: Cleaned up duplicate 'enclosure' meta values.
 	 *
 	 * @subcommand clean-duplicates
 	 */
 	public function clean_duplicates( $args, $assoc_args ) {
-		global $wpdb;
+		global $fpdb;
 
 		list( $post_id, $key ) = $args;
 
-		$metas = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->postmeta} WHERE meta_key=%s AND post_id=%d",
+		$metas = $fpdb->get_results(
+			$fpdb->prepare(
+				"SELECT * FROM {$fpdb->postmeta} WHERE meta_key=%s AND post_id=%d",
 				$key,
 				$post_id
 			)
 		);
 
 		if ( empty( $metas ) ) {
-			WP_CLI::error( sprintf( 'No meta values found for \'%s\'.', $key ) );
+			FP_CLI::error( sprintf( 'No meta values found for \'%s\'.', $key ) );
 		}
 
 		$uniq_metas = array();
@@ -163,7 +163,7 @@ class Post_Meta_Command extends CommandWithMeta {
 		}
 
 		if ( count( $dupe_metas ) ) {
-			WP_CLI::confirm(
+			FP_CLI::confirm(
 				sprintf(
 					'Are you sure you want to delete %d duplicate meta values and keep %d valid meta value?',
 					count( $dupe_metas ),
@@ -172,11 +172,11 @@ class Post_Meta_Command extends CommandWithMeta {
 			);
 			foreach ( $dupe_metas as $meta_id ) {
 				delete_metadata_by_mid( 'post', $meta_id );
-				WP_CLI::log( sprintf( 'Deleted meta id %d.', $meta_id ) );
+				FP_CLI::log( sprintf( 'Deleted meta id %d.', $meta_id ) );
 			}
-			WP_CLI::success( sprintf( 'Cleaned up duplicate \'%s\' meta values.', $key ) );
+			FP_CLI::success( sprintf( 'Cleaned up duplicate \'%s\' meta values.', $key ) );
 		} else {
-			WP_CLI::success(
+			FP_CLI::success(
 				sprintf(
 					'Nothing to clean up: found %d valid meta value and %d duplicates.',
 					count( $uniq_metas ),

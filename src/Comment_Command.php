@@ -1,8 +1,8 @@
 <?php
 
-use WP_CLI\CommandWithDBObject;
-use WP_CLI\Fetchers\Comment as CommentFetcher;
-use WP_CLI\Utils;
+use FP_CLI\CommandWithDBObject;
+use FP_CLI\Fetchers\Comment as CommentFetcher;
+use FP_CLI\Utils;
 
 /**
  * Creates, updates, deletes, and moderates comments.
@@ -10,23 +10,23 @@ use WP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # Create a new comment.
- *     $ wp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="wp-cli"
+ *     $ fp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fp-cli"
  *     Success: Created comment 932.
  *
  *     # Update an existing comment.
- *     $ wp comment update 123 --comment_author='That Guy'
+ *     $ fp comment update 123 --comment_author='That Guy'
  *     Success: Updated comment 123.
  *
  *     # Delete an existing comment.
- *     $ wp comment delete 1337 --force
+ *     $ fp comment delete 1337 --force
  *     Success: Deleted comment 1337.
  *
  *     # Trash all spam comments.
- *     $ wp comment delete $(wp comment list --status=spam --format=ids)
+ *     $ fp comment delete $(fp comment list --status=spam --format=ids)
  *     Success: Trashed comment 264.
  *     Success: Trashed comment 262.
  *
- * @package wp-cli
+ * @package fp-cli
  */
 class Comment_Command extends CommandWithDBObject {
 
@@ -53,7 +53,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## OPTIONS
 	 *
 	 * [--<field>=<value>]
-	 * : Associative args for the new comment. See wp_insert_comment().
+	 * : Associative args for the new comment. See fp_insert_comment().
 	 *
 	 * [--porcelain]
 	 * : Output just the new comment id.
@@ -61,11 +61,11 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Create comment.
-	 *     $ wp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="wp-cli"
+	 *     $ fp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fp-cli"
 	 *     Success: Created comment 932.
 	 */
 	public function create( $args, $assoc_args ) {
-		$assoc_args = wp_slash( $assoc_args );
+		$assoc_args = fp_slash( $assoc_args );
 		parent::_create(
 			$args,
 			$assoc_args,
@@ -74,19 +74,19 @@ class Comment_Command extends CommandWithDBObject {
 					$post_id = $params['comment_post_ID'];
 					$post    = get_post( $post_id );
 					if ( ! $post ) {
-						return new WP_Error( 'no_post', "Can't find post {$post_id}." );
+						return new FP_Error( 'no_post', "Can't find post {$post_id}." );
 					}
 				} else {
-					// Make sure it's set for older WP versions else get undefined PHP notice.
+					// Make sure it's set for older FP versions else get undefined PHP notice.
 					$params['comment_post_ID'] = 0;
 				}
 
-				// We use wp_insert_comment() instead of wp_new_comment() to stay at a low level and
-				// avoid wp_die() formatted messages or notifications
-				$comment_id = wp_insert_comment( $params );
+				// We use fp_insert_comment() instead of fp_new_comment() to stay at a low level and
+				// avoid fp_die() formatted messages or notifications
+				$comment_id = fp_insert_comment( $params );
 
 				if ( ! $comment_id ) {
-					return new WP_Error( 'db_error', 'Could not create comment.' );
+					return new FP_Error( 'db_error', 'Could not create comment.' );
 				}
 
 				return $comment_id;
@@ -103,22 +103,22 @@ class Comment_Command extends CommandWithDBObject {
 	 * : One or more IDs of comments to update.
 	 *
 	 * --<field>=<value>
-	 * : One or more fields to update. See wp_update_comment().
+	 * : One or more fields to update. See fp_update_comment().
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     # Update comment.
-	 *     $ wp comment update 123 --comment_author='That Guy'
+	 *     $ fp comment update 123 --comment_author='That Guy'
 	 *     Success: Updated comment 123.
 	 */
 	public function update( $args, $assoc_args ) {
-		$assoc_args = wp_slash( $assoc_args );
+		$assoc_args = fp_slash( $assoc_args );
 		parent::_update(
 			$args,
 			$assoc_args,
 			function ( $params ) {
-				if ( ! wp_update_comment( $params ) ) {
-					return new WP_Error( 'db_error', 'Could not update comment.' );
+				if ( ! fp_update_comment( $params ) ) {
+					return new FP_Error( 'db_error', 'Could not update comment.' );
 				}
 
 				return true;
@@ -154,11 +154,11 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Generate comments for the given post.
-	 *     $ wp comment generate --format=ids --count=3 --post_id=123
+	 *     $ fp comment generate --format=ids --count=3 --post_id=123
 	 *     138 139 140
 	 *
 	 *     # Add meta to every generated comment.
-	 *     $ wp comment generate --format=ids --count=3 | xargs -d ' ' -I % wp comment meta add % foo bar
+	 *     $ fp comment generate --format=ids --count=3 | xargs -d ' ' -I % fp comment meta add % foo bar
 	 *     Success: Added custom field.
 	 *     Success: Added custom field.
 	 *     Success: Added custom field.
@@ -178,12 +178,12 @@ class Comment_Command extends CommandWithDBObject {
 			$notify = Utils\make_progress_bar( 'Generating comments', $assoc_args['count'] );
 		}
 
-		$comment_count = wp_count_comments();
+		$comment_count = fp_count_comments();
 		$total         = (int) $comment_count->total_comments;
 		$limit         = $total + $assoc_args['count'];
 
 		for ( $index = $total; $index < $limit; $index++ ) {
-			$comment_id = wp_insert_comment(
+			$comment_id = fp_insert_comment(
 				[
 					'comment_content' => "Comment {$index}",
 					'comment_post_ID' => $assoc_args['post_id'],
@@ -232,14 +232,14 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Get comment.
-	 *     $ wp comment get 21 --field=content
+	 *     $ fp comment get 21 --field=content
 	 *     Thanks for all the comments, everyone!
 	 */
 	public function get( $args, $assoc_args ) {
 		$comment_id = (int) $args[0];
 		$comment    = get_comment( $comment_id );
 		if ( empty( $comment ) ) {
-			WP_CLI::error( 'Invalid comment ID.' );
+			FP_CLI::error( 'Invalid comment ID.' );
 		}
 
 		if ( ! isset( $comment->url ) ) {
@@ -260,12 +260,12 @@ class Comment_Command extends CommandWithDBObject {
 	 * Gets a list of comments.
 	 *
 	 * Display comments based on all arguments supported by
-	 * [WP_Comment_Query()](https://developer.wordpress.org/reference/classes/WP_Comment_Query/__construct/).
+	 * [FP_Comment_Query()](https://developer.finpress.org/reference/classes/FP_Comment_Query/__construct/).
 	 *
 	 * ## OPTIONS
 	 *
 	 * [--<field>=<value>]
-	 * : One or more args to pass to WP_Comment_Query.
+	 * : One or more args to pass to FP_Comment_Query.
 	 *
 	 * [--field=<field>]
 	 * : Prints the value of a single field for each comment.
@@ -313,41 +313,41 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # List comment IDs.
-	 *     $ wp comment list --field=ID
+	 *     $ fp comment list --field=ID
 	 *     22
 	 *     23
 	 *     24
 	 *
 	 *     # List comments of a post.
-	 *     $ wp comment list --post_id=1 --fields=ID,comment_date,comment_author
+	 *     $ fp comment list --post_id=1 --fields=ID,comment_date,comment_author
 	 *     +------------+---------------------+----------------+
 	 *     | comment_ID | comment_date        | comment_author |
 	 *     +------------+---------------------+----------------+
-	 *     | 1          | 2015-06-20 09:00:10 | Mr WordPress   |
+	 *     | 1          | 2015-06-20 09:00:10 | Mr FinPress   |
 	 *     +------------+---------------------+----------------+
 	 *
 	 *     # List approved comments.
-	 *     $ wp comment list --number=3 --status=approve --fields=ID,comment_date,comment_author
+	 *     $ fp comment list --number=3 --status=approve --fields=ID,comment_date,comment_author
 	 *     +------------+---------------------+----------------+
 	 *     | comment_ID | comment_date        | comment_author |
 	 *     +------------+---------------------+----------------+
-	 *     | 1          | 2015-06-20 09:00:10 | Mr WordPress   |
+	 *     | 1          | 2015-06-20 09:00:10 | Mr FinPress   |
 	 *     | 30         | 2013-03-14 12:35:07 | John Doe       |
 	 *     | 29         | 2013-03-14 11:56:08 | Jane Doe       |
 	 *     +------------+---------------------+----------------+
 	 *
 	 *     # List unapproved comments.
-	 *     $ wp comment list --number=3 --status=hold --fields=ID,comment_date,comment_author
+	 *     $ fp comment list --number=3 --status=hold --fields=ID,comment_date,comment_author
 	 *     +------------+---------------------+----------------+
 	 *     | comment_ID | comment_date        | comment_author |
 	 *     +------------+---------------------+----------------+
 	 *     | 8          | 2023-11-10 13:13:06 | John Doe       |
-	 *     | 7          | 2023-11-10 13:09:55 | Mr WordPress   |
+	 *     | 7          | 2023-11-10 13:09:55 | Mr FinPress   |
 	 *     | 9          | 2023-11-10 11:22:31 | Jane Doe       |
 	 *     +------------+---------------------+----------------+
 	 *
 	 *     # List comments marked as spam.
-	 *     $ wp comment list --status=spam --fields=ID,comment_date,comment_author
+	 *     $ fp comment list --status=spam --fields=ID,comment_date,comment_author
 	 *     +------------+---------------------+----------------+
 	 *     | comment_ID | comment_date        | comment_author |
 	 *     +------------+---------------------+----------------+
@@ -355,7 +355,7 @@ class Comment_Command extends CommandWithDBObject {
 	 *     +------------+---------------------+----------------+
 	 *
 	 *     # List comments in trash.
-	 *     $ wp comment list --status=trash --fields=ID,comment_date,comment_author
+	 *     $ fp comment list --status=trash --fields=ID,comment_date,comment_author
 	 *     +------------+---------------------+----------------+
 	 *     | comment_ID | comment_date        | comment_author |
 	 *     +------------+---------------------+----------------+
@@ -377,7 +377,7 @@ class Comment_Command extends CommandWithDBObject {
 			$assoc_args['count'] = true;
 		}
 
-		$query    = new WP_Comment_Query();
+		$query    = new FP_Comment_Query();
 		$comments = $query->query( $assoc_args );
 
 		if ( 'count' === $formatter->format ) {
@@ -393,9 +393,9 @@ class Comment_Command extends CommandWithDBObject {
 
 			if ( 'ids' === $formatter->format ) {
 				/**
-				 * @var \WP_Comment[] $comments
+				 * @var \FP_Comment[] $comments
 				 */
-				$items = wp_list_pluck( $comments, 'comment_ID' );
+				$items = fp_list_pluck( $comments, 'comment_ID' );
 
 				$comments = $items;
 			} elseif ( is_array( $comments ) ) {
@@ -425,11 +425,11 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete comment.
-	 *     $ wp comment delete 1337 --force
+	 *     $ fp comment delete 1337 --force
 	 *     Success: Deleted comment 1337.
 	 *
 	 *     # Delete multiple comments.
-	 *     $ wp comment delete 1337 2341 --force
+	 *     $ fp comment delete 1337 2341 --force
 	 *     Success: Deleted comment 1337.
 	 *     Success: Deleted comment 2341.
 	 */
@@ -440,8 +440,8 @@ class Comment_Command extends CommandWithDBObject {
 			function ( $comment_id, $assoc_args ) {
 				$force = (bool) Utils\get_flag_value( $assoc_args, 'force' );
 
-				$status = wp_get_comment_status( $comment_id );
-				$result = wp_delete_comment( $comment_id, $force );
+				$status = fp_get_comment_status( $comment_id );
+				$result = fp_delete_comment( $comment_id, $force );
 
 				if ( ! $result ) {
 					return [ 'error', "Failed deleting comment {$comment_id}." ];
@@ -459,32 +459,32 @@ class Comment_Command extends CommandWithDBObject {
 		/**
 		 * @var callable $func
 		 */
-		$func = "wp_{$status}_comment";
+		$func = "fp_{$status}_comment";
 
 		if ( ! $func( $comment_id ) ) {
-			WP_CLI::error( sprintf( $failure, "comment {$comment_id}" ) );
+			FP_CLI::error( sprintf( $failure, "comment {$comment_id}" ) );
 		}
-		WP_CLI::success( sprintf( $success, "comment {$comment_id}" ) );
+		FP_CLI::success( sprintf( $success, "comment {$comment_id}" ) );
 	}
 
 	private function set_status( $args, $status, $success ) {
 		$comment = $this->fetcher->get_check( $args );
 
-		$result = wp_set_comment_status( $comment->comment_ID, $status, true );
+		$result = fp_set_comment_status( $comment->comment_ID, $status, true );
 
-		if ( is_wp_error( $result ) ) {
-			WP_CLI::error( $result );
+		if ( is_fp_error( $result ) ) {
+			FP_CLI::error( $result );
 		}
 
-		WP_CLI::success( "{$success} comment {$comment->comment_ID}." );
+		FP_CLI::success( "{$success} comment {$comment->comment_ID}." );
 	}
 
 	/**
-	 * Warns if `$_SERVER['SERVER_NAME']` not set as used in email from-address sent to post author in `wp_notify_postauthor()`.
+	 * Warns if `$_SERVER['SERVER_NAME']` not set as used in email from-address sent to post author in `fp_notify_postauthor()`.
 	 */
 	private function check_server_name() {
 		if ( empty( $_SERVER['SERVER_NAME'] ) ) {
-			WP_CLI::warning( 'Site url not set - defaulting to \'example.com\'. Any notification emails sent to post author may appear to come from \'example.com\'.' );
+			FP_CLI::warning( 'Site url not set - defaulting to \'example.com\'. Any notification emails sent to post author may appear to come from \'example.com\'.' );
 			$_SERVER['SERVER_NAME'] = 'example.com';
 		}
 	}
@@ -500,7 +500,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Trash comment.
-	 *     $ wp comment trash 1337
+	 *     $ fp comment trash 1337
 	 *     Success: Trashed comment 1337.
 	 */
 	public function trash( $args, $assoc_args ) {
@@ -520,7 +520,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Untrash comment.
-	 *     $ wp comment untrash 1337
+	 *     $ fp comment untrash 1337
 	 *     Success: Untrashed comment 1337.
 	 */
 	public function untrash( $args, $assoc_args ) {
@@ -541,7 +541,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Spam comment.
-	 *     $ wp comment spam 1337
+	 *     $ fp comment spam 1337
 	 *     Success: Marked as spam comment 1337.
 	 */
 	public function spam( $args, $assoc_args ) {
@@ -561,7 +561,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Unspam comment.
-	 *     $ wp comment unspam 1337
+	 *     $ fp comment unspam 1337
 	 *     Success: Unspammed comment 1337.
 	 */
 	public function unspam( $args, $assoc_args ) {
@@ -582,7 +582,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Approve comment.
-	 *     $ wp comment approve 1337
+	 *     $ fp comment approve 1337
 	 *     Success: Approved comment 1337.
 	 */
 	public function approve( $args, $assoc_args ) {
@@ -603,7 +603,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Unapprove comment.
-	 *     $ wp comment unapprove 1337
+	 *     $ fp comment unapprove 1337
 	 *     Success: Unapproved comment 1337.
 	 */
 	public function unapprove( $args, $assoc_args ) {
@@ -624,7 +624,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Count comments on whole blog.
-	 *     $ wp comment count
+	 *     $ fp comment count
 	 *     approved:        33
 	 *     spam:            3
 	 *     trash:           1
@@ -634,7 +634,7 @@ class Comment_Command extends CommandWithDBObject {
 	 *     total_comments:  37
 	 *
 	 *     # Count comments in a post.
-	 *     $ wp comment count 42
+	 *     $ fp comment count 42
 	 *     approved:        19
 	 *     spam:            0
 	 *     trash:           0
@@ -646,7 +646,7 @@ class Comment_Command extends CommandWithDBObject {
 	public function count( $args, $assoc_args ) {
 		$post_id = $args[0] ?? null;
 
-		$count = wp_count_comments( $post_id );
+		$count = fp_count_comments( $post_id );
 
 		// Move total_comments to the end of the object
 		$total = $count->total_comments;
@@ -655,7 +655,7 @@ class Comment_Command extends CommandWithDBObject {
 		$count->total_comments = $total;
 
 		foreach ( (array) $count as $status => $count ) {
-			WP_CLI::line( str_pad( "$status:", 17 ) . $count );
+			FP_CLI::line( str_pad( "$status:", 17 ) . $count );
 		}
 	}
 
@@ -670,19 +670,19 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Recount comment for the post.
-	 *     $ wp comment recount 123
+	 *     $ fp comment recount 123
 	 *     Updated post 123 comment count to 67.
 	 */
 	public function recount( $args ) {
 		foreach ( $args as $id ) {
-			if ( wp_update_comment_count( $id ) ) {
+			if ( fp_update_comment_count( $id ) ) {
 				/**
-				 * @var \WP_Post $post
+				 * @var \FP_Post $post
 				 */
 				$post = get_post( $id );
-				WP_CLI::log( "Updated post {$post->ID} comment count to {$post->comment_count}." );
+				FP_CLI::log( "Updated post {$post->ID} comment count to {$post->comment_count}." );
 			} else {
-				WP_CLI::warning( "Post {$id} doesn't exist." );
+				FP_CLI::warning( "Post {$id} doesn't exist." );
 			}
 		}
 	}
@@ -698,18 +698,18 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Get status of comment.
-	 *     $ wp comment status 1337
+	 *     $ fp comment status 1337
 	 *     approved
 	 */
 	public function status( $args, $assoc_args ) {
 		list( $comment_id ) = $args;
 
-		$status = wp_get_comment_status( $comment_id );
+		$status = fp_get_comment_status( $comment_id );
 
 		if ( false === $status ) {
-			WP_CLI::error( "Could not check status of comment {$comment_id}." );
+			FP_CLI::error( "Could not check status of comment {$comment_id}." );
 		} else {
-			WP_CLI::line( $status );
+			FP_CLI::line( $status );
 		}
 	}
 
@@ -726,12 +726,12 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Check whether comment exists.
-	 *     $ wp comment exists 1337
+	 *     $ fp comment exists 1337
 	 *     Success: Comment with ID 1337 exists.
 	 */
 	public function exists( $args ) {
 		if ( $this->fetcher->get( $args[0] ) ) {
-			WP_CLI::success( "Comment with ID {$args[0]} exists." );
+			FP_CLI::success( "Comment with ID {$args[0]} exists." );
 		}
 	}
 }

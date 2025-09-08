@@ -1,36 +1,36 @@
 <?php
 
-use WP_CLI\CommandWithDBObject;
-use WP_CLI\Fetchers\User as UserFetcher;
-use WP_CLI\Formatter;
-use WP_CLI\Iterators\CSV as CsvIterator;
-use WP_CLI\Utils;
+use FP_CLI\CommandWithDBObject;
+use FP_CLI\Fetchers\User as UserFetcher;
+use FP_CLI\Formatter;
+use FP_CLI\Iterators\CSV as CsvIterator;
+use FP_CLI\Utils;
 
 /**
  * Manages users, along with their roles, capabilities, and meta.
  *
- * See references for [Roles and Capabilities](https://codex.wordpress.org/Roles_and_Capabilities) and [WP User class](https://codex.wordpress.org/Class_Reference/WP_User).
+ * See references for [Roles and Capabilities](https://codex.finpress.org/Roles_and_Capabilities) and [FP User class](https://codex.finpress.org/Class_Reference/FP_User).
  *
  * ## EXAMPLES
  *
  *     # List user IDs
- *     $ wp user list --field=ID
+ *     $ fp user list --field=ID
  *     1
  *
  *     # Create a new user.
- *     $ wp user create bob bob@example.com --role=author
+ *     $ fp user create bob bob@example.com --role=author
  *     Success: Created user 3.
  *     Password: k9**&I4vNH(&
  *
  *     # Update an existing user.
- *     $ wp user update 123 --display_name=Mary --user_pass=marypass
+ *     $ fp user update 123 --display_name=Mary --user_pass=marypass
  *     Success: Updated user 123.
  *
  *     # Delete user 123 and reassign posts to user 567
- *     $ wp user delete 123 --reassign=567
+ *     $ fp user delete 123 --reassign=567
  *     Success: Removed user 123 from http://example.com.
  *
- * @package wp-cli
+ * @package fp-cli
  *
  * @phpstan-import-type UserSite from Site_Command
  */
@@ -58,8 +58,8 @@ class User_Command extends CommandWithDBObject {
 	/**
 	 * Lists users.
 	 *
-	 * Display WordPress users based on all arguments supported by
-	 * [WP_User_Query()](https://developer.wordpress.org/reference/classes/wp_user_query/prepare_query/).
+	 * Display FinPress users based on all arguments supported by
+	 * [FP_User_Query()](https://developer.finpress.org/reference/classes/fp_user_query/prepare_query/).
 	 *
 	 * ## OPTIONS
 	 *
@@ -67,7 +67,7 @@ class User_Command extends CommandWithDBObject {
 	 * : Only display users with a certain role.
 	 *
 	 * [--<field>=<value>]
-	 * : Control output by one or more arguments of WP_User_Query().
+	 * : Control output by one or more arguments of FP_User_Query().
 	 *
 	 * [--network]
 	 * : List all users in the network for multisite.
@@ -120,20 +120,20 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # List user IDs
-	 *     $ wp user list --field=ID
+	 *     $ fp user list --field=ID
 	 *     1
 	 *
 	 *     # List users with administrator role
-	 *     $ wp user list --role=administrator --format=csv
+	 *     $ fp user list --role=administrator --format=csv
 	 *     ID,user_login,display_name,user_email,user_registered,roles
 	 *     1,supervisor,supervisor,supervisor@gmail.com,"2016-06-03 04:37:00",administrator
 	 *
 	 *     # List users with only given fields
-	 *     $ wp user list --fields=display_name,user_email --format=json
+	 *     $ fp user list --fields=display_name,user_email --format=json
 	 *     [{"display_name":"supervisor","user_email":"supervisor@gmail.com"}]
 	 *
 	 *     # List users ordered by the 'last_activity' meta value.
-	 *     $ wp user list --meta_key=last_activity --orderby=meta_value_num
+	 *     $ fp user list --meta_key=last_activity --orderby=meta_value_num
 	 *
 	 * @subcommand list
 	 */
@@ -141,7 +141,7 @@ class User_Command extends CommandWithDBObject {
 
 		if ( Utils\get_flag_value( $assoc_args, 'network' ) ) {
 			if ( ! is_multisite() ) {
-				WP_CLI::error( 'This is not a multisite installation.' );
+				FP_CLI::error( 'This is not a multisite installation.' );
 			}
 			$assoc_args['blog_id'] = 0;
 			if ( isset( $assoc_args['fields'] ) ) {
@@ -164,7 +164,7 @@ class User_Command extends CommandWithDBObject {
 		$assoc_args                = self::process_csv_arguments_to_arrays( $assoc_args );
 
 		if ( ! empty( $assoc_args['role'] ) && 'none' === $assoc_args['role'] ) {
-			$norole_user_ids = wp_get_users_with_no_role();
+			$norole_user_ids = fp_get_users_with_no_role();
 
 			if ( ! empty( $norole_user_ids ) ) {
 				$assoc_args['include'] = $norole_user_ids;
@@ -187,7 +187,7 @@ class User_Command extends CommandWithDBObject {
 					}
 
 					/**
-					 * @var \WP_User $user
+					 * @var \FP_User $user
 					 */
 
 					// @phpstan-ignore assign.propertyType
@@ -230,11 +230,11 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Get user
-	 *     $ wp user get 12 --field=login
+	 *     $ fp user get 12 --field=login
 	 *     supervisor
 	 *
 	 *     # Get user and export to JSON file
-	 *     $ wp user get bob --format=json > bob.json
+	 *     $ fp user get bob --format=json > bob.json
 	 */
 	public function get( $args, $assoc_args ) {
 		$user               = $this->fetcher->get_check( $args[0] );
@@ -248,7 +248,7 @@ class User_Command extends CommandWithDBObject {
 	/**
 	 * Deletes one or more users from the current site.
 	 *
-	 * On multisite, `wp user delete` only removes the user from the current
+	 * On multisite, `fp user delete` only removes the user from the current
 	 * site. Include `--network` to also remove the user from the database, but
 	 * make sure to reassign their posts prior to deleting the user.
 	 *
@@ -269,16 +269,16 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete user 123 and reassign posts to user 567
-	 *     $ wp user delete 123 --reassign=567
+	 *     $ fp user delete 123 --reassign=567
 	 *     Success: Removed user 123 from http://example.com.
 	 *
 	 *     # Delete all contributors and reassign their posts to user 2
-	 *     $ wp user delete $(wp user list --role=contributor --field=ID) --reassign=2
+	 *     $ fp user delete $(fp user list --role=contributor --field=ID) --reassign=2
 	 *     Success: Removed user 813 from http://example.com.
 	 *     Success: Removed user 578 from http://example.com.
 	 *
-	 *     # Delete all contributors in batches of 100 (avoid error: argument list too long: wp)
-	 *     $ wp user delete $(wp user list --role=contributor --field=ID | head -n 100)
+	 *     # Delete all contributors in batches of 100 (avoid error: argument list too long: fp)
+	 *     $ fp user delete $(fp user list --role=contributor --field=ID | head -n 100)
 	 */
 	public function delete( $args, $assoc_args ) {
 		$network = Utils\get_flag_value( $assoc_args, 'network' ) && is_multisite();
@@ -293,15 +293,15 @@ class User_Command extends CommandWithDBObject {
 		}
 
 		if ( $network && $reassign ) {
-			WP_CLI::error( 'Reassigning content to a different user is not supported on multisite.' );
+			FP_CLI::error( 'Reassigning content to a different user is not supported on multisite.' );
 		}
 
 		$is_reassign_valid = ( $reassign && false === get_userdata( $reassign ) ) ? false : true;
 
 		if ( ! $reassign ) {
-			WP_CLI::confirm( '--reassign parameter not passed. All associated posts will be deleted. Proceed?', $assoc_args );
+			FP_CLI::confirm( '--reassign parameter not passed. All associated posts will be deleted. Proceed?', $assoc_args );
 		} elseif ( ! $is_reassign_valid ) {
-			WP_CLI::confirm( '--reassign parameter is invalid. All associated posts will be deleted. Proceed?', $assoc_args );
+			FP_CLI::confirm( '--reassign parameter is invalid. All associated posts will be deleted. Proceed?', $assoc_args );
 		}
 
 		$users = $this->fetcher->get_many( $args );
@@ -313,13 +313,13 @@ class User_Command extends CommandWithDBObject {
 				$user_id = $user->ID;
 
 				if ( $network ) {
-					$result  = wpmu_delete_user( $user_id );
+					$result  = fpmu_delete_user( $user_id );
 					$message = "Deleted user {$user_id}.";
 				} elseif ( is_multisite() && empty( $user->roles ) ) {
 					$message = "No roles found for user {$user_id} on " . home_url() . ', no users deleted.';
 					return [ 'error', $message ];
 				} else {
-					$result  = wp_delete_user( $user_id, $reassign );
+					$result  = fp_delete_user( $user_id, $reassign );
 					$message = "Removed user {$user_id} from " . home_url() . '.';
 				}
 
@@ -392,12 +392,12 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Create user
-	 *     $ wp user create bob bob@example.com --role=author
+	 *     $ fp user create bob bob@example.com --role=author
 	 *     Success: Created user 3.
 	 *     Password: k9**&I4vNH(&
 	 *
 	 *     # Create user without showing password upon success
-	 *     $ wp user create ann ann@example.com --porcelain
+	 *     $ fp user create ann ann@example.com --porcelain
 	 *     4
 	 *
 	 * @param array{0: string, 1: string} $args Positional arguments.
@@ -408,14 +408,14 @@ class User_Command extends CommandWithDBObject {
 
 		list( $user->user_login, $user->user_email ) = $args;
 
-		$assoc_args = wp_slash( $assoc_args );
+		$assoc_args = fp_slash( $assoc_args );
 
 		if ( username_exists( $user->user_login ) ) {
-			WP_CLI::error( "The '{$user->user_login}' username is already registered." );
+			FP_CLI::error( "The '{$user->user_login}' username is already registered." );
 		}
 
 		if ( ! is_email( $user->user_email ) ) {
-			WP_CLI::error( "The '{$user->user_email}' email address is invalid." );
+			FP_CLI::error( "The '{$user->user_email}' email address is invalid." );
 		}
 
 		$user->user_registered = Utils\get_flag_value(
@@ -439,7 +439,7 @@ class User_Command extends CommandWithDBObject {
 		if ( isset( $assoc_args['user_pass'] ) ) {
 			$user->user_pass = $assoc_args['user_pass'];
 		} else {
-			$user->user_pass = wp_generate_password( 24 );
+			$user->user_pass = fp_generate_password( 24 );
 			$generated_pass  = true;
 		}
 
@@ -457,43 +457,43 @@ class User_Command extends CommandWithDBObject {
 		}
 
 		if ( is_multisite() ) {
-			$result = wpmu_validate_user_signup( $user->user_login, $user->user_email );
+			$result = fpmu_validate_user_signup( $user->user_login, $user->user_email );
 			if ( ! empty( $result['errors']->errors ) ) {
-				WP_CLI::error( $result['errors'] );
+				FP_CLI::error( $result['errors'] );
 			}
-			$user_id = wpmu_create_user( $user->user_login, $user->user_pass, $user->user_email );
+			$user_id = fpmu_create_user( $user->user_login, $user->user_pass, $user->user_email );
 			if ( ! $user_id ) {
-				WP_CLI::error( 'Unknown error creating new user.' );
+				FP_CLI::error( 'Unknown error creating new user.' );
 			}
 			$user->ID = $user_id;
-			$user_id  = wp_update_user( $user );
-			if ( is_wp_error( $user_id ) ) {
-				WP_CLI::error( $user_id );
+			$user_id  = fp_update_user( $user );
+			if ( is_fp_error( $user_id ) ) {
+				FP_CLI::error( $user_id );
 			}
 		} else {
-			$user_id = wp_insert_user( $user );
+			$user_id = fp_insert_user( $user );
 		}
 
-		if ( ! $user_id || is_wp_error( $user_id ) ) {
+		if ( ! $user_id || is_fp_error( $user_id ) ) {
 			if ( ! $user_id ) {
 				$user_id = 'Unknown error creating new user.';
 			}
-			WP_CLI::error( $user_id );
+			FP_CLI::error( $user_id );
 		} elseif ( false === $user->role ) {
 				delete_user_option( $user_id, 'capabilities' );
 				delete_user_option( $user_id, 'user_level' );
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'send-email' ) ) {
-			self::wp_new_user_notification( $user_id, $user->user_pass );
+			self::fp_new_user_notification( $user_id, $user->user_pass );
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( (string) $user_id );
+			FP_CLI::line( (string) $user_id );
 		} else {
-			WP_CLI::success( "Created user {$user_id}." );
+			FP_CLI::success( "Created user {$user_id}." );
 			if ( isset( $generated_pass ) ) {
-				WP_CLI::line( "Password: {$user->user_pass}" );
+				FP_CLI::line( "Password: {$user->user_pass}" );
 			}
 		}
 	}
@@ -543,7 +543,7 @@ class User_Command extends CommandWithDBObject {
 	 * : A string used to set the user's role.
 	 *
 	 * --<field>=<value>
-	 * : One or more fields to update. For accepted fields, see wp_update_user().
+	 * : One or more fields to update. For accepted fields, see fp_update_user().
 	 *
 	 * [--skip-email]
 	 * : Don't send an email notification to the user.
@@ -551,12 +551,12 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Update user
-	 *     $ wp user update 123 --display_name=Mary --user_pass=marypass
+	 *     $ fp user update 123 --display_name=Mary --user_pass=marypass
 	 *     Success: Updated user 123.
 	 */
 	public function update( $args, $assoc_args ) {
 		if ( isset( $assoc_args['user_login'] ) ) {
-			WP_CLI::warning( "User logins can't be changed." );
+			FP_CLI::warning( "User logins can't be changed." );
 			unset( $assoc_args['user_login'] );
 		}
 
@@ -570,7 +570,7 @@ class User_Command extends CommandWithDBObject {
 		}
 
 		if ( empty( $user_ids ) ) {
-			WP_CLI::error( 'No valid users found.' );
+			FP_CLI::error( 'No valid users found.' );
 		}
 
 		$skip_email = Utils\get_flag_value( $assoc_args, 'skip-email' );
@@ -579,8 +579,8 @@ class User_Command extends CommandWithDBObject {
 			add_filter( 'send_password_change_email', '__return_false' );
 		}
 
-		$assoc_args = wp_slash( $assoc_args );
-		parent::_update( $user_ids, $assoc_args, 'wp_update_user' );
+		$assoc_args = fp_slash( $assoc_args );
+		parent::_update( $user_ids, $assoc_args, 'fp_update_user' );
 
 		if ( $skip_email ) {
 			remove_filter( 'send_email_change_email', '__return_false' );
@@ -602,7 +602,7 @@ class User_Command extends CommandWithDBObject {
 	 * ---
 	 *
 	 * [--role=<role>]
-	 * : The role of the generated users. Default: default role from WP
+	 * : The role of the generated users. Default: default role from FP
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -616,7 +616,7 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Add meta to every generated users.
-	 *     $ wp user generate --format=ids --count=3 | xargs -d ' ' -I % wp user meta add % foo bar
+	 *     $ fp user generate --format=ids --count=3 | xargs -d ' ' -I % fp user meta add % foo bar
 	 *     Success: Added custom field.
 	 *     Success: Added custom field.
 	 *     Success: Added custom field.
@@ -651,7 +651,7 @@ class User_Command extends CommandWithDBObject {
 			$login = "user_{$blog_id}_{$index}";
 			$name  = "User {$index}";
 
-			$user_id = wp_insert_user(
+			$user_id = fp_insert_user(
 				[
 					'user_login'   => $login,
 					'user_pass'    => $login,
@@ -661,7 +661,7 @@ class User_Command extends CommandWithDBObject {
 				]
 			);
 
-			if ( false === $role && ! is_wp_error( $user_id ) ) {
+			if ( false === $role && ! is_fp_error( $user_id ) ) {
 				delete_user_option( $user_id, 'capabilities' );
 				delete_user_option( $user_id, 'user_level' );
 			}
@@ -669,7 +669,7 @@ class User_Command extends CommandWithDBObject {
 			if ( 'progress' === $format ) {
 				$notify->tick();
 			} elseif ( 'ids' === $format ) {
-				if ( ! is_wp_error( $user_id ) ) {
+				if ( ! is_fp_error( $user_id ) ) {
 					echo $user_id;
 				}
 
@@ -697,21 +697,21 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # The user exists.
-	 *     $ wp user exists 1337
+	 *     $ fp user exists 1337
 	 *     Success: User with ID 1337 exists.
 	 *     $ echo $?
 	 *     0
 	 *
 	 *     # The user does not exist.
-	 *     $ wp user exists 10000
+	 *     $ fp user exists 10000
 	 *     $ echo $?
 	 *     1
 	 */
 	public function exists( $args ) {
 		if ( $this->fetcher->get( $args[0] ) ) {
-			WP_CLI::success( "User with ID {$args[0]} exists." );
+			FP_CLI::success( "User with ID {$args[0]} exists." );
 		} else {
-			WP_CLI::halt( 1 );
+			FP_CLI::halt( 1 );
 		}
 	}
 
@@ -729,7 +729,7 @@ class User_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp user set-role 12 author
+	 *     $ fp user set-role 12 author
 	 *     Success: Added johndoe (12) to http://example.com as author.
 	 *
 	 * @subcommand set-role
@@ -748,7 +748,7 @@ class User_Command extends CommandWithDBObject {
 			$user->set_role( $role );
 		}
 
-		WP_CLI::success( "Added {$user->user_login} ({$user->ID}) to " . site_url() . " as {$role}." );
+		FP_CLI::success( "Added {$user->user_login} ({$user->ID}) to " . site_url() . " as {$role}." );
 	}
 
 	/**
@@ -764,10 +764,10 @@ class User_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp user add-role 12 author
+	 *     $ fp user add-role 12 author
 	 *     Success: Added 'author' role for johndoe (12).
 	 *
-	 *     $ wp user add-role 12 author editor
+	 *     $ fp user add-role 12 author editor
 	 *     Success: Added 'author', 'editor' roles for johndoe (12).
 	 *
 	 * @subcommand add-role
@@ -779,7 +779,7 @@ class User_Command extends CommandWithDBObject {
 		array_shift( $roles );
 
 		if ( empty( $roles ) ) {
-			WP_CLI::error( 'Please specify at least one role to add.' );
+			FP_CLI::error( 'Please specify at least one role to add.' );
 		}
 
 		foreach ( $roles as $role ) {
@@ -791,7 +791,7 @@ class User_Command extends CommandWithDBObject {
 		}
 		$message = implode( "', '", $roles );
 		$label   = count( $roles ) > 1 ? 'roles' : 'role';
-		WP_CLI::success( "Added '{$message}' {$label} for {$user->user_login} ({$user->ID})." );
+		FP_CLI::success( "Added '{$message}' {$label} for {$user->user_login} ({$user->ID})." );
 	}
 
 	/**
@@ -807,10 +807,10 @@ class User_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp user remove-role 12 author
+	 *     $ fp user remove-role 12 author
 	 *     Success: Removed 'author' role for johndoe (12).
 	 *
-	 *     $ wp user remove-role 12 author editor
+	 *     $ fp user remove-role 12 author editor
 	 *     Success: Removed 'author', 'editor' roles for johndoe (12).
 	 *
 	 * @subcommand remove-role
@@ -831,7 +831,7 @@ class User_Command extends CommandWithDBObject {
 			}
 			$message = implode( "', '", $roles );
 			$label   = count( $roles ) > 1 ? 'roles' : 'role';
-			WP_CLI::success( "Removed '{$message}' {$label} from {$user->user_login} ({$user->ID})." );
+			FP_CLI::success( "Removed '{$message}' {$label} from {$user->user_login} ({$user->ID})." );
 		} else {
 			// Multisite
 			if ( function_exists( 'remove_user_from_blog' ) ) {
@@ -840,7 +840,7 @@ class User_Command extends CommandWithDBObject {
 				$user->remove_all_caps();
 			}
 
-			WP_CLI::success( "Removed {$user->user_login} ({$user->ID}) from " . site_url() . '.' );
+			FP_CLI::success( "Removed {$user->user_login} ({$user->ID}) from " . site_url() . '.' );
 		}
 	}
 
@@ -858,11 +858,11 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Add a capability for a user
-	 *     $ wp user add-cap john create_premium_item
+	 *     $ fp user add-cap john create_premium_item
 	 *     Success: Added 'create_premium_item' capability for john (16).
 	 *
 	 *     # Add a capability for a user
-	 *     $ wp user add-cap 15 edit_product
+	 *     $ fp user add-cap 15 edit_product
 	 *     Success: Added 'edit_product' capability for johndoe (15).
 	 *
 	 * @subcommand add-cap
@@ -873,7 +873,7 @@ class User_Command extends CommandWithDBObject {
 			$cap = $args[1];
 			$user->add_cap( $cap );
 
-			WP_CLI::success( "Added '{$cap}' capability for {$user->user_login} ({$user->ID})." );
+			FP_CLI::success( "Added '{$cap}' capability for {$user->user_login} ({$user->ID})." );
 		}
 	}
 
@@ -893,41 +893,41 @@ class User_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp user remove-cap 11 publish_newsletters
+	 *     $ fp user remove-cap 11 publish_newsletters
 	 *     Success: Removed 'publish_newsletters' cap for supervisor (11).
 	 *
-	 *     $ wp user remove-cap 11 publish_posts
+	 *     $ fp user remove-cap 11 publish_posts
 	 *     Error: The 'publish_posts' cap for supervisor (11) is inherited from a role.
 	 *
-	 *     $ wp user remove-cap 11 nonexistent_cap
+	 *     $ fp user remove-cap 11 nonexistent_cap
 	 *     Error: No such 'nonexistent_cap' cap for supervisor (11).
 	 *
-	 *     $ wp user remove-cap 11 publish_newsletters --force
+	 *     $ fp user remove-cap 11 publish_newsletters --force
 	 *     Success: Removed 'publish_newsletters' cap for supervisor (11).
 	 *
 	 * @subcommand remove-cap
 	 */
 	public function remove_cap( $args, $assoc_args ) {
 		/**
-		 * @var \WP_User $user
+		 * @var \FP_User $user
 		 */
 		$user = $this->fetcher->get_check( $args[0] );
 		if ( $user ) {
 			$cap = $args[1];
 			if ( ! isset( $user->caps[ $cap ] ) ) {
 				if ( isset( $user->allcaps[ $cap ] ) ) {
-					WP_CLI::error( "The '{$cap}' cap for {$user->user_login} ({$user->ID}) is inherited from a role." );
+					FP_CLI::error( "The '{$cap}' cap for {$user->user_login} ({$user->ID}) is inherited from a role." );
 				}
-				WP_CLI::error( "No such '{$cap}' cap for {$user->user_login} ({$user->ID})." );
+				FP_CLI::error( "No such '{$cap}' cap for {$user->user_login} ({$user->ID})." );
 			}
 
 			$user_roles = $user->roles;
 			if ( ! empty( $user_roles ) && in_array( $cap, $user_roles, true ) && ! Utils\get_flag_value( $assoc_args, 'force' ) ) {
-				WP_CLI::error( "Aborting because a role has the same name as '{$cap}'. Use `wp user remove-cap {$user->ID} {$cap} --force` to proceed with the removal." );
+				FP_CLI::error( "Aborting because a role has the same name as '{$cap}'. Use `fp user remove-cap {$user->ID} {$cap} --force` to proceed with the removal." );
 			}
 			$user->remove_cap( $cap );
 
-			WP_CLI::success( "Removed '{$cap}' cap for {$user->user_login} ({$user->ID})." );
+			FP_CLI::success( "Removed '{$cap}' cap for {$user->user_login} ({$user->ID})." );
 		}
 	}
 
@@ -967,7 +967,7 @@ class User_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp user list-caps 21
+	 *     $ fp user list-caps 21
 	 *     edit_product
 	 *     create_premium_item
 	 *
@@ -999,7 +999,7 @@ class User_Command extends CommandWithDBObject {
 				/**
 				 * @var array<string, int> $user_capabilities
 				 */
-				$user_capabilities = get_user_meta( $user->ID, 'wp_capabilities', true );
+				$user_capabilities = get_user_meta( $user->ID, 'fp_capabilities', true );
 
 				// Loop through each capability and only return the non-inherited ones
 				foreach ( $user_capabilities as $capability => $active ) {
@@ -1012,7 +1012,7 @@ class User_Command extends CommandWithDBObject {
 				/**
 				 * @var array<string, int> $user_capabilities
 				 */
-				$user_capabilities = get_user_meta( $user->ID, 'wp_capabilities', true );
+				$user_capabilities = get_user_meta( $user->ID, 'fp_capabilities', true );
 
 				// Loop through each capability and only return the inherited ones (including the role name)
 				foreach ( $user->get_role_caps() as $capability => $active ) {
@@ -1028,7 +1028,7 @@ class User_Command extends CommandWithDBObject {
 
 		if ( 'list' === $assoc_args['format'] ) {
 			foreach ( $active_user_cap_list as $cap ) {
-				WP_CLI::line( $cap );
+				FP_CLI::line( $cap );
 			}
 		} else {
 			$output_caps = [];
@@ -1064,13 +1064,13 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Import users from local CSV file
-	 *     $ wp user import-csv /path/to/users.csv
+	 *     $ fp user import-csv /path/to/users.csv
 	 *     Success: bobjones created.
 	 *     Success: newuser1 created.
 	 *     Success: existinguser created.
 	 *
 	 *     # Import users from remote CSV file
-	 *     $ wp user import-csv http://example.com/users.csv
+	 *     $ fp user import-csv http://example.com/users.csv
 	 *
 	 *     Sample users.csv file:
 	 *
@@ -1088,17 +1088,17 @@ class User_Command extends CommandWithDBObject {
 		$filename = $args[0];
 
 		if ( 0 === stripos( $filename, 'http://' ) || 0 === stripos( $filename, 'https://' ) ) {
-			$response      = wp_remote_head( $filename );
-			$response_code = (string) wp_remote_retrieve_response_code( $response );
+			$response      = fp_remote_head( $filename );
+			$response_code = (string) fp_remote_retrieve_response_code( $response );
 			if ( in_array( (int) $response_code[0], [ 4, 5 ], true ) ) {
-				WP_CLI::error( "Couldn't access remote CSV file (HTTP {$response_code} response)." );
+				FP_CLI::error( "Couldn't access remote CSV file (HTTP {$response_code} response)." );
 			}
 		} elseif ( '-' === $filename ) {
 			if ( ! Utils\has_stdin() ) {
-				WP_CLI::error( 'Unable to read content from STDIN.' );
+				FP_CLI::error( 'Unable to read content from STDIN.' );
 			}
 		} elseif ( ! file_exists( $filename ) ) {
-			WP_CLI::error( "Missing file: {$filename}" );
+			FP_CLI::error( "Missing file: {$filename}" );
 		}
 
 		// Don't send core's emails during the creation / update process
@@ -1150,7 +1150,7 @@ class User_Command extends CommandWithDBObject {
 		foreach ( $csv_data as $new_user ) {
 			$defaults = [
 				'role'            => $default_role,
-				'user_pass'       => wp_generate_password( 24 ),
+				'user_pass'       => fp_generate_password( 24 ),
 				'user_registered' => current_time( 'mysql', true ),
 				'display_name'    => '',
 			];
@@ -1162,7 +1162,7 @@ class User_Command extends CommandWithDBObject {
 				$invalid_role = false;
 				foreach ( $roles as $role ) {
 					if ( null === get_role( $role ) ) {
-						WP_CLI::warning( "{$new_user['user_login']} has an invalid role." );
+						FP_CLI::warning( "{$new_user['user_login']} has an invalid role." );
 						$invalid_role = true;
 						break;
 					}
@@ -1175,7 +1175,7 @@ class User_Command extends CommandWithDBObject {
 			} elseif ( 'none' === $new_user['role'] ) {
 				$new_user['role'] = '';
 			} elseif ( null === get_role( $new_user['role'] ) ) {
-				WP_CLI::warning( "{$new_user['user_login']} has an invalid role." );
+				FP_CLI::warning( "{$new_user['user_login']} has an invalid role." );
 				continue;
 			}
 
@@ -1188,22 +1188,22 @@ class User_Command extends CommandWithDBObject {
 
 			if ( $existing_user && Utils\get_flag_value( $assoc_args, 'skip-update' ) ) {
 
-				WP_CLI::log( "{$existing_user->user_login} exists and has been skipped." );
+				FP_CLI::log( "{$existing_user->user_login} exists and has been skipped." );
 				continue;
 
 			}
 
 			if ( $existing_user ) {
 				$new_user['ID'] = $existing_user->ID;
-				$user_id        = wp_update_user( $new_user );
+				$user_id        = fp_update_user( $new_user );
 
-				if ( ! in_array( $existing_user->user_login, wp_list_pluck( $blog_users, 'user_login' ), true ) && is_multisite() && $new_user['role'] ) {
+				if ( ! in_array( $existing_user->user_login, fp_list_pluck( $blog_users, 'user_login' ), true ) && is_multisite() && $new_user['role'] ) {
 					add_user_to_blog( get_current_blog_id(), $existing_user->ID, $new_user['role'] );
-					WP_CLI::log( "{$existing_user->user_login} added as {$new_user['role']}." );
+					FP_CLI::log( "{$existing_user->user_login} added as {$new_user['role']}." );
 				}
 
-				if ( is_wp_error( $user_id ) ) {
-					WP_CLI::warning( $user_id );
+				if ( is_fp_error( $user_id ) ) {
+					FP_CLI::warning( $user_id );
 					continue;
 				}
 
@@ -1212,33 +1212,33 @@ class User_Command extends CommandWithDBObject {
 				unset( $new_user['ID'] ); // Unset else it will just return the ID
 
 				if ( is_multisite() ) {
-					$result = wpmu_validate_user_signup( $new_user['user_login'], $new_user['user_email'] );
+					$result = fpmu_validate_user_signup( $new_user['user_login'], $new_user['user_email'] );
 					if ( ! empty( $result['errors']->errors ) ) {
-						WP_CLI::warning( $result['errors'] );
+						FP_CLI::warning( $result['errors'] );
 						continue;
 					}
-					$user_id = wpmu_create_user( $new_user['user_login'], $new_user['user_pass'], $new_user['user_email'] );
+					$user_id = fpmu_create_user( $new_user['user_login'], $new_user['user_pass'], $new_user['user_email'] );
 					if ( ! $user_id ) {
-						WP_CLI::warning( 'Unknown error creating new user.' );
+						FP_CLI::warning( 'Unknown error creating new user.' );
 						continue;
 					}
 					$new_user['ID'] = $user_id;
-					$user_id        = wp_update_user( $new_user );
-					if ( is_wp_error( $user_id ) ) {
-						WP_CLI::warning( $user_id );
+					$user_id        = fp_update_user( $new_user );
+					if ( is_fp_error( $user_id ) ) {
+						FP_CLI::warning( $user_id );
 						continue;
 					}
 				} else {
-					$user_id = wp_insert_user( $new_user );
+					$user_id = fp_insert_user( $new_user );
 				}
 
-				if ( is_wp_error( $user_id ) ) {
-					WP_CLI::warning( $user_id );
+				if ( is_fp_error( $user_id ) ) {
+					FP_CLI::warning( $user_id );
 					continue;
 				}
 
 				if ( Utils\get_flag_value( $assoc_args, 'send-email' ) ) {
-					self::wp_new_user_notification( $user_id, $new_user['user_pass'] );
+					self::fp_new_user_notification( $user_id, $new_user['user_pass'] );
 				}
 			}
 
@@ -1248,7 +1248,7 @@ class User_Command extends CommandWithDBObject {
 			}
 
 			/**
-			 * @var \WP_User $user
+			 * @var \FP_User $user
 			 */
 			$user = get_user_by( 'id', $user_id );
 			foreach ( $secondary_roles as $secondary_role ) {
@@ -1256,9 +1256,9 @@ class User_Command extends CommandWithDBObject {
 			}
 
 			if ( ! empty( $existing_user ) ) {
-				WP_CLI::success( $new_user['user_login'] . ' updated.' );
+				FP_CLI::success( $new_user['user_login'] . ' updated.' );
 			} else {
-				WP_CLI::success( $new_user['user_login'] . ' created.' );
+				FP_CLI::success( $new_user['user_login'] . ' created.' );
 			}
 		}
 	}
@@ -1283,30 +1283,30 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Reset the password for two users and send them the change email.
-	 *     $ wp user reset-password admin editor
+	 *     $ fp user reset-password admin editor
 	 *     Reset password for admin.
 	 *     Reset password for editor.
 	 *     Success: Passwords reset for 2 users.
 	 *
 	 *     # Reset and display the password.
-	 *     $ wp user reset-password editor --show-password
+	 *     $ fp user reset-password editor --show-password
 	 *     Reset password for editor.
 	 *     Password: N6hAau0fXZMN#rLCIirdEGOh
 	 *     Success: Password reset for 1 user.
 	 *
 	 *     # Reset the password for one user, displaying only the new password, and not sending the change email.
-	 *     $ wp user reset-password admin --skip-email --porcelain
+	 *     $ fp user reset-password admin --skip-email --porcelain
 	 *     yV6BP*!d70wg
 	 *
 	 *     # Reset password for all users.
-	 *     $ wp user reset-password $(wp user list --format=ids)
+	 *     $ fp user reset-password $(fp user list --format=ids)
 	 *     Reset password for admin.
 	 *     Reset password for editor.
 	 *     Reset password for subscriber.
 	 *     Success: Passwords reset for 3 users.
 	 *
 	 *     # Reset password for all users with a particular role.
-	 *     $ wp user reset-password $(wp user list --format=ids --role=administrator)
+	 *     $ fp user reset-password $(fp user list --format=ids --role=administrator)
 	 *     Reset password for admin.
 	 *     Success: Password reset for 1 user.
 	 *
@@ -1323,19 +1323,19 @@ class User_Command extends CommandWithDBObject {
 		$fetcher = new UserFetcher();
 		$users   = $fetcher->get_many( $args );
 		foreach ( $users as $user ) {
-			$new_pass = wp_generate_password( 24 );
-			wp_update_user(
+			$new_pass = fp_generate_password( 24 );
+			fp_update_user(
 				[
 					'ID'        => $user->ID,
 					'user_pass' => $new_pass,
 				]
 			);
 			if ( $porcelain ) {
-				WP_CLI::line( "$new_pass" );
+				FP_CLI::line( "$new_pass" );
 			} else {
-				WP_CLI::log( "Reset password for {$user->user_login}." );
+				FP_CLI::log( "Reset password for {$user->user_login}." );
 				if ( $show_new_pass ) {
-					WP_CLI::line( "Password: $new_pass" );
+					FP_CLI::line( "Password: $new_pass" );
 				}
 			}
 		}
@@ -1344,11 +1344,11 @@ class User_Command extends CommandWithDBObject {
 
 		if ( ! $porcelain ) {
 			if ( 1 === $reset_user_count ) {
-				WP_CLI::success( "Password reset for {$reset_user_count} user." );
+				FP_CLI::success( "Password reset for {$reset_user_count} user." );
 			} elseif ( $reset_user_count > 1 ) {
-				WP_CLI::success( "Passwords reset for {$reset_user_count} users." );
+				FP_CLI::success( "Passwords reset for {$reset_user_count} users." );
 			} else {
-				WP_CLI::error( 'No user found to reset password.' );
+				FP_CLI::error( 'No user found to reset password.' );
 			}
 		}
 	}
@@ -1363,21 +1363,21 @@ class User_Command extends CommandWithDBObject {
 
 		if ( ! empty( $role ) && null === get_role( $role ) ) {
 			if ( $warn_user_only ) {
-				WP_CLI::warning( "Role doesn't exist: {$role}" );
+				FP_CLI::warning( "Role doesn't exist: {$role}" );
 			} else {
-				WP_CLI::error( "Role doesn't exist: {$role}" );
+				FP_CLI::error( "Role doesn't exist: {$role}" );
 			}
 		}
 	}
 
 	/**
-	 * Wrapper around wp_new_user_notification().
+	 * Wrapper around fp_new_user_notification().
 	 *
 	 * @param string|int $user_id
 	 * @param mixed $password
 	 */
-	public static function wp_new_user_notification( $user_id, $password ) {
-		wp_new_user_notification( (int) $user_id, null, 'both' );
+	public static function fp_new_user_notification( $user_id, $password ) {
+		fp_new_user_notification( (int) $user_id, null, 'both' );
 	}
 
 	/**
@@ -1391,7 +1391,7 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Mark user as spam.
-	 *     $ wp user spam 123
+	 *     $ fp user spam 123
 	 *     User 123 marked as spam.
 	 *     Success: Spammed 1 of 1 users.
 	 */
@@ -1410,7 +1410,7 @@ class User_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Remove user from spam.
-	 *     $ wp user unspam 123
+	 *     $ fp user unspam 123
 	 *     User 123 removed from spam.
 	 *     Success: Unspamed 1 of 1 users.
 	 */
@@ -1425,7 +1425,7 @@ class User_Command extends CommandWithDBObject {
 
 		// If site is not multisite, then stop execution.
 		if ( ! is_multisite() ) {
-			WP_CLI::error( 'This is not a multisite installation.' );
+			FP_CLI::error( 'This is not a multisite installation.' );
 		}
 
 		$action = 'updated';
@@ -1448,13 +1448,13 @@ class User_Command extends CommandWithDBObject {
 
 			// Super admin should not be marked as spam.
 			if ( is_super_admin( $user->ID ) ) {
-				WP_CLI::warning( "User cannot be modified. The user {$user->ID} is a network administrator." );
+				FP_CLI::warning( "User cannot be modified. The user {$user->ID} is a network administrator." );
 				continue;
 			}
 
 			// Skip if user is already marked as spam and show warning.
 			if ( $value === $user->spam ) {
-				WP_CLI::warning( "User {$user_id} already {$action}." );
+				FP_CLI::warning( "User {$user_id} already {$action}." );
 				continue;
 			}
 
@@ -1471,11 +1471,11 @@ class User_Command extends CommandWithDBObject {
 				}
 			}
 
-			if ( Utils\wp_version_compare( '5.3', '<' ) ) {
+			if ( Utils\fp_version_compare( '5.3', '<' ) ) {
 				// @phpstan-ignore function.deprecated
-				update_user_status( $user_id, $pref, $value ); // phpcs:ignore WordPress.WP.DeprecatedFunctions.update_user_statusFound -- Fallback for older versions.
+				update_user_status( $user_id, $pref, $value ); // phpcs:ignore FinPress.FP.DeprecatedFunctions.update_user_statusFound -- Fallback for older versions.
 			} else {
-				wp_update_user(
+				fp_update_user(
 					[
 						'ID'  => $user_id,
 						$pref => $value,
@@ -1483,7 +1483,7 @@ class User_Command extends CommandWithDBObject {
 				);
 			}
 
-			WP_CLI::log( "User {$user_id} {$action}." );
+			FP_CLI::log( "User {$user_id} {$action}." );
 			++$successes;
 		}
 
@@ -1502,17 +1502,17 @@ class User_Command extends CommandWithDBObject {
 	 * : A string that contains the plain text password for the user.
 	 *
 	 * [--escape-chars]
-	 * : Escape password with `wp_slash()` to mimic the same behavior as `wp-login.php`.
+	 * : Escape password with `fp_slash()` to mimic the same behavior as `fp-login.php`.
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     # Check whether given credentials are valid; exit status 0 if valid, otherwise 1
-	 *     $ wp user check-password admin adminpass
+	 *     $ fp user check-password admin adminpass
 	 *     $ echo $?
 	 *     1
 	 *
 	 *     # Bash script for checking whether given credentials are valid or not
-	 *     if ! $(wp user check-password admin adminpass); then
+	 *     if ! $(fp user check-password admin adminpass); then
 	 *      notify-send "Invalid Credentials";
 	 *     fi
 	 *
@@ -1521,17 +1521,17 @@ class User_Command extends CommandWithDBObject {
 	public function check_password( $args, $assoc_args ) {
 		$escape_chars = Utils\get_flag_value( $assoc_args, 'escape-chars', false );
 
-		if ( ! $escape_chars && wp_slash( wp_unslash( $args[1] ) ) !== $args[1] ) {
-			WP_CLI::warning( 'Password contains characters that need to be escaped. Please escape them manually or use the `--escape-chars` option.' );
+		if ( ! $escape_chars && fp_slash( fp_unslash( $args[1] ) ) !== $args[1] ) {
+			FP_CLI::warning( 'Password contains characters that need to be escaped. Please escape them manually or use the `--escape-chars` option.' );
 		}
 
 		$user      = $this->fetcher->get_check( $args[0] );
-		$user_pass = $escape_chars ? wp_slash( $args[1] ) : $args[1];
+		$user_pass = $escape_chars ? fp_slash( $args[1] ) : $args[1];
 
-		if ( wp_check_password( $user_pass, $user->data->user_pass, $user->ID ) ) {
-			WP_CLI::halt( 0 );
+		if ( fp_check_password( $user_pass, $user->data->user_pass, $user->ID ) ) {
+			FP_CLI::halt( 0 );
 		} else {
-			WP_CLI::halt( 1 );
+			FP_CLI::halt( 1 );
 		}
 	}
 }

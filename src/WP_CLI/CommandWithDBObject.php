@@ -1,21 +1,21 @@
 <?php
 
-namespace WP_CLI;
+namespace FP_CLI;
 
-use WP_CLI;
-use WP_CLI_Command;
-use WP_CLI\Utils;
-use WP_Error;
+use FP_CLI;
+use FP_CLI_Command;
+use FP_CLI\Utils;
+use FP_Error;
 
 /**
- * Base class for WP-CLI commands that deal with database objects.
+ * Base class for FP-CLI commands that deal with database objects.
  *
- * @package wp-cli
+ * @package fp-cli
  */
-abstract class CommandWithDBObject extends WP_CLI_Command {
+abstract class CommandWithDBObject extends FP_CLI_Command {
 
 	/**
-	 * @var string $object_type WordPress' expected name for the object.
+	 * @var string $object_type FinPress' expected name for the object.
 	 */
 	protected $obj_type;
 
@@ -42,14 +42,14 @@ abstract class CommandWithDBObject extends WP_CLI_Command {
 
 		$obj_id = $callback( $assoc_args );
 
-		if ( is_wp_error( $obj_id ) ) {
-			WP_CLI::error( $obj_id );
+		if ( is_fp_error( $obj_id ) ) {
+			FP_CLI::error( $obj_id );
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( $obj_id );
+			FP_CLI::line( $obj_id );
 		} else {
-			WP_CLI::success( "Created {$this->obj_type} {$obj_id}." );
+			FP_CLI::success( "Created {$this->obj_type} {$obj_id}." );
 		}
 	}
 
@@ -65,18 +65,18 @@ abstract class CommandWithDBObject extends WP_CLI_Command {
 		$status = 0;
 
 		if ( empty( $assoc_args ) ) {
-			WP_CLI::error( 'Need some fields to update.' );
+			FP_CLI::error( 'Need some fields to update.' );
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'defer-term-counting' ) ) {
-			wp_defer_term_counting( true );
+			fp_defer_term_counting( true );
 		}
 
 		foreach ( $args as $obj_id ) {
 			$params = array_merge( $assoc_args, [ $this->obj_id_key => $obj_id ] );
 
 			$status = $this->success_or_failure(
-				$this->wp_error_to_resp(
+				$this->fp_error_to_resp(
 					$callback( $params ),
 					"Updated {$this->obj_type} {$obj_id}."
 				)
@@ -84,7 +84,7 @@ abstract class CommandWithDBObject extends WP_CLI_Command {
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'defer-term-counting' ) ) {
-			wp_defer_term_counting( false );
+			fp_defer_term_counting( false );
 		}
 
 		exit( $status );
@@ -117,7 +117,7 @@ abstract class CommandWithDBObject extends WP_CLI_Command {
 		$status = 0;
 
 		if ( Utils\get_flag_value( $assoc_args, 'defer-term-counting' ) ) {
-			wp_defer_term_counting( true );
+			fp_defer_term_counting( true );
 		}
 
 		foreach ( $args as $obj_id ) {
@@ -126,7 +126,7 @@ abstract class CommandWithDBObject extends WP_CLI_Command {
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'defer-term-counting' ) ) {
-			wp_defer_term_counting( false );
+			fp_defer_term_counting( false );
 		}
 
 		exit( $status );
@@ -135,12 +135,12 @@ abstract class CommandWithDBObject extends WP_CLI_Command {
 	/**
 	 * Format callback response to consistent format.
 	 *
-	 * @param WP_Error|true $response Response from CRUD callback.
+	 * @param FP_Error|true $response Response from CRUD callback.
 	 * @param string        $success_msg
 	 * @return array
 	 */
-	protected function wp_error_to_resp( $response, $success_msg ) {
-		return is_wp_error( $response )
+	protected function fp_error_to_resp( $response, $success_msg ) {
+		return is_fp_error( $response )
 			? [ 'error', $response->get_error_message() ]
 			: [ 'success', $success_msg ];
 	}
@@ -155,10 +155,10 @@ abstract class CommandWithDBObject extends WP_CLI_Command {
 		list( $type, $msg ) = $response;
 
 		if ( 'success' === $type ) {
-			WP_CLI::success( $msg );
+			FP_CLI::success( $msg );
 			$status = 0;
 		} else {
-			WP_CLI::warning( $msg );
+			FP_CLI::warning( $msg );
 			$status = 1;
 		}
 

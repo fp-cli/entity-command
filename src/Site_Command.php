@@ -1,13 +1,13 @@
 <?php
 
-use WP_CLI\CommandWithDBObject;
-use WP_CLI\ExitException;
-use WP_CLI\Fetchers\Site as SiteFetcher;
-use WP_CLI\Iterators\Query as QueryIterator;
-use WP_CLI\Iterators\Table as TableIterator;
-use WP_CLI\Utils;
-use WP_CLI\Formatter;
-use WP_CLI\Fetchers\User as UserFetcher;
+use FP_CLI\CommandWithDBObject;
+use FP_CLI\ExitException;
+use FP_CLI\Fetchers\Site as SiteFetcher;
+use FP_CLI\Iterators\Query as QueryIterator;
+use FP_CLI\Iterators\Table as TableIterator;
+use FP_CLI\Utils;
+use FP_CLI\Formatter;
+use FP_CLI\Fetchers\User as UserFetcher;
 
 /**
  * Creates, deletes, empties, moderates, and lists one or more sites on a multisite installation.
@@ -15,20 +15,20 @@ use WP_CLI\Fetchers\User as UserFetcher;
  * ## EXAMPLES
  *
  *     # Create site
- *     $ wp site create --slug=example
+ *     $ fp site create --slug=example
  *     Success: Site 3 created: www.example.com/example/
  *
  *     # Output a simple list of site URLs
- *     $ wp site list --field=url
+ *     $ fp site list --field=url
  *     http://www.example.com/
  *     http://www.example.com/subdir/
  *
  *     # Delete site
- *     $ wp site delete 123
+ *     $ fp site delete 123
  *     Are you sure you want to delete the 'http://www.example.com/example' site? [y/n] y
  *     Success: The site at 'http://www.example.com/example' was deleted.
  *
- * @package wp-cli
+ * @package fp-cli
  *
  * @phpstan-type UserSite object{userblog_id: int, blogname: string, domain: string, path: string, site_id: int, siteurl: string, archived: int, spam: int, deleted: int}
  */
@@ -47,26 +47,26 @@ class Site_Command extends CommandWithDBObject {
 	 * Delete comments.
 	 */
 	private function empty_comments() {
-		global $wpdb;
+		global $fpdb;
 
 		// Empty comments and comment cache
-		$comment_ids = $wpdb->get_col( "SELECT comment_ID FROM $wpdb->comments" );
+		$comment_ids = $fpdb->get_col( "SELECT comment_ID FROM $fpdb->comments" );
 		foreach ( $comment_ids as $comment_id ) {
-			wp_cache_delete( $comment_id, 'comment' );
-			wp_cache_delete( $comment_id, 'comment_meta' );
+			fp_cache_delete( $comment_id, 'comment' );
+			fp_cache_delete( $comment_id, 'comment_meta' );
 		}
-		$wpdb->query( "TRUNCATE TABLE $wpdb->comments" );
-		$wpdb->query( "TRUNCATE TABLE $wpdb->commentmeta" );
+		$fpdb->query( "TRUNCATE TABLE $fpdb->comments" );
+		$fpdb->query( "TRUNCATE TABLE $fpdb->commentmeta" );
 	}
 
 	/**
 	 * Delete all posts.
 	 */
 	private function empty_posts() {
-		global $wpdb;
+		global $fpdb;
 
 		// Empty posts and post cache
-		$posts_query = "SELECT ID FROM $wpdb->posts";
+		$posts_query = "SELECT ID FROM $fpdb->posts";
 		$posts       = new QueryIterator( $posts_query, 10000 );
 
 		$taxonomies = get_taxonomies();
@@ -79,17 +79,17 @@ class Site_Command extends CommandWithDBObject {
 
 			$post_id = $post->ID;
 
-			wp_cache_delete( $post_id, 'posts' );
-			wp_cache_delete( $post_id, 'post_meta' );
+			fp_cache_delete( $post_id, 'posts' );
+			fp_cache_delete( $post_id, 'post_meta' );
 			foreach ( $taxonomies as $taxonomy ) {
-				wp_cache_delete( $post_id, "{$taxonomy}_relationships" );
+				fp_cache_delete( $post_id, "{$taxonomy}_relationships" );
 			}
-			wp_cache_delete( $wpdb->blogid . '-' . $post_id, 'global-posts' );
+			fp_cache_delete( $fpdb->blogid . '-' . $post_id, 'global-posts' );
 
 			$posts->next();
 		}
-		$wpdb->query( "TRUNCATE TABLE $wpdb->posts" );
-		$wpdb->query( "TRUNCATE TABLE $wpdb->postmeta" );
+		$fpdb->query( "TRUNCATE TABLE $fpdb->posts" );
+		$fpdb->query( "TRUNCATE TABLE $fpdb->postmeta" );
 	}
 
 	/**
@@ -97,16 +97,16 @@ class Site_Command extends CommandWithDBObject {
 	 */
 	private function empty_taxonomies() {
 		/**
-		 * @var \wpdb $wpdb
+		 * @var \fpdb $fpdb
 		 */
-		global $wpdb;
+		global $fpdb;
 
 		// Empty taxonomies and terms
-		$terms      = $wpdb->get_results( "SELECT term_id, taxonomy FROM $wpdb->term_taxonomy" );
+		$terms      = $fpdb->get_results( "SELECT term_id, taxonomy FROM $fpdb->term_taxonomy" );
 		$taxonomies = [];
 		foreach ( (array) $terms as $term ) {
 			$taxonomies[] = $term->taxonomy;
-			wp_cache_delete( $term->term_id, $term->taxonomy );
+			fp_cache_delete( $term->term_id, $term->taxonomy );
 		}
 
 		$taxonomies = array_unique( $taxonomies );
@@ -117,15 +117,15 @@ class Site_Command extends CommandWithDBObject {
 			}
 			$cleaned[ $taxonomy ] = true;
 
-			wp_cache_delete( 'all_ids', $taxonomy );
-			wp_cache_delete( 'get', $taxonomy );
+			fp_cache_delete( 'all_ids', $taxonomy );
+			fp_cache_delete( 'get', $taxonomy );
 			delete_option( "{$taxonomy}_children" );
 		}
-		$wpdb->query( "TRUNCATE TABLE $wpdb->terms" );
-		$wpdb->query( "TRUNCATE TABLE $wpdb->term_taxonomy" );
-		$wpdb->query( "TRUNCATE TABLE $wpdb->term_relationships" );
-		if ( ! empty( $wpdb->termmeta ) ) {
-			$wpdb->query( "TRUNCATE TABLE $wpdb->termmeta" );
+		$fpdb->query( "TRUNCATE TABLE $fpdb->terms" );
+		$fpdb->query( "TRUNCATE TABLE $fpdb->term_taxonomy" );
+		$fpdb->query( "TRUNCATE TABLE $fpdb->term_relationships" );
+		if ( ! empty( $fpdb->termmeta ) ) {
+			$fpdb->query( "TRUNCATE TABLE $fpdb->termmeta" );
 		}
 	}
 
@@ -133,14 +133,14 @@ class Site_Command extends CommandWithDBObject {
 	 * Delete all links, link_category terms, and related cache.
 	 */
 	private function empty_links() {
-		global $wpdb;
+		global $fpdb;
 
 		// Remove links and related cached data.
-		$links_query = "SELECT link_id FROM {$wpdb->links}";
+		$links_query = "SELECT link_id FROM {$fpdb->links}";
 		$links       = new QueryIterator( $links_query, 10000 );
 
 		// Remove bookmarks cache group.
-		wp_cache_delete( 'get_bookmarks', 'bookmark' );
+		fp_cache_delete( 'get_bookmarks', 'bookmark' );
 
 		while ( $links->valid() ) {
 			/**
@@ -151,22 +151,22 @@ class Site_Command extends CommandWithDBObject {
 			$link_id = $link->link_id;
 
 			// Remove cache for the link.
-			wp_delete_object_term_relationships( $link_id, 'link_category' );
-			wp_cache_delete( $link_id, 'bookmark' );
+			fp_delete_object_term_relationships( $link_id, 'link_category' );
+			fp_cache_delete( $link_id, 'bookmark' );
 			clean_object_term_cache( $link_id, 'link' );
 
 			$links->next();
 		}
 
 		// Empty the table once link related cache and term is removed.
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->links}" );
+		$fpdb->query( "TRUNCATE TABLE {$fpdb->links}" );
 	}
 
 	/**
 	 * Insert default terms.
 	 */
 	private function insert_default_terms() {
-		global $wpdb;
+		global $fpdb;
 
 		// Default category
 		$cat_name = __( 'Uncategorized' );
@@ -175,11 +175,11 @@ class Site_Command extends CommandWithDBObject {
 		$cat_slug = sanitize_title( _x( 'Uncategorized', 'Default category slug' ) );
 
 		// @phpstan-ignore function.deprecated
-		if ( global_terms_enabled() ) { // phpcs:ignore WordPress.WP.DeprecatedFunctions.global_terms_enabledFound -- Required for backwards compatibility.
-			$cat_id = $wpdb->get_var( $wpdb->prepare( "SELECT cat_ID FROM {$wpdb->sitecategories} WHERE category_nicename = %s", $cat_slug ) );
+		if ( global_terms_enabled() ) { // phpcs:ignore FinPress.FP.DeprecatedFunctions.global_terms_enabledFound -- Required for backwards compatibility.
+			$cat_id = $fpdb->get_var( $fpdb->prepare( "SELECT cat_ID FROM {$fpdb->sitecategories} WHERE category_nicename = %s", $cat_slug ) );
 			if ( null === $cat_id ) {
-				$wpdb->insert(
-					$wpdb->sitecategories,
+				$fpdb->insert(
+					$fpdb->sitecategories,
 					[
 						'cat_ID'            => 0,
 						'cat_name'          => $cat_name,
@@ -190,15 +190,15 @@ class Site_Command extends CommandWithDBObject {
 						),
 					]
 				);
-				$cat_id = $wpdb->insert_id;
+				$cat_id = $fpdb->insert_id;
 			}
 			update_option( 'default_category', $cat_id );
 		} else {
 			$cat_id = 1;
 		}
 
-		$wpdb->insert(
-			$wpdb->terms,
+		$fpdb->insert(
+			$fpdb->terms,
 			[
 				'term_id'    => $cat_id,
 				'name'       => $cat_name,
@@ -206,8 +206,8 @@ class Site_Command extends CommandWithDBObject {
 				'term_group' => 0,
 			]
 		);
-		$wpdb->insert(
-			$wpdb->term_taxonomy,
+		$fpdb->insert(
+			$fpdb->term_taxonomy,
 			[
 				'term_id'     => $cat_id,
 				'taxonomy'    => 'category',
@@ -223,7 +223,7 @@ class Site_Command extends CommandWithDBObject {
 	 */
 	private function reset_options() {
 		// Reset Privacy Policy value to prevent error.
-		update_option( 'wp_page_for_privacy_policy', 0 );
+		update_option( 'fp_page_for_privacy_policy', 0 );
 
 		// Reset sticky posts option.
 		update_option( 'sticky_posts', [] );
@@ -242,11 +242,11 @@ class Site_Command extends CommandWithDBObject {
 	 * execution:
 	 *
 	 * ```
-	 * WP_CLI::add_hook( 'after_invoke:site empty', function(){
-	 *     global $wpdb;
+	 * FP_CLI::add_hook( 'after_invoke:site empty', function(){
+	 *     global $fpdb;
 	 *     foreach( array( 'p2p', 'p2pmeta' ) as $table ) {
-	 *         $table = $wpdb->$table;
-	 *         $wpdb->query( "TRUNCATE $table" );
+	 *         $table = $fpdb->$table;
+	 *         $fpdb->query( "TRUNCATE $table" );
 	 *     }
 	 * });
 	 * ```
@@ -261,7 +261,7 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site empty
+	 *     $ fp site empty
 	 *     Are you sure you want to empty the site at http://www.example.com of all posts, links, comments, and terms? [y/n] y
 	 *     Success: The site at 'http://www.example.com' was emptied.
 	 *
@@ -274,7 +274,7 @@ class Site_Command extends CommandWithDBObject {
 			$upload_message = ', and delete its uploads directory';
 		}
 
-		WP_CLI::confirm( "Are you sure you want to empty the site at '" . site_url() . "' of all posts, links, comments, and terms" . $upload_message . '?', $assoc_args );
+		FP_CLI::confirm( "Are you sure you want to empty the site at '" . site_url() . "' of all posts, links, comments, and terms" . $upload_message . '?', $assoc_args );
 
 		$this->empty_posts();
 		$this->empty_links();
@@ -284,7 +284,7 @@ class Site_Command extends CommandWithDBObject {
 		$this->reset_options();
 
 		if ( ! empty( $upload_message ) ) {
-			$upload_dir = wp_upload_dir();
+			$upload_dir = fp_upload_dir();
 			$files      = new RecursiveIteratorIterator(
 				new RecursiveDirectoryIterator( $upload_dir['basedir'], RecursiveDirectoryIterator::SKIP_DOTS ),
 				RecursiveIteratorIterator::CHILD_FIRST
@@ -320,7 +320,7 @@ class Site_Command extends CommandWithDBObject {
 			@rmdir( $upload_dir['basedir'] );
 		}
 
-		WP_CLI::success( "The site at '" . site_url() . "' was emptied." );
+		FP_CLI::success( "The site at '" . site_url() . "' was emptied." );
 	}
 
 	/**
@@ -342,46 +342,46 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site delete 123
+	 *     $ fp site delete 123
 	 *     Are you sure you want to delete the http://www.example.com/example site? [y/n] y
 	 *     Success: The site at 'http://www.example.com/example' was deleted.
 	 */
 	public function delete( $args, $assoc_args ) {
 		if ( ! is_multisite() ) {
-			WP_CLI::error( 'This is not a multisite installation.' );
+			FP_CLI::error( 'This is not a multisite installation.' );
 		}
 
 		if ( isset( $assoc_args['slug'] ) ) {
 			$blog_id = get_id_from_blogname( $assoc_args['slug'] );
 			if ( null === $blog_id ) {
-				WP_CLI::error( sprintf( 'Could not find site with slug \'%s\'.', $assoc_args['slug'] ) );
+				FP_CLI::error( sprintf( 'Could not find site with slug \'%s\'.', $assoc_args['slug'] ) );
 			}
 			$blog = get_blog_details( $blog_id );
 		} else {
 			if ( empty( $args ) ) {
-				WP_CLI::error( 'Need to specify a blog id.' );
+				FP_CLI::error( 'Need to specify a blog id.' );
 			}
 
 			$blog_id = $args[0];
 
 			if ( is_main_site( $blog_id ) ) {
-				WP_CLI::error( 'You cannot delete the root site.' );
+				FP_CLI::error( 'You cannot delete the root site.' );
 			}
 
 			$blog = get_blog_details( $blog_id );
 		}
 
 		if ( ! $blog ) {
-			WP_CLI::error( 'Site not found.' );
+			FP_CLI::error( 'Site not found.' );
 		}
 
 		$site_url = trailingslashit( $blog->siteurl );
 
-		WP_CLI::confirm( "Are you sure you want to delete the '{$site_url}' site?", $assoc_args );
+		FP_CLI::confirm( "Are you sure you want to delete the '{$site_url}' site?", $assoc_args );
 
-		wpmu_delete_blog( (int) $blog->blog_id, ! Utils\get_flag_value( $assoc_args, 'keep-tables' ) );
+		fpmu_delete_blog( (int) $blog->blog_id, ! Utils\get_flag_value( $assoc_args, 'keep-tables' ) );
 
-		WP_CLI::success( "The site at '{$site_url}' was deleted." );
+		FP_CLI::success( "The site at '{$site_url}' was deleted." );
 	}
 
 	/**
@@ -409,15 +409,15 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site create --slug=example
+	 *     $ fp site create --slug=example
 	 *     Success: Site 3 created: http://www.example.com/example/
 	 */
 	public function create( $args, $assoc_args ) {
 		if ( ! is_multisite() ) {
-			WP_CLI::error( 'This is not a multisite installation.' );
+			FP_CLI::error( 'This is not a multisite installation.' );
 		}
 
-		global $wpdb, $current_site;
+		global $fpdb, $current_site;
 
 		$base = $assoc_args['slug'];
 
@@ -432,7 +432,7 @@ class Site_Command extends CommandWithDBObject {
 		if ( ! empty( $assoc_args['network_id'] ) ) {
 			$network = $this->get_network( $assoc_args['network_id'] );
 			if ( false === $network ) {
-				WP_CLI::error( "Network with id {$assoc_args['network_id']} does not exist." );
+				FP_CLI::error( "Network with id {$assoc_args['network_id']} does not exist." );
 			}
 		} else {
 			$network = $current_site;
@@ -449,7 +449,7 @@ class Site_Command extends CommandWithDBObject {
 		if ( ! is_subdomain_install() ) {
 			$subdirectory_reserved_names = $this->get_subdirectory_reserved_names();
 			if ( in_array( $base, $subdirectory_reserved_names, true ) ) {
-				WP_CLI::error( 'The following words are reserved and cannot be used as blog names: ' . implode( ', ', $subdirectory_reserved_names ) );
+				FP_CLI::error( 'The following words are reserved and cannot be used as blog names: ' . implode( ', ', $subdirectory_reserved_names ) );
 			}
 		}
 
@@ -480,32 +480,32 @@ class Site_Command extends CommandWithDBObject {
 
 		$user_id = email_exists( $email );
 		if ( ! $user_id ) { // Create a new user with a random password
-			$password = wp_generate_password( 24, false );
-			$user_id  = wpmu_create_user( $base, $password, $email );
+			$password = fp_generate_password( 24, false );
+			$user_id  = fpmu_create_user( $base, $password, $email );
 			if ( false === $user_id ) {
-				WP_CLI::error( "Can't create user." );
+				FP_CLI::error( "Can't create user." );
 			} else {
-				User_Command::wp_new_user_notification( $user_id, $password );
+				User_Command::fp_new_user_notification( $user_id, $password );
 			}
 		}
 
-		$wpdb->hide_errors();
-		$title = wp_slash( $title );
-		$id    = wpmu_create_blog( $newdomain, $path, $title, $user_id, [ 'public' => $public ], $network->id );
-		$wpdb->show_errors();
-		if ( ! is_wp_error( $id ) ) {
+		$fpdb->hide_errors();
+		$title = fp_slash( $title );
+		$id    = fpmu_create_blog( $newdomain, $path, $title, $user_id, [ 'public' => $public ], $network->id );
+		$fpdb->show_errors();
+		if ( ! is_fp_error( $id ) ) {
 			if ( ! is_super_admin( $user_id ) && ! get_user_option( 'primary_blog', $user_id ) ) {
 				update_user_option( $user_id, 'primary_blog', $id, true );
 			}
 		} else {
-			WP_CLI::error( $id->get_error_message() );
+			FP_CLI::error( $id->get_error_message() );
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			WP_CLI::line( (string) $id );
+			FP_CLI::line( (string) $id );
 		} else {
 			$site_url = trailingslashit( get_site_url( $id ) );
-			WP_CLI::success( "Site {$id} created: {$site_url}" );
+			FP_CLI::success( "Site {$id} created: {$site_url}" );
 		}
 	}
 
@@ -546,15 +546,15 @@ class Site_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *    # Generate 10 sites.
-	 *    $ wp site generate --count=10
+	 *    $ fp site generate --count=10
 	 *    Generating sites  100% [================================================] 0:01 / 0:04
 	 */
 	public function generate( $args, $assoc_args ) {
 		if ( ! is_multisite() ) {
-			WP_CLI::error( 'This is not a multisite installation.' );
+			FP_CLI::error( 'This is not a multisite installation.' );
 		}
 
-		global $wpdb, $current_site;
+		global $fpdb, $current_site;
 
 		$defaults = [
 			'count'      => 100,
@@ -576,7 +576,7 @@ class Site_Command extends CommandWithDBObject {
 		if ( ! $is_subdomain_install ) {
 			$subdirectory_reserved_names = $this->get_subdirectory_reserved_names();
 			if ( in_array( $base, $subdirectory_reserved_names, true ) ) {
-				WP_CLI::error( 'The following words are reserved and cannot be used as blog names: ' . implode( ', ', $subdirectory_reserved_names ) );
+				FP_CLI::error( 'The following words are reserved and cannot be used as blog names: ' . implode( ', ', $subdirectory_reserved_names ) );
 			}
 		}
 
@@ -584,7 +584,7 @@ class Site_Command extends CommandWithDBObject {
 		if ( ! empty( $assoc_args['network_id'] ) ) {
 			$network = $this->get_network( $assoc_args['network_id'] );
 			if ( false === $network ) {
-				WP_CLI::error( "Network with id {$assoc_args['network_id']} does not exist." );
+				FP_CLI::error( "Network with id {$assoc_args['network_id']} does not exist." );
 			}
 		} else {
 			$network = $current_site;
@@ -612,13 +612,13 @@ class Site_Command extends CommandWithDBObject {
 
 		$user_id = email_exists( $email );
 		if ( ! $user_id ) {
-			$password = wp_generate_password( 24, false );
-			$user_id  = wpmu_create_user( $base . '-admin', $password, $email );
+			$password = fp_generate_password( 24, false );
+			$user_id  = fpmu_create_user( $base . '-admin', $password, $email );
 
 			if ( false === $user_id ) {
-				WP_CLI::error( "Can't create user." );
+				FP_CLI::error( "Can't create user." );
 			} else {
-				User_Command::wp_new_user_notification( $user_id, $password );
+				User_Command::fp_new_user_notification( $user_id, $password );
 			}
 		}
 
@@ -641,16 +641,16 @@ class Site_Command extends CommandWithDBObject {
 				$path       = $network->path . $current_base . '/';
 			}
 
-			$wpdb->hide_errors();
-			$title = wp_slash( $title );
-			$id    = wpmu_create_blog( $new_domain, $path, $title, $user_id, [ 'public' => $public ], $network->id );
-			$wpdb->show_errors();
-			if ( ! is_wp_error( $id ) ) {
+			$fpdb->hide_errors();
+			$title = fp_slash( $title );
+			$id    = fpmu_create_blog( $new_domain, $path, $title, $user_id, [ 'public' => $public ], $network->id );
+			$fpdb->show_errors();
+			if ( ! is_fp_error( $id ) ) {
 				if ( ! is_super_admin( $user_id ) && ! get_user_option( 'primary_blog', $user_id ) ) {
 					update_user_option( $user_id, 'primary_blog', $id, true );
 				}
 			} else {
-				WP_CLI::error( $id->get_error_message() );
+				FP_CLI::error( $id->get_error_message() );
 			}
 
 			if ( 'progress' === $format ) {
@@ -671,7 +671,7 @@ class Site_Command extends CommandWithDBObject {
 	/**
 	 * Retrieves a list of reserved site on a sub-directory Multisite installation.
 	 *
-	 * Works on older WordPress versions where get_subdirectory_reserved_names() does not exist.
+	 * Works on older FinPress versions where get_subdirectory_reserved_names() does not exist.
 	 *
 	 * @return string[] Array of reserved names.
 	 */
@@ -686,14 +686,14 @@ class Site_Command extends CommandWithDBObject {
 			'blog',
 			'files',
 			'feed',
-			'wp-admin',
-			'wp-content',
-			'wp-includes',
-			'wp-json',
+			'fp-admin',
+			'fp-content',
+			'fp-includes',
+			'fp-json',
 			'embed',
 		);
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Calling WordPress native hook.
+		// phpcs:ignore FinPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Calling FinPress native hook.
 		return apply_filters( 'subdirectory_reserved_names', $names );
 	}
 
@@ -704,12 +704,12 @@ class Site_Command extends CommandWithDBObject {
 	 * @return bool|array False if no network found with given id, array otherwise
 	 */
 	private function get_network( $network_id ) {
-		global $wpdb;
+		global $fpdb;
 
 		// Load network data
-		$networks = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM $wpdb->site WHERE id = %d",
+		$networks = $fpdb->get_results(
+			$fpdb->prepare(
+				"SELECT * FROM $fpdb->site WHERE id = %d",
 				$network_id
 			)
 		);
@@ -732,7 +732,7 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * [--<field>=<value>]
 	 * : Filter by one or more fields (see "Available Fields" section). However,
-	 * 'url' isn't an available filter, as it comes from 'home' in wp_options.
+	 * 'url' isn't an available filter, as it comes from 'home' in fp_options.
 	 *
 	 * [--site__in=<value>]
 	 * : Only list the sites with these blog_id values (comma-separated).
@@ -783,7 +783,7 @@ class Site_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Output a simple list of site URLs
-	 *     $ wp site list --field=url
+	 *     $ fp site list --field=url
 	 *     http://www.example.com/
 	 *     http://www.example.com/subdir/
 	 *
@@ -791,10 +791,10 @@ class Site_Command extends CommandWithDBObject {
 	 */
 	public function list_( $args, $assoc_args ) {
 		if ( ! is_multisite() ) {
-			WP_CLI::error( 'This is not a multisite installation.' );
+			FP_CLI::error( 'This is not a multisite installation.' );
 		}
 
-		global $wpdb;
+		global $fpdb;
 
 		if ( isset( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = preg_split( '/,[ \t]*/', $assoc_args['fields'] );
@@ -849,7 +849,7 @@ class Site_Command extends CommandWithDBObject {
 		}
 
 		$iterator_args = [
-			'table'  => $wpdb->blogs,
+			'table'  => $fpdb->blogs,
 			'where'  => $where,
 			'append' => $append,
 		];
@@ -869,7 +869,7 @@ class Site_Command extends CommandWithDBObject {
 
 		if ( ! empty( $assoc_args['format'] ) && 'ids' === $assoc_args['format'] ) {
 			$sites     = iterator_to_array( $iterator );
-			$ids       = wp_list_pluck( $sites, 'blog_id' );
+			$ids       = fp_list_pluck( $sites, 'blog_id' );
 			$formatter = new Formatter( $assoc_args, null, 'site' );
 			$formatter->display_items( $ids );
 		} else {
@@ -891,10 +891,10 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site archive 123
+	 *     $ fp site archive 123
 	 *     Success: Site 123 archived.
 	 *
-	 *     $ wp site archive --slug=demo
+	 *     $ fp site archive --slug=demo
 	 *     Success: Site 123 archived.
 	 */
 	public function archive( $args, $assoc_args ) {
@@ -920,10 +920,10 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site unarchive 123
+	 *     $ fp site unarchive 123
 	 *     Success: Site 123 unarchived.
 	 *
-	 *     $ wp site unarchive --slug=demo
+	 *     $ fp site unarchive --slug=demo
 	 *     Success: Site 123 unarchived.
 	 */
 	public function unarchive( $args, $assoc_args ) {
@@ -949,10 +949,10 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site activate 123
+	 *     $ fp site activate 123
 	 *     Success: Site 123 activated.
 	 *
-	 *      $ wp site activate --slug=demo
+	 *      $ fp site activate --slug=demo
 	 *      Success: Site 123 marked as activated.
 	 */
 	public function activate( $args, $assoc_args ) {
@@ -978,10 +978,10 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site deactivate 123
+	 *     $ fp site deactivate 123
 	 *     Success: Site 123 deactivated.
 	 *
-	 *     $ wp site deactivate --slug=demo
+	 *     $ fp site deactivate --slug=demo
 	 *     Success: Site 123 deactivated.
 	 */
 	public function deactivate( $args, $assoc_args ) {
@@ -1007,7 +1007,7 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site spam 123
+	 *     $ fp site spam 123
 	 *     Success: Site 123 marked as spam.
 	 */
 	public function spam( $args, $assoc_args ) {
@@ -1033,7 +1033,7 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site unspam 123
+	 *     $ fp site unspam 123
 	 *     Success: Site 123 removed from spam.
 	 *
 	 * @subcommand unspam
@@ -1061,10 +1061,10 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site mature 123
+	 *     $ fp site mature 123
 	 *     Success: Site 123 marked as mature.
 	 *
-	 *     $ wp site mature --slug=demo
+	 *     $ fp site mature --slug=demo
 	 *     Success: Site 123 marked as mature.
 	 */
 	public function mature( $args, $assoc_args ) {
@@ -1090,10 +1090,10 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site unmature 123
+	 *     $ fp site unmature 123
 	 *     Success: Site 123 marked as unmature.
 	 *
-	 *     $ wp site unmature --slug=demo
+	 *     $ fp site unmature --slug=demo
 	 *     Success: Site 123 marked as unmature.
 	 */
 	public function unmature( $args, $assoc_args ) {
@@ -1119,10 +1119,10 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site public 123
+	 *     $ fp site public 123
 	 *     Success: Site 123 marked as public.
 	 *
-	 *      $ wp site public --slug=demo
+	 *      $ fp site public --slug=demo
 	 *      Success: Site 123 marked as public.
 	 *
 	 * @subcommand public
@@ -1150,10 +1150,10 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp site private 123
+	 *     $ fp site private 123
 	 *     Success: Site 123 marked as private.
 	 *
-	 *     $ wp site private --slug=demo
+	 *     $ fp site private --slug=demo
 	 *     Success: Site 123 marked as private.
 	 *
 	 * @subcommand private
@@ -1195,19 +1195,19 @@ class Site_Command extends CommandWithDBObject {
 			$site = $this->fetcher->get_check( $site_id );
 
 			if ( is_main_site( $site->blog_id ) ) {
-				WP_CLI::warning( 'You are not allowed to change the main site.' );
+				FP_CLI::warning( 'You are not allowed to change the main site.' );
 				continue;
 			}
 
 			$old_value = (int) get_blog_status( $site->blog_id, $pref );
 
 			if ( $value === $old_value ) {
-				WP_CLI::warning( "Site {$site->blog_id} already {$action}." );
+				FP_CLI::warning( "Site {$site->blog_id} already {$action}." );
 				continue;
 			}
 
 			update_blog_status( $site->blog_id, $pref, (string) $value );
-			WP_CLI::success( "Site {$site->blog_id} {$action}." );
+			FP_CLI::success( "Site {$site->blog_id} {$action}." );
 		}
 	}
 
@@ -1229,7 +1229,7 @@ class Site_Command extends CommandWithDBObject {
 		if ( $slug ) {
 			$blog_id = get_id_from_blogname( trim( $slug, '/' ) );
 			if ( null === $blog_id ) {
-				WP_CLI::error( sprintf( 'Could not find site with slug \'%s\'.', $slug ) );
+				FP_CLI::error( sprintf( 'Could not find site with slug \'%s\'.', $slug ) );
 			}
 			return [ $blog_id ];
 		}
@@ -1249,7 +1249,7 @@ class Site_Command extends CommandWithDBObject {
 	private function check_site_ids_and_slug( $args, $assoc_args ) {
 		if ( ( empty( $args ) && empty( $assoc_args['slug'] ) )
 			|| ( ! empty( $args ) && ! empty( $assoc_args['slug'] ) ) ) {
-			WP_CLI::error( 'Please specify one or more IDs of sites, or pass the slug for a single site using --slug.' );
+			FP_CLI::error( 'Please specify one or more IDs of sites, or pass the slug for a single site using --slug.' );
 		}
 
 		return true;

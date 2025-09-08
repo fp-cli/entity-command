@@ -1,19 +1,19 @@
 <?php
 
-namespace WP_CLI;
+namespace FP_CLI;
 
 use Exception;
-use WP_CLI;
-use WP_CLI_Command;
-use WP_CLI\Traverser\RecursiveDataStructureTraverser;
-use WP_CLI\Utils;
+use FP_CLI;
+use FP_CLI_Command;
+use FP_CLI\Traverser\RecursiveDataStructureTraverser;
+use FP_CLI\Utils;
 
 /**
- * Base class for WP-CLI commands that deal with metadata
+ * Base class for FP-CLI commands that deal with metadata
  *
- * @package wp-cli
+ * @package fp-cli
  */
-abstract class CommandWithMeta extends WP_CLI_Command {
+abstract class CommandWithMeta extends FP_CLI_Command {
 
 	protected $meta_type;
 
@@ -173,7 +173,7 @@ abstract class CommandWithMeta extends WP_CLI_Command {
 			die( 1 );
 		}
 
-		WP_CLI::print_value( $value, $assoc_args );
+		FP_CLI::print_value( $value, $assoc_args );
 	}
 
 	/**
@@ -203,7 +203,7 @@ abstract class CommandWithMeta extends WP_CLI_Command {
 		$meta_value = ! empty( $args[2] ) ? $args[2] : '';
 
 		if ( empty( $meta_key ) && ! Utils\get_flag_value( $assoc_args, 'all' ) ) {
-			WP_CLI::error( 'Please specify a meta key, or use the --all flag.' );
+			FP_CLI::error( 'Please specify a meta key, or use the --all flag.' );
 		}
 
 		$object_id = $this->check_object_id( $object_id );
@@ -213,23 +213,23 @@ abstract class CommandWithMeta extends WP_CLI_Command {
 			foreach ( $this->get_metadata( $object_id ) as $meta_key => $values ) {
 				$success = $this->delete_metadata( $object_id, $meta_key );
 				if ( $success ) {
-					WP_CLI::log( "Deleted '{$meta_key}' custom field." );
+					FP_CLI::log( "Deleted '{$meta_key}' custom field." );
 				} else {
-					WP_CLI::warning( "Failed to delete '{$meta_key}' custom field." );
+					FP_CLI::warning( "Failed to delete '{$meta_key}' custom field." );
 					$errors = true;
 				}
 			}
 			if ( $errors ) {
-				WP_CLI::error( 'Failed to delete all custom fields.' );
+				FP_CLI::error( 'Failed to delete all custom fields.' );
 			} else {
-				WP_CLI::success( 'Deleted all custom fields.' );
+				FP_CLI::success( 'Deleted all custom fields.' );
 			}
 		} else {
 			$success = $this->delete_metadata( $object_id, $meta_key, $meta_value );
 			if ( $success ) {
-				WP_CLI::success( 'Deleted custom field.' );
+				FP_CLI::success( 'Deleted custom field.' );
 			} else {
-				WP_CLI::error( 'Failed to delete custom field.' );
+				FP_CLI::error( 'Failed to delete custom field.' );
 			}
 		}
 	}
@@ -263,18 +263,18 @@ abstract class CommandWithMeta extends WP_CLI_Command {
 	public function add( $args, $assoc_args ) {
 		list( $object_id, $meta_key ) = $args;
 
-		$meta_value = WP_CLI::get_value_from_arg_or_stdin( $args, 2 );
-		$meta_value = WP_CLI::read_value( $meta_value, $assoc_args );
+		$meta_value = FP_CLI::get_value_from_arg_or_stdin( $args, 2 );
+		$meta_value = FP_CLI::read_value( $meta_value, $assoc_args );
 
 		$object_id = $this->check_object_id( $object_id );
 
-		$meta_value = wp_slash( $meta_value );
+		$meta_value = fp_slash( $meta_value );
 		$success    = $this->add_metadata( $object_id, $meta_key, $meta_value );
 
 		if ( $success ) {
-			WP_CLI::success( 'Added custom field.' );
+			FP_CLI::success( 'Added custom field.' );
 		} else {
-			WP_CLI::error( 'Failed to add custom field.' );
+			FP_CLI::error( 'Failed to add custom field.' );
 		}
 	}
 
@@ -309,8 +309,8 @@ abstract class CommandWithMeta extends WP_CLI_Command {
 	public function update( $args, $assoc_args ) {
 		list( $object_id, $meta_key ) = $args;
 
-		$meta_value = WP_CLI::get_value_from_arg_or_stdin( $args, 2 );
-		$meta_value = WP_CLI::read_value( $meta_value, $assoc_args );
+		$meta_value = FP_CLI::get_value_from_arg_or_stdin( $args, 2 );
+		$meta_value = FP_CLI::read_value( $meta_value, $assoc_args );
 
 		$object_id = $this->check_object_id( $object_id );
 
@@ -318,15 +318,15 @@ abstract class CommandWithMeta extends WP_CLI_Command {
 		$old_value  = sanitize_meta( $meta_key, $this->get_metadata( $object_id, $meta_key, true ), $this->meta_type );
 
 		if ( $meta_value === $old_value ) {
-			WP_CLI::success( "Value passed for custom field '{$meta_key}' is unchanged." );
+			FP_CLI::success( "Value passed for custom field '{$meta_key}' is unchanged." );
 		} else {
-			$meta_value = wp_slash( $meta_value );
+			$meta_value = fp_slash( $meta_value );
 			$success    = $this->update_metadata( $object_id, $meta_key, $meta_value );
 
 			if ( $success ) {
-				WP_CLI::success( "Updated custom field '{$meta_key}'." );
+				FP_CLI::success( "Updated custom field '{$meta_key}'." );
 			} else {
-				WP_CLI::error( "Failed to update custom field '{$meta_key}'." );
+				FP_CLI::error( "Failed to update custom field '{$meta_key}'." );
 			}
 		}
 	}
@@ -377,7 +377,7 @@ abstract class CommandWithMeta extends WP_CLI_Command {
 			die( 1 );
 		}
 
-		WP_CLI::print_value( $value, $assoc_args );
+		FP_CLI::print_value( $value, $assoc_args );
 	}
 
 	/**
@@ -432,11 +432,11 @@ abstract class CommandWithMeta extends WP_CLI_Command {
 			$patch_value = null;
 		} else {
 			$stdin_value = Utils\has_stdin()
-				? trim( WP_CLI::get_value_from_arg_or_stdin( $args, -1 ) )
+				? trim( FP_CLI::get_value_from_arg_or_stdin( $args, -1 ) )
 				: null;
 			$patch_value = ! empty( $stdin_value )
-				? WP_CLI::read_value( $stdin_value, $assoc_args )
-				: WP_CLI::read_value( array_pop( $key_path ), $assoc_args );
+				? FP_CLI::read_value( $stdin_value, $assoc_args )
+				: FP_CLI::read_value( array_pop( $key_path ), $assoc_args );
 		}
 
 		/* Need to make a copy of $current_meta_value here as it is modified by reference */
@@ -451,21 +451,21 @@ abstract class CommandWithMeta extends WP_CLI_Command {
 		try {
 			$traverser->$action( $key_path, $patch_value );
 		} catch ( Exception $exception ) {
-			WP_CLI::error( $exception->getMessage() );
+			FP_CLI::error( $exception->getMessage() );
 		}
 
 		$patched_meta_value = sanitize_meta( $meta_key, $traverser->value(), $this->meta_type );
 
 		if ( $patched_meta_value === $old_meta_value ) {
-			WP_CLI::success( "Value passed for custom field '{$meta_key}' is unchanged." );
+			FP_CLI::success( "Value passed for custom field '{$meta_key}' is unchanged." );
 		} else {
-			$slashed = wp_slash( $patched_meta_value );
+			$slashed = fp_slash( $patched_meta_value );
 			$success = $this->update_metadata( $object_id, $meta_key, $slashed );
 
 			if ( $success ) {
-				WP_CLI::success( "Updated custom field '{$meta_key}'." );
+				FP_CLI::success( "Updated custom field '{$meta_key}'." );
 			} else {
-				WP_CLI::error( "Failed to update custom field '{$meta_key}'." );
+				FP_CLI::error( "Failed to update custom field '{$meta_key}'." );
 			}
 		}
 	}

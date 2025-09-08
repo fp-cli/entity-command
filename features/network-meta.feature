@@ -1,15 +1,15 @@
 Feature: Manage network-wide custom fields.
 
   Scenario: Non-multisite
-    Given a WP install
+    Given a FP install
 
-    When I run `wp network-meta`
+    When I run `fp network-meta`
     Then STDOUT should contain:
       """
-      usage: wp network meta
+      usage: fp network meta
       """
 
-    When I try `wp network-meta get 1 site_admins`
+    When I try `fp network-meta get 1 site_admins`
     Then STDOUT should be empty
     And STDERR should contain:
       """

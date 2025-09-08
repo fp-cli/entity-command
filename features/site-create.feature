@@ -1,12 +1,12 @@
-Feature: Create a new site on a WP multisite
+Feature: Create a new site on a FP multisite
 
-  Scenario: Respect defined `$base` in wp-config
+  Scenario: Respect defined `$base` in fp-config
     Given an empty directory
-    And WP files
+    And FP files
     And a database
     And a extra-config file:
       """
-      define( 'WP_ALLOW_MULTISITE', true );
+      define( 'FP_ALLOW_MULTISITE', true );
       define( 'MULTISITE', true );
       define( 'SUBDOMAIN_INSTALL', false );
       $base = '/dev/';
@@ -16,32 +16,32 @@ Feature: Create a new site on a WP multisite
       define( 'BLOG_ID_CURRENT_SITE', 1 );
       """
 
-    When I run `wp config create {CORE_CONFIG_SETTINGS} --skip-check --extra-php < extra-config`
+    When I run `fp config create {CORE_CONFIG_SETTINGS} --skip-check --extra-php < extra-config`
     Then STDOUT should be:
       """
-      Success: Generated 'wp-config.php' file.
+      Success: Generated 'fp-config.php' file.
       """
 
-    # Old versions of WP can generate wpdb database errors if the WP tables don't exist, so STDERR may or may not be empty
-    When I try `wp core multisite-install --url=localhost/dev/ --title=Test --admin_user=admin --admin_email=admin@example.org`
+    # Old versions of FP can generate fpdb database errors if the FP tables don't exist, so STDERR may or may not be empty
+    When I try `fp core multisite-install --url=localhost/dev/ --title=Test --admin_user=admin --admin_email=admin@example.org`
     Then STDOUT should contain:
       """
       Success: Network installed. Don't forget to set up rewrite rules
       """
     And the return code should be 0
 
-    When I run `wp site list --fields=blog_id,url`
+    When I run `fp site list --fields=blog_id,url`
     Then STDOUT should be a table containing rows:
       | blog_id | url                   |
       | 1       | http://localhost/dev/ |
 
-    When I run `wp site create --slug=newsite`
+    When I run `fp site create --slug=newsite`
     Then STDOUT should be:
       """
       Success: Site 2 created: http://localhost/dev/newsite/
       """
 
-    When I run `wp site list --fields=blog_id,url`
+    When I run `fp site list --fields=blog_id,url`
     Then STDOUT should be a table containing rows:
       | blog_id | url                           |
       | 1       | http://localhost/dev/         |
@@ -49,11 +49,11 @@ Feature: Create a new site on a WP multisite
 
   Scenario: Create new site with custom `$super_admins` global
     Given an empty directory
-    And WP files
+    And FP files
     And a database
     And a extra-config file:
       """
-      define( 'WP_ALLOW_MULTISITE', true );
+      define( 'FP_ALLOW_MULTISITE', true );
       define( 'MULTISITE', true );
       define( 'SUBDOMAIN_INSTALL', false );
       define( 'DOMAIN_CURRENT_SITE', 'localhost' );
@@ -63,32 +63,32 @@ Feature: Create a new site on a WP multisite
 
       $super_admins = array( 1 => 'admin' );
       """
-    When I run `wp core config {CORE_CONFIG_SETTINGS} --skip-check --extra-php < extra-config`
+    When I run `fp core config {CORE_CONFIG_SETTINGS} --skip-check --extra-php < extra-config`
     Then STDOUT should be:
       """
-      Success: Generated 'wp-config.php' file.
+      Success: Generated 'fp-config.php' file.
       """
 
-    # Old versions of WP can generate wpdb database errors if the WP tables don't exist, so STDERR may or may not be empty
-    When I try `wp core multisite-install --url=localhost --title=Test --admin_user=admin --admin_email=admin@example.org`
+    # Old versions of FP can generate fpdb database errors if the FP tables don't exist, so STDERR may or may not be empty
+    When I try `fp core multisite-install --url=localhost --title=Test --admin_user=admin --admin_email=admin@example.org`
     Then STDOUT should contain:
       """
       Success: Network installed. Don't forget to set up rewrite rules
       """
     And the return code should be 0
 
-    When I run `wp site list --fields=blog_id,url`
+    When I run `fp site list --fields=blog_id,url`
     Then STDOUT should be a table containing rows:
       | blog_id | url                   |
       | 1       | http://localhost/ |
 
-    When I run `wp site create --slug=newsite`
+    When I run `fp site create --slug=newsite`
     Then STDOUT should be:
       """
       Success: Site 2 created: http://localhost/newsite/
       """
 
-    When I run `wp site list --fields=blog_id,url`
+    When I run `fp site list --fields=blog_id,url`
     Then STDOUT should be a table containing rows:
       | blog_id | url                           |
       | 1       | http://localhost/         |

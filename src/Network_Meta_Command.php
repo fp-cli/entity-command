@@ -1,6 +1,6 @@
 <?php
 
-use WP_CLI\CommandWithMeta;
+use FP_CLI\CommandWithMeta;
 
 /**
  * Gets, adds, updates, deletes, and lists network custom fields.
@@ -8,7 +8,7 @@ use WP_CLI\CommandWithMeta;
  * ## EXAMPLES
  *
  *     # Get a list of super-admins
- *     $ wp network meta get 1 site_admins
+ *     $ fp network meta get 1 site_admins
  *     array (
  *       0 => 'supervisor',
  *     )

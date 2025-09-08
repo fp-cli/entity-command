@@ -1,7 +1,7 @@
 <?php
 
-use WP_CLI\Formatter;
-use WP_CLI\Utils;
+use FP_CLI\Formatter;
+use FP_CLI\Utils;
 
 /**
  * Assigns, removes, and lists a menu's locations.
@@ -9,7 +9,7 @@ use WP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # List available menu locations
- *     $ wp menu location list
+ *     $ fp menu location list
  *     +----------+-------------------+
  *     | location | description       |
  *     +----------+-------------------+
@@ -18,14 +18,14 @@ use WP_CLI\Utils;
  *     +----------+-------------------+
  *
  *     # Assign the 'primary-menu' menu to the 'primary' location
- *     $ wp menu location assign primary-menu primary
+ *     $ fp menu location assign primary-menu primary
  *     Success: Assigned location primary to menu primary-menu.
  *
  *     # Remove the 'primary-menu' menu from the 'primary' location
- *     $ wp menu location remove primary-menu primary
+ *     $ fp menu location remove primary-menu primary
  *     Success: Removed location from menu.
  */
-class Menu_Location_Command extends WP_CLI_Command {
+class Menu_Location_Command extends FP_CLI_Command {
 
 	/**
 	 * Lists locations for the current theme.
@@ -54,7 +54,7 @@ class Menu_Location_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp menu location list
+	 *     $ fp menu location list
 	 *     +----------+-------------------+
 	 *     | location | description       |
 	 *     +----------+-------------------+
@@ -103,7 +103,7 @@ class Menu_Location_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp menu location assign primary-menu primary
+	 *     $ fp menu location assign primary-menu primary
 	 *     Success: Assigned location primary to menu primary-menu.
 	 *
 	 * @subcommand assign
@@ -114,14 +114,14 @@ class Menu_Location_Command extends WP_CLI_Command {
 
 		list( $menu, $location ) = $args;
 
-		$menu_obj = wp_get_nav_menu_object( $menu );
+		$menu_obj = fp_get_nav_menu_object( $menu );
 		if ( ! $menu_obj ) {
-			WP_CLI::error( "Invalid menu {$menu}." );
+			FP_CLI::error( "Invalid menu {$menu}." );
 		}
 
 		$locations = get_registered_nav_menus();
 		if ( ! array_key_exists( $location, $locations ) ) {
-			WP_CLI::error( "Invalid location {$location}." );
+			FP_CLI::error( "Invalid location {$location}." );
 		}
 
 		$locations              = get_nav_menu_locations();
@@ -129,7 +129,7 @@ class Menu_Location_Command extends WP_CLI_Command {
 
 		set_theme_mod( 'nav_menu_locations', $locations );
 
-		WP_CLI::success( "Assigned location {$location} to menu {$menu}." );
+		FP_CLI::success( "Assigned location {$location} to menu {$menu}." );
 	}
 
 	/**
@@ -145,7 +145,7 @@ class Menu_Location_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp menu location remove primary-menu primary
+	 *     $ fp menu location remove primary-menu primary
 	 *     Success: Removed location from menu.
 	 *
 	 * @subcommand remove
@@ -156,19 +156,19 @@ class Menu_Location_Command extends WP_CLI_Command {
 
 		list( $menu, $location ) = $args;
 
-		$menu = wp_get_nav_menu_object( $menu );
+		$menu = fp_get_nav_menu_object( $menu );
 		if ( false === $menu ) {
-			WP_CLI::error( 'Invalid menu.' );
+			FP_CLI::error( 'Invalid menu.' );
 		}
 
 		$locations = get_nav_menu_locations();
 		if ( ( $locations[ $location ] ?? null ) !== $menu->term_id ) {
-			WP_CLI::error( "Menu isn't assigned to location." );
+			FP_CLI::error( "Menu isn't assigned to location." );
 		}
 
 		$locations[ $location ] = 0;
 		set_theme_mod( 'nav_menu_locations', $locations );
 
-		WP_CLI::success( 'Removed location from menu.' );
+		FP_CLI::success( 'Removed location from menu.' );
 	}
 }

@@ -1,25 +1,25 @@
 Feature: Manage post custom fields
 
   Scenario: Postmeta CRUD
-    Given a WP install
+    Given a FP install
 
-    When I run `wp post-meta add 1 foo 'bar'`
+    When I run `fp post-meta add 1 foo 'bar'`
     Then STDOUT should not be empty
 
-    When I run `wp post-meta get 1 foo`
+    When I run `fp post-meta get 1 foo`
     Then STDOUT should be:
       """
       bar
       """
 
-    When I try `wp post meta get 999999 foo`
+    When I try `fp post meta get 999999 foo`
     Then STDERR should be:
       """
       Error: Could not find the post with ID 999999.
       """
     And the return code should be 1
 
-    When I run `wp post-meta set 1 foo '[ "1", "2" ]' --format=json`
+    When I run `fp post-meta set 1 foo '[ "1", "2" ]' --format=json`
     Then STDOUT should not be empty
 
     When I run the previous command again
@@ -28,113 +28,113 @@ Feature: Manage post custom fields
       Success: Value passed for custom field 'foo' is unchanged.
       """
 
-    When I run `wp post-meta get 1 foo --format=json`
+    When I run `fp post-meta get 1 foo --format=json`
     Then STDOUT should be:
       """
       ["1","2"]
       """
 
-    When I run `echo 'via STDIN' | wp post-meta set 1 foo`
-    And I run `wp post-meta get 1 foo`
+    When I run `echo 'via STDIN' | fp post-meta set 1 foo`
+    And I run `fp post-meta get 1 foo`
     Then STDOUT should be:
       """
       via STDIN
       """
 
-    When I run `wp post-meta delete 1 foo`
+    When I run `fp post-meta delete 1 foo`
     Then STDOUT should not be empty
 
-    When I try `wp post-meta get 1 foo`
+    When I try `fp post-meta get 1 foo`
     Then the return code should be 1
 
   Scenario: List post meta
-    Given a WP install
+    Given a FP install
 
-    When I run `wp post meta add 1 apple banana`
-    And I run `wp post meta add 1 apple banana`
+    When I run `fp post meta add 1 apple banana`
+    And I run `fp post meta add 1 apple banana`
     Then STDOUT should not be empty
 
-    When I run `wp post meta set 1 banana '["apple", "apple"]' --format=json`
+    When I run `fp post meta set 1 banana '["apple", "apple"]' --format=json`
     Then STDOUT should not be empty
 
-    When I run `wp post meta list 1`
+    When I run `fp post meta list 1`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value                             |
       | 1       | apple    | banana                                 |
       | 1       | apple    | banana                                 |
       | 1       | banana   | a:2:{i:0;s:5:"apple";i:1;s:5:"apple";} |
 
-    When I run `wp post meta list 1 --unserialize`
+    When I run `fp post meta list 1 --unserialize`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value        |
       | 1       | apple    | banana            |
       | 1       | apple    | banana            |
       | 1       | banana   | ["apple","apple"] |
 
-    When I run `wp post meta list 1 --orderby=id --order=desc`
+    When I run `fp post meta list 1 --orderby=id --order=desc`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value                             |
       | 1       | banana   | a:2:{i:0;s:5:"apple";i:1;s:5:"apple";} |
       | 1       | apple    | banana                                 |
       | 1       | apple    | banana                                 |
 
-    When I run `wp post meta list 1 --orderby=id --order=desc --unserialize`
+    When I run `fp post meta list 1 --orderby=id --order=desc --unserialize`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value        |
       | 1       | banana   | ["apple","apple"] |
       | 1       | apple    | banana            |
       | 1       | apple    | banana            |
 
-    When I run `wp post meta list 1 --orderby=meta_key --order=asc`
+    When I run `fp post meta list 1 --orderby=meta_key --order=asc`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value                             |
       | 1       | apple    | banana                                 |
       | 1       | apple    | banana                                 |
       | 1       | banana   | a:2:{i:0;s:5:"apple";i:1;s:5:"apple";} |
 
-    When I run `wp post meta list 1 --orderby=meta_key --order=asc --unserialize`
+    When I run `fp post meta list 1 --orderby=meta_key --order=asc --unserialize`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value        |
       | 1       | apple    | banana            |
       | 1       | apple    | banana            |
       | 1       | banana   | ["apple","apple"] |
 
-    When I run `wp post meta list 1 --orderby=meta_key --order=desc`
+    When I run `fp post meta list 1 --orderby=meta_key --order=desc`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value                             |
       | 1       | banana   | a:2:{i:0;s:5:"apple";i:1;s:5:"apple";} |
       | 1       | apple    | banana                                 |
       | 1       | apple    | banana                                 |
 
-    When I run `wp post meta list 1 --orderby=meta_key --order=desc --unserialize`
+    When I run `fp post meta list 1 --orderby=meta_key --order=desc --unserialize`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value        |
       | 1       | banana   | ["apple","apple"] |
       | 1       | apple    | banana            |
       | 1       | apple    | banana            |
 
-    When I run `wp post meta list 1 --orderby=meta_value --order=asc`
+    When I run `fp post meta list 1 --orderby=meta_value --order=asc`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value                             |
       | 1       | apple    | banana                                 |
       | 1       | apple    | banana                                 |
       | 1       | banana   | a:2:{i:0;s:5:"apple";i:1;s:5:"apple";} |
 
-    When I run `wp post meta list 1 --orderby=meta_value --order=asc --unserialize`
+    When I run `fp post meta list 1 --orderby=meta_value --order=asc --unserialize`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value        |
       | 1       | apple    | banana            |
       | 1       | apple    | banana            |
       | 1       | banana   | ["apple","apple"] |
 
-    When I run `wp post meta list 1 --orderby=meta_value --order=desc`
+    When I run `fp post meta list 1 --orderby=meta_value --order=desc`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value                             |
       | 1       | banana   | a:2:{i:0;s:5:"apple";i:1;s:5:"apple";} |
       | 1       | apple    | banana                                 |
       | 1       | apple    | banana                                 |
 
-    When I run `wp post meta list 1 --orderby=meta_value --order=desc --unserialize`
+    When I run `fp post meta list 1 --orderby=meta_value --order=desc --unserialize`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value        |
       | 1       | banana   | ["apple","apple"] |
@@ -142,26 +142,26 @@ Feature: Manage post custom fields
       | 1       | apple    | banana            |
 
   Scenario: Delete all post meta
-    Given a WP install
+    Given a FP install
 
-    When I run `wp post meta add 1 apple banana`
-    And I run `wp post meta add 1 _foo banana`
+    When I run `fp post meta add 1 apple banana`
+    And I run `fp post meta add 1 _foo banana`
     Then STDOUT should not be empty
 
-    When I run `wp post meta list 1 --format=count`
+    When I run `fp post meta list 1 --format=count`
     Then STDOUT should be:
       """
       2
       """
 
-    When I try `wp post meta delete 1`
+    When I try `fp post meta delete 1`
     Then STDERR should be:
       """
       Error: Please specify a meta key, or use the --all flag.
       """
     And the return code should be 1
 
-    When I run `wp post meta delete 1 --all`
+    When I run `fp post meta delete 1 --all`
     Then STDOUT should contain:
       """
       Deleted 'apple' custom field.
@@ -169,39 +169,39 @@ Feature: Manage post custom fields
       Success: Deleted all custom fields.
       """
 
-    When I run `wp post meta list 1 --format=count`
+    When I run `fp post meta list 1 --format=count`
     Then STDOUT should be:
       """
       0
       """
 
   Scenario: List post meta with a null value
-    Given a WP install
+    Given a FP install
     And a setup.php file:
       """
       <?php
       update_post_meta( 1, 'foo', NULL );
       """
-    And I run `wp eval-file setup.php`
+    And I run `fp eval-file setup.php`
 
-    When I run `wp post meta list 1`
+    When I run `fp post meta list 1`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value |
       | 1       | foo      |            |
 
-  Scenario: Make sure WordPress receives the slashed data it expects in meta fields
-    Given a WP install
+  Scenario: Make sure FinPress receives the slashed data it expects in meta fields
+    Given a FP install
 
-    When I run `wp post-meta add 1 foo 'My\Meta'`
+    When I run `fp post-meta add 1 foo 'My\Meta'`
     Then STDOUT should not be empty
 
-    When I run `wp post-meta get 1 foo`
+    When I run `fp post-meta get 1 foo`
     Then STDOUT should be:
       """
       My\Meta
       """
 
-    When I run `wp post-meta update 1 foo 'My\New\Meta'`
+    When I run `fp post-meta update 1 foo 'My\New\Meta'`
     Then STDOUT should be:
       """
       Success: Updated custom field 'foo'.
@@ -213,32 +213,32 @@ Feature: Manage post custom fields
       Success: Value passed for custom field 'foo' is unchanged.
       """
 
-    When I run `wp post-meta get 1 foo`
+    When I run `fp post-meta get 1 foo`
     Then STDOUT should be:
       """
       My\New\Meta
       """
 
   Scenario: List post meta with or without single flag
-    Given a WP install
+    Given a FP install
 
-    When I run `wp post meta add 1 apple banana`
-    And I run `wp post meta add 1 apple mango`
+    When I run `fp post meta add 1 apple banana`
+    And I run `fp post meta add 1 apple mango`
     Then STDOUT should not be empty
 
-    When I run `wp post meta get 1 apple`
+    When I run `fp post meta get 1 apple`
     Then STDOUT should be:
       """
       banana
       """
 
-    When I run `wp post meta get 1 apple --single`
+    When I run `fp post meta get 1 apple --single`
     Then STDOUT should be:
       """
       banana
       """
 
-    When I run `wp post meta get 1 apple --no-single`
+    When I run `fp post meta get 1 apple --no-single`
     Then STDOUT should be:
       """
       array (
@@ -246,7 +246,7 @@ Feature: Manage post custom fields
         1 => 'mango',
       )
       """
-    When I run `wp post meta get 1 apple --no-single --format=json`
+    When I run `fp post meta get 1 apple --no-single --format=json`
     Then STDOUT should be:
       """
       ["banana","mango"]
@@ -254,16 +254,16 @@ Feature: Manage post custom fields
 
   @pluck
   Scenario: Nested values can be retrieved.
-    Given a WP install
+    Given a FP install
     And an input.json file:
       """
       {
         "foo": "bar"
       }
       """
-    And I run `wp post meta set 1 meta-key --format=json < input.json`
+    And I run `fp post meta set 1 meta-key --format=json < input.json`
 
-    When I run `wp post meta pluck 1 meta-key foo`
+    When I run `fp post meta pluck 1 meta-key foo`
     Then STDOUT should be:
       """
       bar
@@ -271,7 +271,7 @@ Feature: Manage post custom fields
 
   @pluck @pluck-deep
   Scenario: A nested value can be retrieved at any depth.
-    Given a WP install
+    Given a FP install
     And an input.json file:
       """
       {
@@ -285,15 +285,15 @@ Feature: Manage post custom fields
         }
       }
       """
-    And I run `wp post meta set 1 meta-key --format=json < input.json`
+    And I run `fp post meta set 1 meta-key --format=json < input.json`
 
-    When I run `wp post meta pluck 1 meta-key foo bar baz`
+    When I run `fp post meta pluck 1 meta-key foo bar baz`
     Then STDOUT should be:
       """
       some value
       """
 
-    When I run `wp post meta pluck 1 meta-key foo.com visitors`
+    When I run `fp post meta pluck 1 meta-key foo.com visitors`
     Then STDOUT should be:
       """
       999
@@ -301,34 +301,34 @@ Feature: Manage post custom fields
 
   @pluck @pluck-fail
   Scenario: Attempting to pluck a non-existent nested value fails.
-    Given a WP install
-    And I run `wp post meta set 1 meta-key '{ "key": "value" }' --format=json`
+    Given a FP install
+    And I run `fp post meta set 1 meta-key '{ "key": "value" }' --format=json`
 
-    When I run `wp post meta pluck 1 meta-key key`
+    When I run `fp post meta pluck 1 meta-key key`
     Then STDOUT should be:
       """
       value
       """
 
-    When I try `wp post meta pluck 1 meta-key foo`
+    When I try `fp post meta pluck 1 meta-key foo`
     Then STDOUT should be empty
     And the return code should be 1
 
   @pluck @pluck-fail
   Scenario: Attempting to pluck from a primitive value fails.
-    Given a WP install
-    And I run `wp post meta set 1 meta-key simple-value`
+    Given a FP install
+    And I run `fp post meta set 1 meta-key simple-value`
 
-    When I try `wp post meta pluck 1 meta-key foo`
+    When I try `fp post meta pluck 1 meta-key foo`
     Then STDOUT should be empty
     And the return code should be 1
 
   @pluck @pluck-numeric
   Scenario: A nested value can be retrieved from an integer key.
-    Given a WP install
-    And I run `wp post meta set 1 meta-key '[ "foo", "bar" ]' --format=json`
+    Given a FP install
+    And I run `fp post meta set 1 meta-key '[ "foo", "bar" ]' --format=json`
 
-    When I run `wp post meta pluck 1 meta-key 0`
+    When I run `fp post meta pluck 1 meta-key 0`
     Then STDOUT should be:
       """
       foo
@@ -336,22 +336,22 @@ Feature: Manage post custom fields
 
   @patch @patch-update @patch-arg
   Scenario: Nested values can be changed.
-    Given a WP install
+    Given a FP install
     And an input.json file:
       """
       {
         "foo": "bar"
       }
       """
-    And I run `wp post meta set 1 meta-key --format=json < input.json`
+    And I run `fp post meta set 1 meta-key --format=json < input.json`
 
-    When I run `wp post meta patch update 1 meta-key foo baz`
+    When I run `fp post meta patch update 1 meta-key foo baz`
     Then STDOUT should be:
       """
       Success: Updated custom field 'meta-key'.
       """
 
-    When I run `wp post meta get 1 meta-key --format=json`
+    When I run `fp post meta get 1 meta-key --format=json`
     Then STDOUT should be JSON containing:
       """
       {
@@ -361,7 +361,7 @@ Feature: Manage post custom fields
 
   @patch @patch-update @patch-stdin
   Scenario: Nested values can be set with a value from STDIN.
-    Given a WP install
+    Given a FP install
     And an input.json file:
       """
       {
@@ -375,15 +375,15 @@ Feature: Manage post custom fields
       """
       new value
       """
-    And I run `wp post meta set 1 meta-key --format=json < input.json`
+    And I run `fp post meta set 1 meta-key --format=json < input.json`
 
-    When I run `wp post meta patch update 1 meta-key foo bar < patch`
+    When I run `fp post meta patch update 1 meta-key foo bar < patch`
     Then STDOUT should be:
       """
       Success: Updated custom field 'meta-key'.
       """
 
-    When I run `wp post meta get 1 meta-key --format=json`
+    When I run `fp post meta get 1 meta-key --format=json`
     Then STDOUT should be JSON containing:
       """
       {
@@ -396,7 +396,7 @@ Feature: Manage post custom fields
 
   @patch @patch-update @patch-fail
   Scenario: Attempting to update a nested value fails if a parent's key does not exist.
-    Given a WP install
+    Given a FP install
     And an input.json file:
       """
       {
@@ -406,9 +406,9 @@ Feature: Manage post custom fields
         "bar": "bad"
       }
       """
-    And I run `wp post meta set 1 meta-key --format=json < input.json`
+    And I run `fp post meta set 1 meta-key --format=json < input.json`
 
-    When I try `wp post meta patch update 1 meta-key foo not-a-key new-value`
+    When I try `fp post meta patch update 1 meta-key foo not-a-key new-value`
     Then STDOUT should be empty
     And STDERR should contain:
       """
@@ -418,7 +418,7 @@ Feature: Manage post custom fields
 
   @patch @patch-delete
   Scenario: A key can be deleted from a nested value.
-    Given a WP install
+    Given a FP install
     And an input.json file:
       """
       {
@@ -428,15 +428,15 @@ Feature: Manage post custom fields
         }
       }
       """
-    And I run `wp post meta set 1 meta-key --format=json < input.json`
+    And I run `fp post meta set 1 meta-key --format=json < input.json`
 
-    When I run `wp post meta patch delete 1 meta-key foo bar`
+    When I run `fp post meta patch delete 1 meta-key foo bar`
     Then STDOUT should be:
       """
       Success: Updated custom field 'meta-key'.
       """
 
-    When I run `wp post meta get 1 meta-key --format=json`
+    When I run `fp post meta get 1 meta-key --format=json`
     Then STDOUT should be JSON containing:
       """
       {
@@ -448,7 +448,7 @@ Feature: Manage post custom fields
 
   @patch @patch-fail @patch-delete @patch-delete-fail
   Scenario: A key cannot be deleted from a nested value from a non-existent key.
-    Given a WP install
+    Given a FP install
     And an input.json file:
       """
       {
@@ -457,9 +457,9 @@ Feature: Manage post custom fields
         }
       }
       """
-    And I run `wp post meta set 1 meta-key --format=json < input.json`
+    And I run `fp post meta set 1 meta-key --format=json < input.json`
 
-    When I try `wp post meta patch delete 1 meta-key foo not-a-key`
+    When I try `fp post meta patch delete 1 meta-key foo not-a-key`
     Then STDOUT should be empty
     And STDERR should contain:
       """
@@ -469,16 +469,16 @@ Feature: Manage post custom fields
 
   @patch @patch-insert
   Scenario: A new key can be inserted into a nested value.
-    Given a WP install
-    And I run `wp post meta set 1 meta-key '{}' --format=json`
+    Given a FP install
+    And I run `fp post meta set 1 meta-key '{}' --format=json`
 
-    When I run `wp post meta patch insert 1 meta-key foo bar`
+    When I run `fp post meta patch insert 1 meta-key foo bar`
     Then STDOUT should be:
       """
       Success: Updated custom field 'meta-key'.
       """
 
-    When I run `wp post meta get 1 meta-key --format=json`
+    When I run `fp post meta get 1 meta-key --format=json`
     Then STDOUT should be JSON containing:
       """
       {
@@ -488,10 +488,10 @@ Feature: Manage post custom fields
 
   @patch @patch-fail @patch-insert @patch-insert-fail
   Scenario: A new key cannot be inserted into a non-nested value.
-    Given a WP install
-    And I run `wp post meta set 1 meta-key 'a simple value'`
+    Given a FP install
+    And I run `fp post meta set 1 meta-key 'a simple value'`
 
-    When I try `wp post meta patch insert 1 meta-key foo bar`
+    When I try `fp post meta patch insert 1 meta-key foo bar`
     Then STDOUT should be empty
     And STDERR should contain:
       """
@@ -499,7 +499,7 @@ Feature: Manage post custom fields
       """
     And the return code should be 1
 
-    When I run `wp post meta get 1 meta-key`
+    When I run `fp post meta get 1 meta-key`
     Then STDOUT should be:
       """
       a simple value
@@ -507,16 +507,16 @@ Feature: Manage post custom fields
 
   @patch @patch-numeric
   Scenario: A nested value can be updated using an integer key.
-    Given a WP install
-    And I run `wp post meta set 1 meta-key '[ "foo", "bar" ]' --format=json`
+    Given a FP install
+    And I run `fp post meta set 1 meta-key '[ "foo", "bar" ]' --format=json`
 
-    When I run `wp post meta patch update 1 meta-key 0 new`
+    When I run `fp post meta patch update 1 meta-key 0 new`
     Then STDOUT should be:
       """
       Success: Updated custom field 'meta-key'.
       """
 
-    When I run `wp post meta get 1 meta-key --format=json`
+    When I run `fp post meta get 1 meta-key --format=json`
     Then STDOUT should be JSON containing:
       """
       [ "new", "bar" ]
