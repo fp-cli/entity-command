@@ -1,8 +1,8 @@
 <?php
 
-use FP_CLI\Formatter;
-use FP_CLI\Traverser\RecursiveDataStructureTraverser;
-use FP_CLI\Utils;
+use FIN_CLI\Formatter;
+use FIN_CLI\Traverser\RecursiveDataStructureTraverser;
+use FIN_CLI\Utils;
 
 /**
  * Retrieves and sets site options, including plugin and FinPress settings.
@@ -12,24 +12,24 @@ use FP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # Get site URL.
- *     $ fp option get siteurl
+ *     $ fin option get siteurl
  *     http://example.com
  *
  *     # Add option.
- *     $ fp option add my_option foobar
+ *     $ fin option add my_option foobar
  *     Success: Added 'my_option' option.
  *
  *     # Update option.
- *     $ fp option update my_option '{"foo": "bar"}' --format=json
+ *     $ fin option update my_option '{"foo": "bar"}' --format=json
  *     Success: Updated 'my_option' option.
  *
  *     # Delete option.
- *     $ fp option delete my_option
+ *     $ fin option delete my_option
  *     Success: Deleted 'my_option' option.
  *
- * @package fp-cli
+ * @package fin-cli
  */
-class Option_Command extends FP_CLI_Command {
+class Option_Command extends FIN_CLI_Command {
 
 	/**
 	 * Gets the value for an option.
@@ -52,23 +52,23 @@ class Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Get option.
-	 *     $ fp option get home
+	 *     $ fin option get home
 	 *     http://example.com
 	 *
 	 *     # Get blog description.
-	 *     $ fp option get blogdescription
+	 *     $ fin option get blogdescription
 	 *     A random blog description
 	 *
 	 *     # Get blog name
-	 *     $ fp option get blogname
+	 *     $ fin option get blogname
 	 *     A random blog name
 	 *
 	 *     # Get admin email.
-	 *     $ fp option get admin_email
+	 *     $ fin option get admin_email
 	 *     someone@example.com
 	 *
 	 *     # Get option in JSON format.
-	 *     $ fp option get active_plugins --format=json
+	 *     $ fin option get active_plugins --format=json
 	 *     {"0":"dynamically-dynamic-sidebar\/dynamically-dynamic-sidebar.php","1":"monster-widget\/monster-widget.php","2":"show-current-template\/show-current-template.php","3":"theme-check\/theme-check.php","5":"finpress-importer\/finpress-importer.php"}
 	 */
 	public function get( $args, $assoc_args ) {
@@ -77,10 +77,10 @@ class Option_Command extends FP_CLI_Command {
 		$value = get_option( $key );
 
 		if ( false === $value ) {
-			FP_CLI::error( "Could not get '{$key}' option. Does it exist?" );
+			FIN_CLI::error( "Could not get '{$key}' option. Does it exist?" );
 		}
 
-		FP_CLI::print_value( $value, $assoc_args );
+		FIN_CLI::print_value( $value, $assoc_args );
 	}
 
 	/**
@@ -118,14 +118,14 @@ class Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Create an option by reading a JSON file.
-	 *     $ fp option add my_option --format=json < config.json
+	 *     $ fin option add my_option --format=json < config.json
 	 *     Success: Added 'my_option' option.
 	 */
 	public function add( $args, $assoc_args ) {
 		$key = $args[0];
 
-		$value = FP_CLI::get_value_from_arg_or_stdin( $args, 1 );
-		$value = FP_CLI::read_value( $value, $assoc_args );
+		$value = FIN_CLI::get_value_from_arg_or_stdin( $args, 1 );
+		$value = FIN_CLI::read_value( $value, $assoc_args );
 
 		if ( in_array( Utils\get_flag_value( $assoc_args, 'autoload' ), [ 'no', 'off' ], true ) ) {
 			$autoload = 'no';
@@ -135,9 +135,9 @@ class Option_Command extends FP_CLI_Command {
 
 		// @phpstan-ignore argument.type
 		if ( ! add_option( $key, $value, '', $autoload ) ) {
-			FP_CLI::error( "Could not add option '{$key}'. Does it already exist?" );
+			FIN_CLI::error( "Could not add option '{$key}'. Does it already exist?" );
 		} else {
-			FP_CLI::success( "Added '{$key}' option." );
+			FIN_CLI::success( "Added '{$key}' option." );
 		}
 	}
 
@@ -214,11 +214,11 @@ class Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Get the total size of all autoload options.
-	 *     $ fp option list --autoload=on --format=total_bytes
+	 *     $ fin option list --autoload=on --format=total_bytes
 	 *     33198
 	 *
 	 *     # Find biggest transients.
-	 *     $ fp option list --search="*_transient_*" --fields=option_name,size_bytes | sort -n -k 2 | tail
+	 *     $ fin option list --search="*_transient_*" --fields=option_name,size_bytes | sort -n -k 2 | tail
 	 *     option_name size_bytes
 	 *     _site_transient_timeout_theme_roots 10
 	 *     _site_transient_theme_roots 76
@@ -227,7 +227,7 @@ class Option_Command extends FP_CLI_Command {
 	 *     _site_transient_update_plugins  6645
 	 *
 	 *     # List all options beginning with "i2f_".
-	 *     $ fp option list --search="i2f_*"
+	 *     $ fin option list --search="i2f_*"
 	 *     +-------------+--------------+
 	 *     | option_name | option_value |
 	 *     +-------------+--------------+
@@ -235,7 +235,7 @@ class Option_Command extends FP_CLI_Command {
 	 *     +-------------+--------------+
 	 *
 	 *     # Delete all options beginning with "theme_mods_".
-	 *     $ fp option list --search="theme_mods_*" --field=option_name | xargs -I % fp option delete %
+	 *     $ fin option list --search="theme_mods_*" --field=option_name | xargs -I % fin option delete %
 	 *     Success: Deleted 'theme_mods_twentysixteen' option.
 	 *     Success: Deleted 'theme_mods_twentyfifteen' option.
 	 *     Success: Deleted 'theme_mods_twentyfourteen' option.
@@ -247,7 +247,7 @@ class Option_Command extends FP_CLI_Command {
 	 */
 	public function list_( $args, $assoc_args ) {
 
-		global $fpdb;
+		global $findb;
 		$pattern        = '%';
 		$exclude        = '';
 		$fields         = array( 'option_name', 'option_value' );
@@ -283,7 +283,7 @@ class Option_Command extends FP_CLI_Command {
 			} elseif ( 'off' === $autoload || 'no' === $autoload ) {
 				$autoload_query = " AND (autoload='off') OR (autoload='no')";
 			} else {
-				FP_CLI::error( "Value of '--autoload' should be 'on', 'off', 'yes', or 'no'." );
+				FIN_CLI::error( "Value of '--autoload' should be 'on', 'off', 'yes', or 'no'." );
 			}
 		}
 
@@ -300,18 +300,18 @@ class Option_Command extends FP_CLI_Command {
 
 		$where = '';
 		if ( $pattern ) {
-			$where .= $fpdb->prepare( 'WHERE `option_name` LIKE %s', $pattern );
+			$where .= $findb->prepare( 'WHERE `option_name` LIKE %s', $pattern );
 		}
 
 		if ( $exclude ) {
-			$where .= $fpdb->prepare( ' AND `option_name` NOT LIKE %s', $exclude );
+			$where .= $findb->prepare( ' AND `option_name` NOT LIKE %s', $exclude );
 		}
 		$where .= $autoload_query . $transients_query;
 
 		// phpcs:disable FinPress.DB.PreparedSQL -- Hardcoded query parts without user input.
-		$results = $fpdb->get_results(
+		$results = $findb->get_results(
 			'SELECT `option_name`,`option_value`,`autoload`' . $size_query
-			. " FROM `$fpdb->options` {$where}"
+			. " FROM `$findb->options` {$where}"
 		);
 		// phpcs:enable
 
@@ -342,7 +342,7 @@ class Option_Command extends FP_CLI_Command {
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'format' ) === 'total_bytes' ) {
-			FP_CLI::line( $results[0]->size_bytes );
+			FIN_CLI::line( $results[0]->size_bytes );
 		} else {
 			$formatter = new Formatter(
 				$assoc_args,
@@ -364,7 +364,7 @@ class Option_Command extends FP_CLI_Command {
 	 * : The new value. If omitted, the value is read from STDIN.
 	 *
 	 * [--autoload=<autoload>]
-	 * : Requires FP 4.2. Should this option be automatically loaded.
+	 * : Requires FIN 4.2. Should this option be automatically loaded.
 	 * ---
 	 * options:
 	 *   - 'on'
@@ -385,32 +385,32 @@ class Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Update an option by reading from a file.
-	 *     $ fp option update my_option < value.txt
+	 *     $ fin option update my_option < value.txt
 	 *     Success: Updated 'my_option' option.
 	 *
 	 *     # Update one option on multiple sites using xargs.
-	 *     $ fp site list --field=url | xargs -n1 -I {} sh -c 'fp --url={} option update my_option my_value'
+	 *     $ fin site list --field=url | xargs -n1 -I {} sh -c 'fin --url={} option update my_option my_value'
 	 *     Success: Updated 'my_option' option.
 	 *     Success: Updated 'my_option' option.
 	 *
 	 *     # Update site blog name.
-	 *     $ fp option update blogname "Random blog name"
+	 *     $ fin option update blogname "Random blog name"
 	 *     Success: Updated 'blogname' option.
 	 *
 	 *     # Update site blog description.
-	 *     $ fp option update blogdescription "Some random blog description"
+	 *     $ fin option update blogdescription "Some random blog description"
 	 *     Success: Updated 'blogdescription' option.
 	 *
 	 *     # Update admin email address.
-	 *     $ fp option update admin_email someone@example.com
+	 *     $ fin option update admin_email someone@example.com
 	 *     Success: Updated 'admin_email' option.
 	 *
 	 *     # Set the default role.
-	 *     $ fp option update default_role author
+	 *     $ fin option update default_role author
 	 *     Success: Updated 'default_role' option.
 	 *
 	 *     # Set the timezone string.
-	 *     $ fp option update timezone_string "America/New_York"
+	 *     $ fin option update timezone_string "America/New_York"
 	 *     Success: Updated 'timezone_string' option.
 	 *
 	 * @alias set
@@ -418,8 +418,8 @@ class Option_Command extends FP_CLI_Command {
 	public function update( $args, $assoc_args ) {
 		$key = $args[0];
 
-		$value = FP_CLI::get_value_from_arg_or_stdin( $args, 1 );
-		$value = FP_CLI::read_value( $value, $assoc_args );
+		$value = FIN_CLI::get_value_from_arg_or_stdin( $args, 1 );
+		$value = FIN_CLI::read_value( $value, $assoc_args );
 
 		$autoload = Utils\get_flag_value( $assoc_args, 'autoload' );
 		if ( ! in_array( $autoload, [ 'on', 'off', 'yes', 'no' ], true ) ) {
@@ -438,12 +438,12 @@ class Option_Command extends FP_CLI_Command {
 		$old_value = sanitize_option( $key, get_option( $key ) );
 
 		if ( $value === $old_value && null === $autoload ) {
-			FP_CLI::success( "Value passed for '{$key}' option is unchanged." );
+			FIN_CLI::success( "Value passed for '{$key}' option is unchanged." );
 			// @phpstan-ignore argument.type
 		} elseif ( update_option( $key, $value, $autoload ) ) {
-				FP_CLI::success( "Updated '{$key}' option." );
+				FIN_CLI::success( "Updated '{$key}' option." );
 		} else {
-			FP_CLI::error( "Could not update option '{$key}'." );
+			FIN_CLI::error( "Could not update option '{$key}'." );
 		}
 	}
 
@@ -458,27 +458,27 @@ class Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Get the 'autoload' value for an option.
-	 *     $ fp option get-autoload blogname
+	 *     $ fin option get-autoload blogname
 	 *     yes
 	 *
 	 * @subcommand get-autoload
 	 */
 	public function get_autoload( $args ) {
-		global $fpdb;
+		global $findb;
 
 		list( $option ) = $args;
 
-		$existing = $fpdb->get_row(
-			$fpdb->prepare(
-				"SELECT autoload FROM $fpdb->options WHERE option_name=%s",
+		$existing = $findb->get_row(
+			$findb->prepare(
+				"SELECT autoload FROM $findb->options WHERE option_name=%s",
 				$option
 			)
 		);
 		if ( ! $existing ) {
-			FP_CLI::error( "Could not get '{$option}' option. Does it exist?" );
+			FIN_CLI::error( "Could not get '{$option}' option. Does it exist?" );
 
 		}
-		FP_CLI::log( $existing->autoload );
+		FIN_CLI::log( $existing->autoload );
 	}
 
 	/**
@@ -502,57 +502,57 @@ class Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Set the 'autoload' value for an option.
-	 *     $ fp option set-autoload abc_options no
+	 *     $ fin option set-autoload abc_options no
 	 *     Success: Updated autoload value for 'abc_options' option.
 	 *
 	 * @subcommand set-autoload
 	 */
 	public function set_autoload( $args ) {
-		global $fpdb;
+		global $findb;
 
 		list( $option, $autoload ) = $args;
 
-		$previous = $fpdb->get_row(
-			$fpdb->prepare(
-				"SELECT autoload, option_value FROM $fpdb->options WHERE option_name=%s",
+		$previous = $findb->get_row(
+			$findb->prepare(
+				"SELECT autoload, option_value FROM $findb->options WHERE option_name=%s",
 				$option
 			)
 		);
 		if ( ! $previous ) {
-			FP_CLI::error( "Could not get '{$option}' option. Does it exist?" );
+			FIN_CLI::error( "Could not get '{$option}' option. Does it exist?" );
 
 		}
 
 		if ( $previous->autoload === $autoload ) {
-			FP_CLI::success( "Autoload value passed for '{$option}' option is unchanged." );
+			FIN_CLI::success( "Autoload value passed for '{$option}' option is unchanged." );
 			return;
 		}
 
-		$fpdb->update(
-			$fpdb->options,
+		$findb->update(
+			$findb->options,
 			array( 'autoload' => $autoload ),
 			array( 'option_name' => $option )
 		);
 
 		// Recreate cache refreshing from update_option().
-		$notoptions = fp_cache_get( 'notoptions', 'options' );
+		$notoptions = fin_cache_get( 'notoptions', 'options' );
 
 		if ( is_array( $notoptions ) && isset( $notoptions[ $option ] ) ) {
 			unset( $notoptions[ $option ] );
-			fp_cache_set( 'notoptions', $notoptions, 'options' );
+			fin_cache_set( 'notoptions', $notoptions, 'options' );
 		}
 
-		if ( ! defined( 'FP_INSTALLING' ) ) {
-			$alloptions = fp_load_alloptions( true );
+		if ( ! defined( 'FIN_INSTALLING' ) ) {
+			$alloptions = fin_load_alloptions( true );
 			if ( isset( $alloptions[ $option ] ) ) {
 				$alloptions[ $option ] = $previous->option_value;
-				fp_cache_set( 'alloptions', $alloptions, 'options' );
+				fin_cache_set( 'alloptions', $alloptions, 'options' );
 			} else {
-				fp_cache_set( $option, $previous->option_value, 'options' );
+				fin_cache_set( $option, $previous->option_value, 'options' );
 			}
 		}
 
-		FP_CLI::success( "Updated autoload value for '{$option}' option." );
+		FIN_CLI::success( "Updated autoload value for '{$option}' option." );
 	}
 
 	/**
@@ -566,11 +566,11 @@ class Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete an option.
-	 *     $ fp option delete my_option
+	 *     $ fin option delete my_option
 	 *     Success: Deleted 'my_option' option.
 	 *
 	 *     # Delete multiple options.
-	 *     $ fp option delete option_one option_two option_three
+	 *     $ fin option delete option_one option_two option_three
 	 *     Success: Deleted 'option_one' option.
 	 *     Success: Deleted 'option_two' option.
 	 *     Warning: Could not delete 'option_three' option. Does it exist?
@@ -578,9 +578,9 @@ class Option_Command extends FP_CLI_Command {
 	public function delete( $args ) {
 		foreach ( $args as $arg ) {
 			if ( ! delete_option( $arg ) ) {
-				FP_CLI::warning( "Could not delete '{$arg}' option. Does it exist?" );
+				FIN_CLI::warning( "Could not delete '{$arg}' option. Does it exist?" );
 			} else {
-				FP_CLI::success( "Deleted '{$arg}' option." );
+				FIN_CLI::success( "Deleted '{$arg}' option." );
 			}
 		}
 	}
@@ -612,7 +612,7 @@ class Option_Command extends FP_CLI_Command {
 		$value = get_option( $key );
 
 		if ( false === $value ) {
-			FP_CLI::halt( 1 );
+			FIN_CLI::halt( 1 );
 		}
 
 		$key_path = array_map(
@@ -633,7 +633,7 @@ class Option_Command extends FP_CLI_Command {
 			die( 1 );
 		}
 
-		FP_CLI::print_value( $value, $assoc_args );
+		FIN_CLI::print_value( $value, $assoc_args );
 	}
 
 	/**
@@ -671,27 +671,27 @@ class Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Add 'bar' to the 'foo' key on an option with name 'option_name'
-	 *     $ fp option patch insert option_name foo bar
+	 *     $ fin option patch insert option_name foo bar
 	 *     Success: Updated 'option_name' option.
 	 *
 	 *     # Update the value of 'foo' key to 'new' on an option with name 'option_name'
-	 *     $ fp option patch update option_name foo new
+	 *     $ fin option patch update option_name foo new
 	 *     Success: Updated 'option_name' option.
 	 *
 	 *     # Set nested value of 'bar' key to value we have in the patch file on an option with name 'option_name'.
-	 *     $ fp option patch update option_name foo bar < patch
+	 *     $ fin option patch update option_name foo bar < patch
 	 *     Success: Updated 'option_name' option.
 	 *
 	 *     # Update the value for the key 'not-a-key' which is not exist on an option with name 'option_name'.
-	 *     $ fp option patch update option_name foo not-a-key new-value
+	 *     $ fin option patch update option_name foo not-a-key new-value
 	 *     Error: No data exists for key "not-a-key"
 	 *
 	 *     # Update the value for the key 'foo' without passing value on an option with name 'option_name'.
-	 *     $ fp option patch update option_name foo
+	 *     $ fin option patch update option_name foo
 	 *     Error: Please provide value to update.
 	 *
 	 *     # Delete the nested key 'bar' under 'foo' key on an option with name 'option_name'.
-	 *     $ fp option patch delete option_name foo bar
+	 *     $ fin option patch delete option_name foo bar
 	 *     Success: Updated 'option_name' option.
 	 */
 	public function patch( $args, $assoc_args ) {
@@ -710,19 +710,19 @@ class Option_Command extends FP_CLI_Command {
 			$patch_value = null;
 		} else {
 			$stdin_value = Utils\has_stdin()
-				? trim( FP_CLI::get_value_from_arg_or_stdin( $args, -1 ) )
+				? trim( FIN_CLI::get_value_from_arg_or_stdin( $args, -1 ) )
 				: null;
 
 			if ( ! empty( $stdin_value ) ) {
-				$patch_value = FP_CLI::read_value( $stdin_value, $assoc_args );
+				$patch_value = FIN_CLI::read_value( $stdin_value, $assoc_args );
 			} elseif ( count( $key_path ) > 1 ) {
-					$patch_value = FP_CLI::read_value( array_pop( $key_path ), $assoc_args );
+					$patch_value = FIN_CLI::read_value( array_pop( $key_path ), $assoc_args );
 			} else {
 				$patch_value = null;
 			}
 
 			if ( null === $patch_value ) {
-				FP_CLI::error( 'Please provide value to update.' );
+				FIN_CLI::error( 'Please provide value to update.' );
 			}
 		}
 
@@ -738,26 +738,26 @@ class Option_Command extends FP_CLI_Command {
 		try {
 			$traverser->$action( $key_path, $patch_value );
 		} catch ( Exception $exception ) {
-			FP_CLI::error( $exception->getMessage() );
+			FIN_CLI::error( $exception->getMessage() );
 		}
 
 		$patched_value = sanitize_option( $key, $traverser->value() );
 
 		if ( $patched_value === $old_value ) {
-			FP_CLI::success( "Value passed for '{$key}' option is unchanged." );
+			FIN_CLI::success( "Value passed for '{$key}' option is unchanged." );
 		} elseif ( update_option( $key, $patched_value ) ) {
-				FP_CLI::success( "Updated '{$key}' option." );
+				FIN_CLI::success( "Updated '{$key}' option." );
 		} else {
-			FP_CLI::error( "Could not update option '{$key}'." );
+			FIN_CLI::error( "Could not update option '{$key}'." );
 		}
 	}
 
 	private static function esc_like( $old ) {
 		/**
-		 * @var \fpdb $fpdb
+		 * @var \findb $findb
 		 */
-		global $fpdb;
+		global $findb;
 
-		return $fpdb->esc_like( $old );
+		return $findb->esc_like( $old );
 	}
 }

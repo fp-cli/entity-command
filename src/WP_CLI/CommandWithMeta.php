@@ -1,19 +1,19 @@
 <?php
 
-namespace FP_CLI;
+namespace FIN_CLI;
 
 use Exception;
-use FP_CLI;
-use FP_CLI_Command;
-use FP_CLI\Traverser\RecursiveDataStructureTraverser;
-use FP_CLI\Utils;
+use FIN_CLI;
+use FIN_CLI_Command;
+use FIN_CLI\Traverser\RecursiveDataStructureTraverser;
+use FIN_CLI\Utils;
 
 /**
- * Base class for FP-CLI commands that deal with metadata
+ * Base class for FIN-CLI commands that deal with metadata
  *
- * @package fp-cli
+ * @package fin-cli
  */
-abstract class CommandWithMeta extends FP_CLI_Command {
+abstract class CommandWithMeta extends FIN_CLI_Command {
 
 	protected $meta_type;
 
@@ -173,7 +173,7 @@ abstract class CommandWithMeta extends FP_CLI_Command {
 			die( 1 );
 		}
 
-		FP_CLI::print_value( $value, $assoc_args );
+		FIN_CLI::print_value( $value, $assoc_args );
 	}
 
 	/**
@@ -203,7 +203,7 @@ abstract class CommandWithMeta extends FP_CLI_Command {
 		$meta_value = ! empty( $args[2] ) ? $args[2] : '';
 
 		if ( empty( $meta_key ) && ! Utils\get_flag_value( $assoc_args, 'all' ) ) {
-			FP_CLI::error( 'Please specify a meta key, or use the --all flag.' );
+			FIN_CLI::error( 'Please specify a meta key, or use the --all flag.' );
 		}
 
 		$object_id = $this->check_object_id( $object_id );
@@ -213,23 +213,23 @@ abstract class CommandWithMeta extends FP_CLI_Command {
 			foreach ( $this->get_metadata( $object_id ) as $meta_key => $values ) {
 				$success = $this->delete_metadata( $object_id, $meta_key );
 				if ( $success ) {
-					FP_CLI::log( "Deleted '{$meta_key}' custom field." );
+					FIN_CLI::log( "Deleted '{$meta_key}' custom field." );
 				} else {
-					FP_CLI::warning( "Failed to delete '{$meta_key}' custom field." );
+					FIN_CLI::warning( "Failed to delete '{$meta_key}' custom field." );
 					$errors = true;
 				}
 			}
 			if ( $errors ) {
-				FP_CLI::error( 'Failed to delete all custom fields.' );
+				FIN_CLI::error( 'Failed to delete all custom fields.' );
 			} else {
-				FP_CLI::success( 'Deleted all custom fields.' );
+				FIN_CLI::success( 'Deleted all custom fields.' );
 			}
 		} else {
 			$success = $this->delete_metadata( $object_id, $meta_key, $meta_value );
 			if ( $success ) {
-				FP_CLI::success( 'Deleted custom field.' );
+				FIN_CLI::success( 'Deleted custom field.' );
 			} else {
-				FP_CLI::error( 'Failed to delete custom field.' );
+				FIN_CLI::error( 'Failed to delete custom field.' );
 			}
 		}
 	}
@@ -263,18 +263,18 @@ abstract class CommandWithMeta extends FP_CLI_Command {
 	public function add( $args, $assoc_args ) {
 		list( $object_id, $meta_key ) = $args;
 
-		$meta_value = FP_CLI::get_value_from_arg_or_stdin( $args, 2 );
-		$meta_value = FP_CLI::read_value( $meta_value, $assoc_args );
+		$meta_value = FIN_CLI::get_value_from_arg_or_stdin( $args, 2 );
+		$meta_value = FIN_CLI::read_value( $meta_value, $assoc_args );
 
 		$object_id = $this->check_object_id( $object_id );
 
-		$meta_value = fp_slash( $meta_value );
+		$meta_value = fin_slash( $meta_value );
 		$success    = $this->add_metadata( $object_id, $meta_key, $meta_value );
 
 		if ( $success ) {
-			FP_CLI::success( 'Added custom field.' );
+			FIN_CLI::success( 'Added custom field.' );
 		} else {
-			FP_CLI::error( 'Failed to add custom field.' );
+			FIN_CLI::error( 'Failed to add custom field.' );
 		}
 	}
 
@@ -309,8 +309,8 @@ abstract class CommandWithMeta extends FP_CLI_Command {
 	public function update( $args, $assoc_args ) {
 		list( $object_id, $meta_key ) = $args;
 
-		$meta_value = FP_CLI::get_value_from_arg_or_stdin( $args, 2 );
-		$meta_value = FP_CLI::read_value( $meta_value, $assoc_args );
+		$meta_value = FIN_CLI::get_value_from_arg_or_stdin( $args, 2 );
+		$meta_value = FIN_CLI::read_value( $meta_value, $assoc_args );
 
 		$object_id = $this->check_object_id( $object_id );
 
@@ -318,15 +318,15 @@ abstract class CommandWithMeta extends FP_CLI_Command {
 		$old_value  = sanitize_meta( $meta_key, $this->get_metadata( $object_id, $meta_key, true ), $this->meta_type );
 
 		if ( $meta_value === $old_value ) {
-			FP_CLI::success( "Value passed for custom field '{$meta_key}' is unchanged." );
+			FIN_CLI::success( "Value passed for custom field '{$meta_key}' is unchanged." );
 		} else {
-			$meta_value = fp_slash( $meta_value );
+			$meta_value = fin_slash( $meta_value );
 			$success    = $this->update_metadata( $object_id, $meta_key, $meta_value );
 
 			if ( $success ) {
-				FP_CLI::success( "Updated custom field '{$meta_key}'." );
+				FIN_CLI::success( "Updated custom field '{$meta_key}'." );
 			} else {
-				FP_CLI::error( "Failed to update custom field '{$meta_key}'." );
+				FIN_CLI::error( "Failed to update custom field '{$meta_key}'." );
 			}
 		}
 	}
@@ -377,7 +377,7 @@ abstract class CommandWithMeta extends FP_CLI_Command {
 			die( 1 );
 		}
 
-		FP_CLI::print_value( $value, $assoc_args );
+		FIN_CLI::print_value( $value, $assoc_args );
 	}
 
 	/**
@@ -432,11 +432,11 @@ abstract class CommandWithMeta extends FP_CLI_Command {
 			$patch_value = null;
 		} else {
 			$stdin_value = Utils\has_stdin()
-				? trim( FP_CLI::get_value_from_arg_or_stdin( $args, -1 ) )
+				? trim( FIN_CLI::get_value_from_arg_or_stdin( $args, -1 ) )
 				: null;
 			$patch_value = ! empty( $stdin_value )
-				? FP_CLI::read_value( $stdin_value, $assoc_args )
-				: FP_CLI::read_value( array_pop( $key_path ), $assoc_args );
+				? FIN_CLI::read_value( $stdin_value, $assoc_args )
+				: FIN_CLI::read_value( array_pop( $key_path ), $assoc_args );
 		}
 
 		/* Need to make a copy of $current_meta_value here as it is modified by reference */
@@ -451,21 +451,21 @@ abstract class CommandWithMeta extends FP_CLI_Command {
 		try {
 			$traverser->$action( $key_path, $patch_value );
 		} catch ( Exception $exception ) {
-			FP_CLI::error( $exception->getMessage() );
+			FIN_CLI::error( $exception->getMessage() );
 		}
 
 		$patched_meta_value = sanitize_meta( $meta_key, $traverser->value(), $this->meta_type );
 
 		if ( $patched_meta_value === $old_meta_value ) {
-			FP_CLI::success( "Value passed for custom field '{$meta_key}' is unchanged." );
+			FIN_CLI::success( "Value passed for custom field '{$meta_key}' is unchanged." );
 		} else {
-			$slashed = fp_slash( $patched_meta_value );
+			$slashed = fin_slash( $patched_meta_value );
 			$success = $this->update_metadata( $object_id, $meta_key, $slashed );
 
 			if ( $success ) {
-				FP_CLI::success( "Updated custom field '{$meta_key}'." );
+				FIN_CLI::success( "Updated custom field '{$meta_key}'." );
 			} else {
-				FP_CLI::error( "Failed to update custom field '{$meta_key}'." );
+				FIN_CLI::error( "Failed to update custom field '{$meta_key}'." );
 			}
 		}
 	}

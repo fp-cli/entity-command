@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="FP-CLI-entity">
-	<description>Custom ruleset for FP-CLI entity-command</description>
+<ruleset name="FIN-CLI-entity">
+	<description>Custom ruleset for FIN-CLI entity-command</description>
 
 	<!--
 	#############################################################################
@@ -24,11 +24,11 @@
 
 	<!--
 	#############################################################################
-	USE THE FP_CLI_CS RULESET
+	USE THE FIN_CLI_CS RULESET
 	#############################################################################
 	-->
 
-	<rule ref="FP_CLI_CS"/>
+	<rule ref="FIN_CLI_CS"/>
 
 	<!--
 	#############################################################################
@@ -45,16 +45,16 @@
 	<rule ref="FinPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="FP_CLI\Entity"/><!-- Namespaces. -->
-				<element value="fpcli_entity"/><!-- Global variables and such. -->
+				<element value="FIN_CLI\Entity"/><!-- Namespaces. -->
+				<element value="fincli_entity"/><!-- Global variables and such. -->
 			</property>
 		</properties>
 	</rule>
 
 	<!-- Exclude existing classes from the prefix rule as it would break BC to prefix them now. -->
 	<rule ref="FinPress.NamingConventions.PrefixAllGlobals.NonPrefixedNamespaceFound">
-		<exclude-pattern>*/src/FP_CLI/Fetchers/(Comment|Post|Signup|Site|User)\.php$</exclude-pattern>
-		<exclude-pattern>*/src/FP_CLI/CommandWith(DBObject|Meta|Terms)\.php$</exclude-pattern>
+		<exclude-pattern>*/src/FIN_CLI/Fetchers/(Comment|Post|Signup|Site|User)\.php$</exclude-pattern>
+		<exclude-pattern>*/src/FIN_CLI/CommandWith(DBObject|Meta|Terms)\.php$</exclude-pattern>
 	</rule>
 
 	<rule ref="FinPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound">
@@ -73,7 +73,7 @@
 
 	<!-- Whitelisting to provide backward compatibility to classes possibly extending this class. -->
 	<rule ref="PSR2.Methods.MethodDeclaration.Underscore">
-		<exclude-pattern>*/src/FP_CLI/CommandWithDBObject\.php$</exclude-pattern>
+		<exclude-pattern>*/src/FIN_CLI/CommandWithDBObject\.php$</exclude-pattern>
 	</rule>
 
 </ruleset>

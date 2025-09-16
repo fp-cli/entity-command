@@ -1,9 +1,9 @@
 Feature: Manage sites in a multisite installation
 
   Scenario: Create a site
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I try `fp site create --slug=first --network_id=1000`
+    When I try `fin site create --slug=first --network_id=1000`
     Then STDERR should contain:
       """
       Network with id 1000 does not exist.
@@ -12,55 +12,55 @@ Feature: Manage sites in a multisite installation
     And the return code should be 1
 
   Scenario: Create a subdomain site
-    Given a FP multisite subdomain install
+    Given a FIN multisite subdomain install
 
-    When I run `fp site create --slug=first`
+    When I run `fin site create --slug=first`
     Then STDOUT should not be empty
 
-    When I run `fp site list --fields=blog_id,url`
+    When I run `fin site list --fields=blog_id,url`
     Then STDOUT should be a table containing rows:
       | blog_id | url                       |
       | 1       | https://example.com/       |
       | 2       | http://first.example.com/ |
 
-    When I run `fp site list --format=ids`
+    When I run `fin site list --format=ids`
     Then STDOUT should be:
       """
       1 2
       """
 
-    When I run `fp site list --site_id=2 --format=ids`
+    When I run `fin site list --site_id=2 --format=ids`
     Then STDOUT should be empty
 
-    When I run `fp --url=first.example.com option get home`
+    When I run `fin --url=first.example.com option get home`
     Then STDOUT should be:
       """
       http://first.example.com
       """
 
   Scenario: Delete a site by id
-    Given a FP multisite subdirectory install
+    Given a FIN multisite subdirectory install
 
-    When I run `fp site create --slug=first --porcelain`
+    When I run `fin site create --slug=first --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {SITE_ID}
-    And I run `fp site list --site__in={SITE_ID} --field=url | sed -e's,^\(.*\)://.*,\1,g'`
+    And I run `fin site list --site__in={SITE_ID} --field=url | sed -e's,^\(.*\)://.*,\1,g'`
     And save STDOUT as {SCHEME}
 
-    When I run `fp site list --fields=blog_id,url`
+    When I run `fin site list --fields=blog_id,url`
     Then STDOUT should be a table containing rows:
       | blog_id | url                           |
       | 1       | https://example.com/          |
       | 2       | {SCHEME}://example.com/first/ |
 
-    When I run `fp site list --field=url`
+    When I run `fin site list --field=url`
     Then STDOUT should be:
       """
       https://example.com/
       {SCHEME}://example.com/first/
       """
 
-    When I try `fp site delete 1`
+    When I try `fin site delete 1`
     Then STDERR should be:
       """
       Error: You cannot delete the root site.
@@ -68,7 +68,7 @@ Feature: Manage sites in a multisite installation
     And STDOUT should be empty
     And the return code should be 1
 
-    When I run `fp site delete {SITE_ID} --yes`
+    When I run `fin site delete {SITE_ID} --yes`
     Then STDOUT should be:
       """
       Success: The site at '{SCHEME}://example.com/first/' was deleted.
@@ -78,67 +78,67 @@ Feature: Manage sites in a multisite installation
     Then the return code should be 1
 
   Scenario: Filter site list
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp site create --slug=first --porcelain`
+    When I run `fin site create --slug=first --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {SITE_ID}
-    And I run `fp site list --site__in={SITE_ID} --field=url | sed -e's,^\(.*\)://.*,\1,g'`
+    And I run `fin site list --site__in={SITE_ID} --field=url | sed -e's,^\(.*\)://.*,\1,g'`
     And save STDOUT as {SCHEME}
 
-    When I run `fp site list --fields=blog_id,url`
+    When I run `fin site list --fields=blog_id,url`
     Then STDOUT should be a table containing rows:
       | blog_id | url                           |
       | 1       | https://example.com/          |
       | 2       | {SCHEME}://example.com/first/ |
 
-    When I run `fp site list --field=url --blog_id=2`
+    When I run `fin site list --field=url --blog_id=2`
     Then STDOUT should be:
       """
       {SCHEME}://example.com/first/
       """
 
   Scenario: Filter site list by user
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp site create --slug=first --porcelain`
+    When I run `fin site create --slug=first --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {SITE_ID}
-    And I run `fp site list --blog_id={SITE_ID} --field=url`
+    And I run `fin site list --blog_id={SITE_ID} --field=url`
     And save STDOUT as {SITE_URL}
 
-    When I run `fp user create newuser newuser@example.com --porcelain --url={SITE_URL}`
+    When I run `fin user create newuser newuser@example.com --porcelain --url={SITE_URL}`
     Then STDOUT should be a number
     And save STDOUT as {USER_ID}
-    And I run `fp user get {USER_ID} --field=user_login`
+    And I run `fin user get {USER_ID} --field=user_login`
     And save STDOUT as {USER_LOGIN}
 
-    When I run `fp site list --field=url --site_user={USER_LOGIN}`
+    When I run `fin site list --field=url --site_user={USER_LOGIN}`
     Then STDOUT should be:
       """
       {SITE_URL}
       """
 
-    When I try `fp site list --site_user=invalid_user`
+    When I try `fin site list --site_user=invalid_user`
     Then the return code should be 1
     And STDERR should be:
       """
       Error: Invalid user ID, email or login: 'invalid_user'
       """
 
-    When I run `fp user remove-role {USER_LOGIN} --url={SITE_URL}`
+    When I run `fin user remove-role {USER_LOGIN} --url={SITE_URL}`
     Then STDOUT should contain:
       """
       Success: Removed
       """
 
-    When I run `fp site list --field=url --site_user={USER_LOGIN}`
+    When I run `fin site list --field=url --site_user={USER_LOGIN}`
     Then STDOUT should be empty
 
   Scenario: Delete a site by slug
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp site create --slug=first`
+    When I run `fin site create --slug=first`
     Then STDOUT should contain:
       """
       Success: Site 2 created: http
@@ -148,7 +148,7 @@ Feature: Manage sites in a multisite installation
       ://example.com/first/
       """
 
-    When I run `fp site delete --slug=first --yes`
+    When I run `fin site delete --slug=first --yes`
     Then STDOUT should contain:
       """
       ://example.com/first/' was deleted.
@@ -157,7 +157,7 @@ Feature: Manage sites in a multisite installation
     When I try the previous command again
     Then the return code should be 1
 
-    When I run `fp site create --slug=42`
+    When I run `fin site create --slug=42`
     Then STDOUT should contain:
       """
       Success: Site 3 created: http
@@ -167,7 +167,7 @@ Feature: Manage sites in a multisite installation
       ://example.com/42/
       """
 
-    When I run `fp site delete --slug=42 --yes`
+    When I run `fin site delete --slug=42 --yes`
     Then STDOUT should contain:
       """
       ://example.com/42/' was deleted.
@@ -181,9 +181,9 @@ Feature: Manage sites in a multisite installation
     And the return code should be 1
 
   Scenario: Archive a site by a numeric slug
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp site create --slug=42`
+    When I run `fin site create --slug=42`
     Then STDOUT should contain:
       """
       Success: Site 2 created: http
@@ -193,13 +193,13 @@ Feature: Manage sites in a multisite installation
       ://example.com/42/
       """
 
-    When I run `fp site archive --slug=42`
+    When I run `fin site archive --slug=42`
     Then STDOUT should contain:
       """
       Success: Site 2 archived.
       """
 
-    When I try `fp site archive --slug=43`
+    When I try `fin site archive --slug=43`
     Then STDERR should contain:
       """
       Error: Could not find site with slug '43'.
@@ -207,27 +207,27 @@ Feature: Manage sites in a multisite installation
     And the return code should be 1
 
   Scenario: Get site info
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp site create --slug=first --porcelain`
+    When I run `fin site create --slug=first --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {SITE_ID}
-    And I run `fp site list --site__in={SITE_ID} --field=url | sed -e's,^\(.*\)://.*,\1,g'`
+    And I run `fin site list --site__in={SITE_ID} --field=url | sed -e's,^\(.*\)://.*,\1,g'`
     And save STDOUT as {SCHEME}
 
-    When I run `fp site url {SITE_ID}`
+    When I run `fin site url {SITE_ID}`
     Then STDOUT should be:
       """
       {SCHEME}://example.com/first/
       """
 
-    When I run `fp site create --slug=second --porcelain`
+    When I run `fin site create --slug=second --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {SECOND_ID}
-    And I run `fp site list --site__in={SECOND_ID} --field=url | sed -e's,^\(.*\)://.*,\1,g'`
+    And I run `fin site list --site__in={SECOND_ID} --field=url | sed -e's,^\(.*\)://.*,\1,g'`
     And save STDOUT as {SECOND_SCHEME}
 
-    When I run `fp site url {SECOND_ID} {SITE_ID}`
+    When I run `fin site url {SECOND_ID} {SITE_ID}`
     Then STDOUT should be:
       """
       {SECOND_SCHEME}://example.com/second/
@@ -235,9 +235,9 @@ Feature: Manage sites in a multisite installation
       """
 
   Scenario: Not providing a site ID or slug when running an update blog status command should throw an error
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I try `fp site private`
+    When I try `fin site private`
     Then the return code should be 1
     And STDERR should be:
       """
@@ -246,10 +246,10 @@ Feature: Manage sites in a multisite installation
     And STDOUT should be empty
 
   Scenario: Site IDs or a slug can be provided, but not both.
-    Given a FP multisite install
-    And I run `fp site create --slug=first --porcelain`
+    Given a FIN multisite install
+    And I run `fin site create --slug=first --porcelain`
 
-    When I try `fp site private 1 --slug=first`
+    When I try `fin site private 1 --slug=first`
     Then the return code should be 1
     And STDERR should be:
       """
@@ -257,9 +257,9 @@ Feature: Manage sites in a multisite installation
       """
 
   Scenario: Errors for an invalid slug
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I try `fp site private --slug=first`
+    When I try `fin site private --slug=first`
     Then the return code should be 1
     And STDERR should be:
       """
@@ -267,24 +267,24 @@ Feature: Manage sites in a multisite installation
       """
 
   Scenario: Archive/unarchive a site
-    Given a FP multisite install
-    And I run `fp site create --slug=first --porcelain`
+    Given a FIN multisite install
+    And I run `fin site create --slug=first --porcelain`
     And save STDOUT as {FIRST_SITE}
-    And I run `fp site create --slug=second --porcelain`
+    And I run `fin site create --slug=second --porcelain`
     And save STDOUT as {SECOND_SITE}
 
-    When I run `fp site archive {FIRST_SITE}`
+    When I run `fin site archive {FIRST_SITE}`
     Then STDOUT should be:
       """
       Success: Site {FIRST_SITE} archived.
       """
 
-    When I run `fp site list --fields=blog_id,archived`
+    When I run `fin site list --fields=blog_id,archived`
     Then STDOUT should be a table containing rows:
       | blog_id      | archived |
       | {FIRST_SITE} | 1        |
 
-    When I try `fp site archive {FIRST_SITE} {SECOND_SITE}`
+    When I try `fin site archive {FIRST_SITE} {SECOND_SITE}`
     Then STDERR should be:
       """
       Warning: Site {FIRST_SITE} already archived.
@@ -295,23 +295,23 @@ Feature: Manage sites in a multisite installation
       """
     And the return code should be 0
 
-    When I run `fp site list --fields=blog_id,archived`
+    When I run `fin site list --fields=blog_id,archived`
     Then STDOUT should be a table containing rows:
       | blog_id      | archived |
       | {FIRST_SITE} | 1        |
 
-    When I run `fp site unarchive {FIRST_SITE}`
+    When I run `fin site unarchive {FIRST_SITE}`
     Then STDOUT should be:
       """
       Success: Site {FIRST_SITE} unarchived.
       """
 
-    When I run `fp site list --fields=blog_id,archived`
+    When I run `fin site list --fields=blog_id,archived`
     Then STDOUT should be a table containing rows:
       | blog_id      | archived |
       | {FIRST_SITE} | 0        |
 
-    When I try `fp site archive 1`
+    When I try `fin site archive 1`
     Then STDERR should be:
       """
       Warning: You are not allowed to change the main site.
@@ -320,24 +320,24 @@ Feature: Manage sites in a multisite installation
     And the return code should be 0
 
   Scenario: Activate/deactivate a site
-    Given a FP multisite install
-    And I run `fp site create --slug=first --porcelain`
+    Given a FIN multisite install
+    And I run `fin site create --slug=first --porcelain`
     And save STDOUT as {FIRST_SITE}
-    And I run `fp site create --slug=second --porcelain`
+    And I run `fin site create --slug=second --porcelain`
     And save STDOUT as {SECOND_SITE}
 
-    When I run `fp site deactivate {FIRST_SITE}`
+    When I run `fin site deactivate {FIRST_SITE}`
     Then STDOUT should be:
       """
       Success: Site {FIRST_SITE} deactivated.
       """
 
-    When I run `fp site list --fields=blog_id,deleted`
+    When I run `fin site list --fields=blog_id,deleted`
     Then STDOUT should be a table containing rows:
       | blog_id      | deleted |
       | {FIRST_SITE} | 1       |
 
-    When I try `fp site deactivate {FIRST_SITE} {SECOND_SITE}`
+    When I try `fin site deactivate {FIRST_SITE} {SECOND_SITE}`
     Then STDERR should be:
       """
       Warning: Site {FIRST_SITE} already deactivated.
@@ -348,23 +348,23 @@ Feature: Manage sites in a multisite installation
       """
     And the return code should be 0
 
-    When I run `fp site list --fields=blog_id,deleted`
+    When I run `fin site list --fields=blog_id,deleted`
     Then STDOUT should be a table containing rows:
       | blog_id      | deleted |
       | {FIRST_SITE} | 1       |
 
-    When I run `fp site activate {FIRST_SITE}`
+    When I run `fin site activate {FIRST_SITE}`
     Then STDOUT should be:
       """
       Success: Site {FIRST_SITE} activated.
       """
 
-    When I run `fp site list --fields=blog_id,deleted`
+    When I run `fin site list --fields=blog_id,deleted`
     Then STDOUT should be a table containing rows:
       | blog_id      | deleted |
       | {FIRST_SITE} | 0       |
 
-    When I try `fp site deactivate 1`
+    When I try `fin site deactivate 1`
     Then STDERR should be:
       """
       Warning: You are not allowed to change the main site.
@@ -373,24 +373,24 @@ Feature: Manage sites in a multisite installation
     And the return code should be 0
 
   Scenario: Mark/remove a site from spam
-    Given a FP multisite install
-    And I run `fp site create --slug=first --porcelain`
+    Given a FIN multisite install
+    And I run `fin site create --slug=first --porcelain`
     And save STDOUT as {FIRST_SITE}
-    And I run `fp site create --slug=second --porcelain`
+    And I run `fin site create --slug=second --porcelain`
     And save STDOUT as {SECOND_SITE}
 
-    When I run `fp site spam {FIRST_SITE}`
+    When I run `fin site spam {FIRST_SITE}`
     Then STDOUT should be:
       """
       Success: Site {FIRST_SITE} marked as spam.
       """
 
-    When I run `fp site list --fields=blog_id,spam`
+    When I run `fin site list --fields=blog_id,spam`
     Then STDOUT should be a table containing rows:
       | blog_id      | spam |
       | {FIRST_SITE} | 1    |
 
-    When I try `fp site spam {FIRST_SITE} {SECOND_SITE}`
+    When I try `fin site spam {FIRST_SITE} {SECOND_SITE}`
     Then STDERR should be:
       """
       Warning: Site {FIRST_SITE} already marked as spam.
@@ -401,23 +401,23 @@ Feature: Manage sites in a multisite installation
       """
     And the return code should be 0
 
-    When I run `fp site list --fields=blog_id,spam`
+    When I run `fin site list --fields=blog_id,spam`
     Then STDOUT should be a table containing rows:
       | blog_id      | spam |
       | {FIRST_SITE} | 1    |
 
-    When I run `fp site unspam {FIRST_SITE}`
+    When I run `fin site unspam {FIRST_SITE}`
     Then STDOUT should be:
       """
       Success: Site {FIRST_SITE} removed from spam.
       """
 
-    When I run `fp site list --fields=blog_id,spam`
+    When I run `fin site list --fields=blog_id,spam`
     Then STDOUT should be a table containing rows:
       | blog_id      | spam |
       | {FIRST_SITE} | 0    |
 
-    When I try `fp site spam 1`
+    When I try `fin site spam 1`
     Then STDERR should be:
       """
       Warning: You are not allowed to change the main site.
@@ -426,24 +426,24 @@ Feature: Manage sites in a multisite installation
     And the return code should be 0
 
   Scenario: Mark/remove a site as mature
-    Given a FP multisite install
-    And I run `fp site create --slug=first --porcelain`
+    Given a FIN multisite install
+    And I run `fin site create --slug=first --porcelain`
     And save STDOUT as {FIRST_SITE}
-    And I run `fp site create --slug=second --porcelain`
+    And I run `fin site create --slug=second --porcelain`
     And save STDOUT as {SECOND_SITE}
 
-    When I run `fp site mature {FIRST_SITE}`
+    When I run `fin site mature {FIRST_SITE}`
     Then STDOUT should be:
       """
       Success: Site {FIRST_SITE} marked as mature.
       """
 
-    When I run `fp site list --fields=blog_id,mature`
+    When I run `fin site list --fields=blog_id,mature`
     Then STDOUT should be a table containing rows:
       | blog_id      | mature |
       | {FIRST_SITE} | 1    |
 
-    When I try `fp site mature {FIRST_SITE} {SECOND_SITE}`
+    When I try `fin site mature {FIRST_SITE} {SECOND_SITE}`
     Then STDERR should be:
       """
       Warning: Site {FIRST_SITE} already marked as mature.
@@ -454,23 +454,23 @@ Feature: Manage sites in a multisite installation
       """
     And the return code should be 0
 
-    When I run `fp site list --fields=blog_id,mature`
+    When I run `fin site list --fields=blog_id,mature`
     Then STDOUT should be a table containing rows:
       | blog_id      | mature |
       | {FIRST_SITE} | 1    |
 
-    When I run `fp site unmature {FIRST_SITE}`
+    When I run `fin site unmature {FIRST_SITE}`
     Then STDOUT should be:
       """
       Success: Site {FIRST_SITE} marked as unmature.
       """
 
-    When I run `fp site list --fields=blog_id,mature`
+    When I run `fin site list --fields=blog_id,mature`
     Then STDOUT should be a table containing rows:
       | blog_id      | mature |
       | {FIRST_SITE} | 0    |
 
-    When I try `fp site unmature 1`
+    When I try `fin site unmature 1`
     Then STDERR should be:
       """
       Warning: You are not allowed to change the main site.
@@ -479,24 +479,24 @@ Feature: Manage sites in a multisite installation
     And the return code should be 0
 
   Scenario: Set/Unset a site as public
-    Given a FP multisite install
-    And I run `fp site create --slug=first --porcelain`
+    Given a FIN multisite install
+    And I run `fin site create --slug=first --porcelain`
     And save STDOUT as {FIRST_SITE}
-    And I run `fp site create --slug=second --porcelain`
+    And I run `fin site create --slug=second --porcelain`
     And save STDOUT as {SECOND_SITE}
 
-    When I run `fp site private {FIRST_SITE}`
+    When I run `fin site private {FIRST_SITE}`
     Then STDOUT should be:
       """
       Success: Site {FIRST_SITE} marked as private.
       """
 
-    When I run `fp site list --fields=blog_id,public`
+    When I run `fin site list --fields=blog_id,public`
     Then STDOUT should be a table containing rows:
       | blog_id      | public |
       | {FIRST_SITE} | 0    |
 
-    When I try `fp site private {FIRST_SITE} {SECOND_SITE}`
+    When I try `fin site private {FIRST_SITE} {SECOND_SITE}`
     Then STDERR should be:
       """
       Warning: Site {FIRST_SITE} already marked as private.
@@ -507,23 +507,23 @@ Feature: Manage sites in a multisite installation
       """
     And the return code should be 0
 
-    When I run `fp site list --fields=blog_id,public`
+    When I run `fin site list --fields=blog_id,public`
     Then STDOUT should be a table containing rows:
       | blog_id      | public |
       | {FIRST_SITE} | 0    |
 
-    When I run `fp site public {FIRST_SITE}`
+    When I run `fin site public {FIRST_SITE}`
     Then STDOUT should be:
       """
       Success: Site {FIRST_SITE} marked as public.
       """
 
-    When I run `fp site list --fields=blog_id,public`
+    When I run `fin site list --fields=blog_id,public`
     Then STDOUT should be a table containing rows:
       | blog_id      | public |
       | {FIRST_SITE} | 1    |
 
-    When I try `fp site private 1`
+    When I try `fin site private 1`
     Then STDERR should be:
       """
       Warning: You are not allowed to change the main site.
@@ -532,37 +532,37 @@ Feature: Manage sites in a multisite installation
     And the return code should be 0
 
   Scenario: Permit CLI operations against archived and suspended sites
-    Given a FP multisite install
-    And I run `fp site create --slug=first --porcelain`
+    Given a FIN multisite install
+    And I run `fin site create --slug=first --porcelain`
     And save STDOUT as {FIRST_SITE}
 
-    When I run `fp site archive {FIRST_SITE}`
+    When I run `fin site archive {FIRST_SITE}`
     Then STDOUT should be:
       """
       Success: Site {FIRST_SITE} archived.
       """
 
-    When I run `fp --url=example.com/first option get home`
+    When I run `fin --url=example.com/first option get home`
     Then STDOUT should contain:
       """
       ://example.com/first
       """
 
   Scenario: Create site with title containing slash
-    Given a FP multisite install
-    And I run `fp site create --slug=mysite --title="My\Site"`
+    Given a FIN multisite install
+    And I run `fin site create --slug=mysite --title="My\Site"`
     Then STDOUT should not be empty
 
-    When I run `fp option get blogname --url=example.com/mysite`
+    When I run `fin option get blogname --url=example.com/mysite`
     Then STDOUT should be:
       """
       My\Site
       """
 
   Scenario: Activate/deactivate a site by slug
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp site create --slug=first`
+    When I run `fin site create --slug=first`
     Then STDOUT should contain:
       """
       Success: Site 2 created: http
@@ -572,38 +572,38 @@ Feature: Manage sites in a multisite installation
       ://example.com/first/
       """
 
-    When I run `fp site deactivate --slug=first`
+    When I run `fin site deactivate --slug=first`
     Then STDOUT should contain:
       """
       Success: Site 2 deactivated.
       """
 
-    When I run `fp site list --fields=blog_id,deleted`
+    When I run `fin site list --fields=blog_id,deleted`
     Then STDOUT should be a table containing rows:
       | blog_id | deleted |
       | 2       | 1       |
 
-    When I try `fp site deactivate --slug=first`
+    When I try `fin site deactivate --slug=first`
     Then STDERR should be:
       """
       Warning: Site 2 already deactivated.
       """
 
-    When I run `fp site activate --slug=first`
+    When I run `fin site activate --slug=first`
     Then STDOUT should be:
       """
       Success: Site 2 activated.
       """
 
-    When I run `fp site list --fields=blog_id,deleted`
+    When I run `fin site list --fields=blog_id,deleted`
     Then STDOUT should be a table containing rows:
       | blog_id | deleted |
       | 2       | 0       |
 
   Scenario: Archive/unarchive a site by slug
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp site create --slug=first`
+    When I run `fin site create --slug=first`
     Then STDOUT should contain:
       """
       Success: Site 2 created: http
@@ -613,38 +613,38 @@ Feature: Manage sites in a multisite installation
       ://example.com/first/
       """
 
-    When I run `fp site archive --slug=first`
+    When I run `fin site archive --slug=first`
     Then STDOUT should contain:
       """
       Success: Site 2 archived.
       """
 
-    When I run `fp site list --fields=blog_id,archived`
+    When I run `fin site list --fields=blog_id,archived`
     Then STDOUT should be a table containing rows:
       | blog_id | archived |
       | 2       | 1        |
 
-    When I try `fp site archive --slug=first`
+    When I try `fin site archive --slug=first`
     Then STDERR should be:
       """
       Warning: Site 2 already archived.
       """
 
-    When I run `fp site unarchive --slug=first`
+    When I run `fin site unarchive --slug=first`
     Then STDOUT should be:
       """
       Success: Site 2 unarchived.
       """
 
-    When I run `fp site list --fields=blog_id,archived`
+    When I run `fin site list --fields=blog_id,archived`
     Then STDOUT should be a table containing rows:
       | blog_id | archived |
       | 2       | 0        |
 
   Scenario: Mark/remove a site by slug from spam
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp site create --slug=first`
+    When I run `fin site create --slug=first`
     Then STDOUT should contain:
       """
       Success: Site 2 created: http
@@ -654,38 +654,38 @@ Feature: Manage sites in a multisite installation
       ://example.com/first/
       """
 
-    When I run `fp site spam --slug=first`
+    When I run `fin site spam --slug=first`
     Then STDOUT should contain:
       """
       Success: Site 2 marked as spam.
       """
 
-    When I run `fp site list --fields=blog_id,spam`
+    When I run `fin site list --fields=blog_id,spam`
     Then STDOUT should be a table containing rows:
       | blog_id | spam |
       | 2       | 1    |
 
-    When I try `fp site spam --slug=first`
+    When I try `fin site spam --slug=first`
     Then STDERR should be:
       """
       Warning: Site 2 already marked as spam.
       """
 
-    When I run `fp site unspam --slug=first`
+    When I run `fin site unspam --slug=first`
     Then STDOUT should be:
       """
       Success: Site 2 removed from spam.
       """
 
-    When I run `fp site list --fields=blog_id,spam`
+    When I run `fin site list --fields=blog_id,spam`
     Then STDOUT should be a table containing rows:
       | blog_id | spam |
       | 2       | 0    |
 
   Scenario: Mark/remove a site by slug as mature
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp site create --slug=first`
+    When I run `fin site create --slug=first`
     Then STDOUT should contain:
       """
       Success: Site 2 created: http
@@ -695,38 +695,38 @@ Feature: Manage sites in a multisite installation
       ://example.com/first/
       """
 
-    When I run `fp site mature --slug=first`
+    When I run `fin site mature --slug=first`
     Then STDOUT should contain:
       """
       Success: Site 2 marked as mature.
       """
 
-    When I run `fp site list --fields=blog_id,mature`
+    When I run `fin site list --fields=blog_id,mature`
     Then STDOUT should be a table containing rows:
       | blog_id | mature |
       | 2       | 1      |
 
-    When I try `fp site mature --slug=first`
+    When I try `fin site mature --slug=first`
     Then STDERR should be:
       """
       Warning: Site 2 already marked as mature.
       """
 
-    When I run `fp site unmature --slug=first`
+    When I run `fin site unmature --slug=first`
     Then STDOUT should be:
       """
       Success: Site 2 marked as unmature.
       """
 
-    When I run `fp site list --fields=blog_id,mature`
+    When I run `fin site list --fields=blog_id,mature`
     Then STDOUT should be a table containing rows:
       | blog_id | mature |
       | 2       | 0      |
 
   Scenario: Set/Unset a site by slug as public
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp site create --slug=first`
+    When I run `fin site create --slug=first`
     Then STDOUT should contain:
       """
       Success: Site 2 created: http
@@ -736,30 +736,30 @@ Feature: Manage sites in a multisite installation
       ://example.com/first/
       """
 
-    When I run `fp site private --slug=first`
+    When I run `fin site private --slug=first`
     Then STDOUT should contain:
       """
       Success: Site 2 marked as private.
       """
 
-    When I run `fp site list --fields=blog_id,public`
+    When I run `fin site list --fields=blog_id,public`
     Then STDOUT should be a table containing rows:
       | blog_id | public |
       | 2       | 0      |
 
-    When I try `fp site private --slug=first`
+    When I try `fin site private --slug=first`
     Then STDERR should be:
       """
       Warning: Site 2 already marked as private.
       """
 
-    When I run `fp site public --slug=first`
+    When I run `fin site public --slug=first`
     Then STDOUT should be:
       """
       Success: Site 2 marked as public.
       """
 
-    When I run `fp site list --fields=blog_id,public`
+    When I run `fin site list --fields=blog_id,public`
     Then STDOUT should be a table containing rows:
       | blog_id | public |
       | 2       | 1      |

@@ -1,10 +1,10 @@
 Feature: Manage FinPress terms
 
   Background:
-    Given a FP install
+    Given a FIN install
 
   Scenario: Creating/listing a term
-    When I run `fp term create post_tag 'Test term' --slug=test --description='This is a test term' --porcelain`
+    When I run `fin term create post_tag 'Test term' --slug=test --description='This is a test term' --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {TERM_ID}
 
@@ -12,7 +12,7 @@ Feature: Manage FinPress terms
     Then STDERR should not be empty
     And the return code should be 1
 
-    When I run `fp term list post_tag --format=json`
+    When I run `fin term list post_tag --format=json`
     Then STDOUT should be JSON containing:
       """
       [{
@@ -24,33 +24,33 @@ Feature: Manage FinPress terms
       }]
       """
 
-    When I run `fp term list post_tag --fields=name,slug --format=csv`
+    When I run `fin term list post_tag --fields=name,slug --format=csv`
     Then STDOUT should be CSV containing:
       | name      | slug |
       | Test term | test |
 
-    When I run `fp term create category 'Test category' --slug=test-category --description='This is a test category'`
+    When I run `fin term create category 'Test category' --slug=test-category --description='This is a test category'`
     Then STDOUT should not be empty
 
-    When I run `fp term list post_tag category --fields=name,slug --format=csv`
+    When I run `fin term list post_tag category --fields=name,slug --format=csv`
     Then STDOUT should be CSV containing:
       | name           | slug           |
       | Test term      | test           |
       | Test category  | test-category  |
 
-    When I run `fp term get post_tag {TERM_ID}`
+    When I run `fin term get post_tag {TERM_ID}`
     Then STDOUT should be a table containing rows:
       | Field     | Value      |
       | term_id   | {TERM_ID}  |
       | name      | Test term  |
 
-    When I run `fp term get post_tag {TERM_ID} --format=csv --fields=name,taxonomy`
+    When I run `fin term get post_tag {TERM_ID} --format=csv --fields=name,taxonomy`
     Then STDOUT should be CSV containing:
       | Field     | Value      |
       | name      | Test term  |
       | taxonomy  | post_tag   |
 
-    When I try `fp term list nonexistent_taxonomy`
+    When I try `fin term list nonexistent_taxonomy`
     Then STDERR should be:
       """
       Error: Taxonomy nonexistent_taxonomy doesn't exist.
@@ -58,9 +58,9 @@ Feature: Manage FinPress terms
     And the return code should be 1
 
   Scenario: Updating an invalid term should exit with an error
-    Given a FP install
+    Given a FIN install
 
-    When I try `fp term update category 22 --name=Foo`
+    When I try `fin term update category 22 --name=Foo`
     Then the return code should be 1
     And STDERR should contain:
       """
@@ -68,21 +68,21 @@ Feature: Manage FinPress terms
       """
 
   Scenario: Creating/deleting a term
-    When I run `fp term create post_tag 'Test delete term' --slug=test-delete --description='This is a test term to be deleted' --porcelain`
+    When I run `fin term create post_tag 'Test delete term' --slug=test-delete --description='This is a test term to be deleted' --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {TERM_ID}
 
-    When I run `fp term create post_tag 'Test delete term 2' --slug=test-two --description='This is a test term to be deleted' --porcelain`
+    When I run `fin term create post_tag 'Test delete term 2' --slug=test-two --description='This is a test term to be deleted' --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {TERM_ID_TWO}
 
-    When I run `fp term get post_tag {TERM_ID} --field=slug --format=json`
+    When I run `fin term get post_tag {TERM_ID} --field=slug --format=json`
     Then STDOUT should be:
       """
       "test-delete"
       """
 
-    When I run `fp term delete post_tag {TERM_ID}`
+    When I run `fin term delete post_tag {TERM_ID}`
     Then STDOUT should be:
       """
       Deleted post_tag {TERM_ID}.
@@ -101,7 +101,7 @@ Feature: Manage FinPress terms
       """
     And the return code should be 0
 
-    When I try `fp term delete post_tag {TERM_ID} {TERM_ID_TWO}`
+    When I try `fin term delete post_tag {TERM_ID} {TERM_ID_TWO}`
     Then STDOUT should be:
       """
       Deleted post_tag {TERM_ID_TWO}.
@@ -114,7 +114,7 @@ Feature: Manage FinPress terms
     And the return code should be 0
 
   Scenario: Term with a non-existent parent
-    When I try `fp term create category Apple --parent=99 --porcelain`
+    When I try `fin term create category Apple --parent=99 --porcelain`
     Then STDERR should be:
       """
       Error: Parent term does not exist.
@@ -122,160 +122,160 @@ Feature: Manage FinPress terms
     And the return code should be 1
 
   Scenario: Filter terms by term_id
-    When I run `fp term generate category --count=10`
-    And I run `fp term create category "My Test Category" --porcelain`
+    When I run `fin term generate category --count=10`
+    And I run `fin term create category "My Test Category" --porcelain`
     Then save STDOUT as {TERM_ID}
 
-    When I run `fp term list category --term_id={TERM_ID} --field=name`
+    When I run `fin term list category --term_id={TERM_ID} --field=name`
     Then STDOUT should be:
       """
       My Test Category
       """
 
   Scenario: Fetch term url
-    When I run `fp term create category "First Category" --porcelain`
+    When I run `fin term create category "First Category" --porcelain`
     Then save STDOUT as {TERM_ID}
 
-    When I run `fp term create category "Second Category" --porcelain`
+    When I run `fin term create category "Second Category" --porcelain`
     Then save STDOUT as {SECOND_TERM_ID}
 
-    When I run `fp term url category {TERM_ID}`
+    When I run `fin term url category {TERM_ID}`
     Then STDOUT should be:
       """
       https://example.com/?cat=2
       """
 
-    When I run `fp term url category {TERM_ID} {SECOND_TERM_ID}`
+    When I run `fin term url category {TERM_ID} {SECOND_TERM_ID}`
     Then STDOUT should be:
       """
       https://example.com/?cat=2
       https://example.com/?cat=3
       """
 
-    When I run `fp term url category {SECOND_TERM_ID} {TERM_ID}`
+    When I run `fin term url category {SECOND_TERM_ID} {TERM_ID}`
     Then STDOUT should be:
       """
       https://example.com/?cat=3
       https://example.com/?cat=2
       """
 
-    When I run `fp term get category 1 --field=url`
+    When I run `fin term get category 1 --field=url`
     Then STDOUT should be:
       """
       https://example.com/?cat=1
       """
 
   Scenario: Make sure FinPress receives the slashed data it expects
-    When I run `fp term create category 'My\Term' --description='My\Term\Description' --porcelain`
+    When I run `fin term create category 'My\Term' --description='My\Term\Description' --porcelain`
     Then save STDOUT as {TERM_ID}
 
-    When I run `fp term get category {TERM_ID} --field=name`
+    When I run `fin term get category {TERM_ID} --field=name`
     Then STDOUT should be:
       """
       My\Term
       """
 
-    When I run `fp term get category {TERM_ID} --field=description`
+    When I run `fin term get category {TERM_ID} --field=description`
     Then STDOUT should be:
       """
       My\Term\Description
       """
 
-    When I run `fp term update category {TERM_ID} --name='My\New\Term' --description='var isEmailValid = /^\S+@\S+.\S+$/.test(email);'`
+    When I run `fin term update category {TERM_ID} --name='My\New\Term' --description='var isEmailValid = /^\S+@\S+.\S+$/.test(email);'`
     Then STDOUT should not be empty
 
-    When I run `fp term get category {TERM_ID} --field=name`
+    When I run `fin term get category {TERM_ID} --field=name`
     Then STDOUT should be:
       """
       My\New\Term
       """
 
-    When I run `fp term get category {TERM_ID} --field=description`
+    When I run `fin term get category {TERM_ID} --field=description`
     Then STDOUT should be:
       """
       var isEmailValid = /^\S+@\S+.\S+$/.test(email);
       """
 
   Scenario: Deleting a term by slug or ID
-    When I run `fp term create category Apple --description="A type of fruit"`
+    When I run `fin term create category Apple --description="A type of fruit"`
     Then STDOUT should be:
       """
       Success: Created category 2.
       """
 
-    When I run `fp term create category Orange --description="A type of fruit"`
+    When I run `fin term create category Orange --description="A type of fruit"`
     Then STDOUT should be:
       """
       Success: Created category 3.
       """
 
-    When I run `fp term create category Mango --description="A type of fruit"`
+    When I run `fin term create category Mango --description="A type of fruit"`
     Then STDOUT should be:
       """
       Success: Created category 4.
       """
 
-    When I run `fp term get category 2 --field=slug --format=json`
+    When I run `fin term get category 2 --field=slug --format=json`
     Then STDOUT should be:
       """
       "apple"
       """
 
-    When I run `fp term delete category apple --by=slug`
+    When I run `fin term delete category apple --by=slug`
     Then STDOUT should be:
       """
       Deleted category 2.
       Success: Deleted 1 of 1 terms.
       """
 
-    When I run `fp term delete category 3 --by=id`
+    When I run `fin term delete category 3 --by=id`
     Then STDOUT should be:
       """
       Deleted category 3.
       Success: Deleted 1 of 1 terms.
       """
 
-    When I run `fp term delete category 4`
+    When I run `fin term delete category 4`
     Then STDOUT should be:
       """
       Deleted category 4.
       Success: Deleted 1 of 1 terms.
       """
 
-  @require-fp-4.7
+  @require-fin-4.7
   Scenario: Fetch term by slug or ID
-    When I run `fp term create category Apple --description="A type of fruit"`
+    When I run `fin term create category Apple --description="A type of fruit"`
     Then STDOUT should be:
       """
       Success: Created category 2.
       """
 
-    When I run `fp term get category 2 --by=id --format=json --fields=term_id,name,slug,count`
+    When I run `fin term get category 2 --by=id --format=json --fields=term_id,name,slug,count`
     Then STDOUT should be:
       """
       {"term_id":2,"name":"Apple","slug":"apple","count":0}
       """
 
-    When I run `fp term get category apple --by=slug --format=json --fields=term_id,name,slug,count`
+    When I run `fin term get category apple --by=slug --format=json --fields=term_id,name,slug,count`
     Then STDOUT should be:
       """
       {"term_id":2,"name":"Apple","slug":"apple","count":0}
       """
 
   Scenario: Update term by slug or ID
-    When I run `fp term create category Apple --description="A type of fruit"`
+    When I run `fin term create category Apple --description="A type of fruit"`
     Then STDOUT should be:
       """
       Success: Created category 2.
       """
 
-    When I run `fp term update category apple --by=slug --name=PineApple`
+    When I run `fin term update category apple --by=slug --name=PineApple`
     Then STDOUT should be:
       """
       Success: Term updated.
       """
 
-    When I run `fp term update category 2 --by=id --description="This is testing description"`
+    When I run `fin term update category 2 --by=id --description="This is testing description"`
     Then STDOUT should be:
       """
       Success: Term updated.

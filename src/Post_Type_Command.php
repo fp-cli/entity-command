@@ -1,6 +1,6 @@
 <?php
 
-use FP_CLI\Formatter;
+use FIN_CLI\Formatter;
 
 /**
  * Retrieves details on the site's registered post types.
@@ -10,11 +10,11 @@ use FP_CLI\Formatter;
  * ## EXAMPLES
  *
  *     # Get details about a post type
- *     $ fp post-type get page --fields=name,label,hierarchical --format=json
+ *     $ fin post-type get page --fields=name,label,hierarchical --format=json
  *     {"name":"page","label":"Pages","hierarchical":true}
  *
  *     # List post types with 'post' capability type
- *     $ fp post-type list --capability_type=post --fields=name,public
+ *     $ fin post-type list --capability_type=post --fields=name,public
  *     +---------------+--------+
  *     | name          | public |
  *     +---------------+--------+
@@ -24,9 +24,9 @@ use FP_CLI\Formatter;
  *     | nav_menu_item |        |
  *     +---------------+--------+
  *
- * @package fp-cli
+ * @package fin-cli
  */
-class Post_Type_Command extends FP_CLI_Command {
+class Post_Type_Command extends FIN_CLI_Command {
 
 	private $fields = array(
 		'name',
@@ -44,26 +44,26 @@ class Post_Type_Command extends FP_CLI_Command {
 	 * @return array Associative array of post counts keyed by post type.
 	 */
 	protected function get_counts( $post_types ) {
-		global $fpdb;
+		global $findb;
 
 		if ( count( $post_types ) <= 0 ) {
 			return [];
 		}
 
-		$query = $fpdb->prepare(
+		$query = $findb->prepare(
 			"SELECT `post_type`, COUNT(*) AS `count`
-			FROM $fpdb->posts
+			FROM $findb->posts
 			WHERE `post_type` IN (" . implode( ',', array_fill( 0, count( $post_types ), '%s' ) ) . ')
 			GROUP BY `post_type`',
 			$post_types
 		);
 		// phpcs:ignore FinPress.DB.PreparedSQL.NotPrepared -- $query is already prepared above.
-		$counts = $fpdb->get_results( $query );
+		$counts = $findb->get_results( $query );
 
 		// Make sure there's a count for every item.
 		$counts = array_merge(
 			array_fill_keys( $post_types, 0 ),
-			fp_list_pluck( $counts, 'count', 'post_type' )
+			fin_list_pluck( $counts, 'count', 'post_type' )
 		);
 
 		return $counts;
@@ -113,7 +113,7 @@ class Post_Type_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # List registered post types
-	 *     $ fp post-type list --format=csv
+	 *     $ fin post-type list --format=csv
 	 *     name,label,description,hierarchical,public,capability_type
 	 *     post,Posts,,,1,post
 	 *     page,Pages,,1,1,page
@@ -122,7 +122,7 @@ class Post_Type_Command extends FP_CLI_Command {
 	 *     nav_menu_item,"Navigation Menu Items",,,,post
 	 *
 	 *     # List post types with 'post' capability type
-	 *     $ fp post-type list --capability_type=post --fields=name,public
+	 *     $ fin post-type list --capability_type=post --fields=name,public
 	 *     +---------------+--------+
 	 *     | name          | public |
 	 *     +---------------+--------+
@@ -142,7 +142,7 @@ class Post_Type_Command extends FP_CLI_Command {
 		$counts = [];
 
 		if ( count( $types ) > 0 && in_array( 'count', $fields, true ) ) {
-			$counts = $this->get_counts( fp_list_pluck( $types, 'name' ) );
+			$counts = $this->get_counts( fin_list_pluck( $types, 'name' ) );
 		}
 
 		$types = array_map(
@@ -203,14 +203,14 @@ class Post_Type_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Get details about the 'page' post type.
-	 *     $ fp post-type get page --fields=name,label,hierarchical --format=json
+	 *     $ fin post-type get page --fields=name,label,hierarchical --format=json
 	 *     {"name":"page","label":"Pages","hierarchical":true}
 	 */
 	public function get( $args, $assoc_args ) {
 		$post_type = get_post_type_object( $args[0] );
 
 		if ( ! $post_type ) {
-			FP_CLI::error( "Post type {$args[0]} doesn't exist." );
+			FIN_CLI::error( "Post type {$args[0]} doesn't exist." );
 		}
 
 		if ( empty( $assoc_args['fields'] ) ) {

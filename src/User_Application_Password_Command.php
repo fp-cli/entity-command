@@ -1,9 +1,9 @@
 <?php
 
-use FP_CLI\ExitException;
-use FP_CLI\Fetchers\User as UserFetcher;
-use FP_CLI\Formatter;
-use FP_CLI\Utils;
+use FIN_CLI\ExitException;
+use FIN_CLI\Fetchers\User as UserFetcher;
+use FIN_CLI\Formatter;
+use FIN_CLI\Utils;
 
 /**
  * Creates, updates, deletes, lists and retrieves application passwords.
@@ -11,7 +11,7 @@ use FP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # List user application passwords and only show app name and password hash
- *     $ fp user application-password list 123 --fields=name,password
+ *     $ fin user application-password list 123 --fields=name,password
  *     +--------+------------------------------------+
  *     | name   | password                           |
  *     +--------+------------------------------------+
@@ -19,7 +19,7 @@ use FP_CLI\Utils;
  *     +--------+------------------------------------+
  *
  *     # Get a specific application password and only show app name and created timestamp
- *     $ fp user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
+ *     $ fin user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
  *     +--------+------------+
  *     | name   | created    |
  *     +--------+------------+
@@ -27,30 +27,30 @@ use FP_CLI\Utils;
  *     +--------+------------+
  *
  *     # Create user application password
- *     $ fp user application-password create 123 myapp
+ *     $ fin user application-password create 123 myapp
  *     Success: Created application password.
  *     Password: ZG1bxdxdzjTwhsY8vK8l1C65
  *
  *     # Only print the password without any chrome
- *     $ fp user application-password create 123 myapp --porcelain
+ *     $ fin user application-password create 123 myapp --porcelain
  *     ZG1bxdxdzjTwhsY8vK8l1C65
  *
  *     # Update an existing application password
- *     $ fp user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
+ *     $ fin user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
  *     Success: Updated application password.
  *
  *     # Delete an existing application password
- *     $ fp user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
+ *     $ fin user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
  *     Success: Deleted 1 of 1 application password.
  *
  *     # Check if an application password for a given application exists
- *     $ fp user application-password exists 123 myapp
+ *     $ fin user application-password exists 123 myapp
  *     $ echo $?
  *     1
  *
  *     # Bash script for checking whether an application password exists and creating one if not
- *     if ! fp user application-password exists 123 myapp; then
- *         PASSWORD=$(fp user application-password create 123 myapp --porcelain)
+ *     if ! fin user application-password exists 123 myapp; then
+ *         PASSWORD=$(fin user application-password create 123 myapp --porcelain)
  *     fi
  */
 final class User_Application_Password_Command {
@@ -126,7 +126,7 @@ final class User_Application_Password_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # List user application passwords and only show app name and password hash
-	 *     $ fp user application-password list 123 --fields=name,password
+	 *     $ fin user application-password list 123 --fields=name,password
 	 *     +--------+------------------------------------+
 	 *     | name   | password                           |
 	 *     +--------+------------------------------------+
@@ -145,10 +145,10 @@ final class User_Application_Password_Command {
 
 		list( $user_id ) = $args;
 
-		$application_passwords = FP_Application_Passwords::get_user_application_passwords( $user_id );
+		$application_passwords = FIN_Application_Passwords::get_user_application_passwords( $user_id );
 
-		if ( $application_passwords instanceof FP_Error ) {
-			FP_CLI::error( $application_passwords );
+		if ( $application_passwords instanceof FIN_Error ) {
+			FIN_CLI::error( $application_passwords );
 		}
 
 		if ( empty( $application_passwords ) ) {
@@ -203,7 +203,7 @@ final class User_Application_Password_Command {
 		$formatter = new Formatter( $assoc_args, $fields );
 
 		if ( 'ids' === $format ) {
-			$formatter->display_items( fp_list_pluck( $application_passwords, 'uuid' ) );
+			$formatter->display_items( fin_list_pluck( $application_passwords, 'uuid' ) );
 		} else {
 			$formatter->display_items( $application_passwords );
 		}
@@ -240,7 +240,7 @@ final class User_Application_Password_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Get a specific application password and only show app name and created timestamp
-	 *     $ fp user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
+	 *     $ fin user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
 	 *     +--------+------------+
 	 *     | name   | created    |
 	 *     +--------+------------+
@@ -256,14 +256,14 @@ final class User_Application_Password_Command {
 
 		list( $user_id, $uuid ) = $args;
 
-		$application_password = FP_Application_Passwords::get_user_application_password( $user_id, $uuid );
+		$application_password = FIN_Application_Passwords::get_user_application_password( $user_id, $uuid );
 
-		if ( $application_password instanceof FP_Error ) {
-			FP_CLI::error( $application_password );
+		if ( $application_password instanceof FIN_Error ) {
+			FIN_CLI::error( $application_password );
 		}
 
 		if ( null === $application_password ) {
-			FP_CLI::error( 'No application password found for this user ID and UUID.' );
+			FIN_CLI::error( 'No application password found for this user ID and UUID.' );
 		}
 
 		$fields = self::APPLICATION_PASSWORD_FIELDS;
@@ -296,16 +296,16 @@ final class User_Application_Password_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Create user application password
-	 *     $ fp user application-password create 123 myapp
+	 *     $ fin user application-password create 123 myapp
 	 *     Success: Created application password.
 	 *     Password: ZG1bxdxdzjTwhsY8vK8l1C65
 	 *
 	 *     # Only print the password without any chrome
-	 *     $ fp user application-password create 123 myapp --porcelain
+	 *     $ fin user application-password create 123 myapp --porcelain
 	 *     ZG1bxdxdzjTwhsY8vK8l1C65
 	 *
 	 *     # Create user application with a custom application ID for internal tracking
-	 *     $ fp user application-password create 123 myapp --app-id=42 --porcelain
+	 *     $ fin user application-password create 123 myapp --app-id=42 --porcelain
 	 *     ZG1bxdxdzjTwhsY8vK8l1C65
 	 *
 	 * @param array $args       Indexed array of positional arguments.
@@ -331,19 +331,19 @@ final class User_Application_Password_Command {
 			'app_id' => $app_id,
 		];
 
-		$result = FP_Application_Passwords::create_new_application_password( (int) $user_id, $arguments );
+		$result = FIN_Application_Passwords::create_new_application_password( (int) $user_id, $arguments );
 
-		if ( $result instanceof FP_Error ) {
-			FP_CLI::error( $result );
+		if ( $result instanceof FIN_Error ) {
+			FIN_CLI::error( $result );
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'porcelain', false ) ) {
-			FP_CLI::line( $result[0] );
-			FP_CLI::halt( 0 );
+			FIN_CLI::line( $result[0] );
+			FIN_CLI::halt( 0 );
 		}
 
-		FP_CLI::success( 'Created application password.' );
-		FP_CLI::line( "Password: {$result[0]}" );
+		FIN_CLI::success( 'Created application password.' );
+		FIN_CLI::line( "Password: {$result[0]}" );
 	}
 
 	/**
@@ -363,7 +363,7 @@ final class User_Application_Password_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Update an existing application password
-	 *     $ fp user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
+	 *     $ fin user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
 	 *     Success: Updated application password.
 	 *
 	 * @param array $args       Indexed array of positional arguments.
@@ -375,13 +375,13 @@ final class User_Application_Password_Command {
 
 		list( $user_id, $uuid ) = $args;
 
-		$result = FP_Application_Passwords::update_application_password( $user_id, $uuid, $assoc_args );
+		$result = FIN_Application_Passwords::update_application_password( $user_id, $uuid, $assoc_args );
 
-		if ( $result instanceof FP_Error ) {
-			FP_CLI::error( $result );
+		if ( $result instanceof FIN_Error ) {
+			FIN_CLI::error( $result );
 		}
 
-		FP_CLI::success( 'Updated application password.' );
+		FIN_CLI::success( 'Updated application password.' );
 	}
 
 	/**
@@ -398,7 +398,7 @@ final class User_Application_Password_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Record usage of an application password
-	 *     $ fp user application-password record-usage 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
+	 *     $ fin user application-password record-usage 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
 	 *     Success: Recorded application password usage.
 	 *
 	 * @subcommand record-usage
@@ -412,13 +412,13 @@ final class User_Application_Password_Command {
 
 		list( $user_id, $uuid ) = $args;
 
-		$result = FP_Application_Passwords::record_application_password_usage( $user_id, $uuid );
+		$result = FIN_Application_Passwords::record_application_password_usage( $user_id, $uuid );
 
-		if ( $result instanceof FP_Error ) {
-			FP_CLI::error( $result );
+		if ( $result instanceof FIN_Error ) {
+			FIN_CLI::error( $result );
 		}
 
-		FP_CLI::success( 'Recorded application password usage.' );
+		FIN_CLI::success( 'Recorded application password usage.' );
 	}
 
 	/**
@@ -438,11 +438,11 @@ final class User_Application_Password_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete an existing application password
-	 *     $ fp user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
+	 *     $ fin user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
 	 *     Success: Deleted 1 of 1 application password.
 	 *
 	 *     # Delete all of the user's application passwords
-	 *     $ fp user application-password delete 123 --all
+	 *     $ fin user application-password delete 123 --all
 	 *     Success: Deleted all application passwords.
 	 *
 	 * @param array $args       Indexed array of positional arguments.
@@ -457,31 +457,31 @@ final class User_Application_Password_Command {
 		$count   = count( $args );
 
 		if ( ( 0 < $count && true === $all ) || ( 0 === $count && true !== $all ) ) {
-			FP_CLI::error( 'You need to specify either one or more UUIDS or provide the --all flag' );
+			FIN_CLI::error( 'You need to specify either one or more UUIDS or provide the --all flag' );
 		}
 
 		if ( true === $all ) {
-			$result = FP_Application_Passwords::delete_all_application_passwords( $user_id );
+			$result = FIN_Application_Passwords::delete_all_application_passwords( $user_id );
 
-			if ( $result instanceof FP_Error ) {
-				FP_CLI::error( $result );
+			if ( $result instanceof FIN_Error ) {
+				FIN_CLI::error( $result );
 			}
 
-			FP_CLI::success( 'Deleted all application passwords.' );
-			FP_CLI::halt( 0 );
+			FIN_CLI::success( 'Deleted all application passwords.' );
+			FIN_CLI::halt( 0 );
 		}
 
 		$errors = 0;
 		foreach ( $args as $uuid ) {
-			$result = FP_Application_Passwords::delete_application_password( $user_id, $uuid );
+			$result = FIN_Application_Passwords::delete_application_password( $user_id, $uuid );
 
-			if ( $result instanceof FP_Error ) {
-				FP_CLI::warning( "Failed to delete UUID {$uuid}: " . $result->get_error_message() );
+			if ( $result instanceof FIN_Error ) {
+				FIN_CLI::warning( "Failed to delete UUID {$uuid}: " . $result->get_error_message() );
 				++$errors;
 			}
 		}
 
-		FP_CLI::success(
+		FIN_CLI::success(
 			sprintf(
 				'Deleted %d of %d application %s.',
 				$count - $errors,
@@ -490,7 +490,7 @@ final class User_Application_Password_Command {
 			)
 		);
 
-		FP_CLI::halt( 0 === $errors ? 0 : 1 );
+		FIN_CLI::halt( 0 === $errors ? 0 : 1 );
 	}
 
 	/**
@@ -507,13 +507,13 @@ final class User_Application_Password_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Check if an application password for a given application exists
-	 *     $ fp user application-password exists 123 myapp
+	 *     $ fin user application-password exists 123 myapp
 	 *     $ echo $?
 	 *     1
 	 *
 	 *     # Bash script for checking whether an application password exists and creating one if not
-	 *     if ! fp user application-password exists 123 myapp; then
-	 *         PASSWORD=$(fp user application-password create 123 myapp --porcelain)
+	 *     if ! fin user application-password exists 123 myapp; then
+	 *         PASSWORD=$(fin user application-password create 123 myapp --porcelain)
 	 *     fi
 	 *
 	 * @param array $args       Indexed array of positional arguments.
@@ -527,11 +527,11 @@ final class User_Application_Password_Command {
 
 		$result = $this->application_name_exists_for_user( $user_id, $app_name );
 
-		if ( $result instanceof FP_Error ) {
-			FP_CLI::error( $result );
+		if ( $result instanceof FIN_Error ) {
+			FIN_CLI::error( $result );
 		}
 
-		FP_CLI::halt( $result ? 0 : 1 );
+		FIN_CLI::halt( $result ? 0 : 1 );
 	}
 
 	/**
@@ -551,7 +551,7 @@ final class User_Application_Password_Command {
 	/**
 	 * Checks if application name exists for the given user.
 	 *
-	 * This is a polyfill for FP_Application_Passwords::get_user_application_passwords(), which was only added for
+	 * This is a polyfill for FIN_Application_Passwords::get_user_application_passwords(), which was only added for
 	 * FinPress 5.7+, but we're already supporting application passwords for FinPress 5.6+.
 	 *
 	 * @param int    $user_id  User ID to check the application passwords for.
@@ -559,8 +559,8 @@ final class User_Application_Password_Command {
 	 * @return bool
 	 */
 	private function application_name_exists_for_user( $user_id, $app_name ) {
-		if ( Utils\fp_version_compare( '5.7', '<' ) ) {
-			$passwords = FP_Application_Passwords::get_user_application_passwords( $user_id );
+		if ( Utils\fin_version_compare( '5.7', '<' ) ) {
+			$passwords = FIN_Application_Passwords::get_user_application_passwords( $user_id );
 
 			foreach ( $passwords as $password ) {
 				if ( strtolower( $password['name'] ) === strtolower( $app_name ) ) {
@@ -571,6 +571,6 @@ final class User_Application_Password_Command {
 			return false;
 		}
 
-		return FP_Application_Passwords::application_name_exists_for_user( $user_id, $app_name );
+		return FIN_Application_Passwords::application_name_exists_for_user( $user_id, $app_name );
 	}
 }

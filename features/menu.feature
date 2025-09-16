@@ -1,17 +1,17 @@
 Feature: Manage FinPress menus
 
   Background:
-    Given a FP install
+    Given a FIN install
 
   Scenario: Menu CRUD operations
 
-    When I run `fp menu create "My Menu"`
-    And I run `fp menu list --fields=name,slug`
+    When I run `fin menu create "My Menu"`
+    And I run `fin menu list --fields=name,slug`
     Then STDOUT should be a table containing rows:
       | name       | slug       |
       | My Menu    | my-menu    |
 
-    When I run `fp menu delete "My Menu"`
+    When I run `fin menu delete "My Menu"`
     Then STDOUT should be:
       """
       Deleted menu 'My Menu'.
@@ -19,21 +19,21 @@ Feature: Manage FinPress menus
       """
     And the return code should be 0
 
-    When I run `fp menu list --format=count`
+    When I run `fin menu list --format=count`
     Then STDOUT should be:
       """
       0
       """
 
-    When I run `fp menu create "First Menu"`
-    And I run `fp menu create "Second Menu"`
-    And I run `fp menu list --fields=name,slug`
+    When I run `fin menu create "First Menu"`
+    And I run `fin menu create "Second Menu"`
+    And I run `fin menu list --fields=name,slug`
     Then STDOUT should be a table containing rows:
       | name           | slug           |
       | First Menu     | first-menu     |
       | Second Menu    | second-menu    |
 
-    When I run `fp menu delete "First Menu" "Second Menu"`
+    When I run `fin menu delete "First Menu" "Second Menu"`
     Then STDOUT should be:
       """
       Deleted menu 'First Menu'.
@@ -42,21 +42,21 @@ Feature: Manage FinPress menus
       """
     And the return code should be 0
 
-    When I run `fp menu list --format=count`
+    When I run `fin menu list --format=count`
     Then STDOUT should be:
       """
       0
       """
 
-    When I run `fp menu create "First Menu"`
-    And I run `fp menu list --format=ids`
+    When I run `fin menu create "First Menu"`
+    And I run `fin menu list --format=ids`
     Then STDOUT should be:
       """
       5
       """
 
   Scenario: Errors when deleting menus
-    When I try `fp menu delete "Your menu"`
+    When I try `fin menu delete "Your menu"`
     Then STDERR should be:
       """
       Warning: Couldn't delete menu 'Your menu'.
@@ -64,13 +64,13 @@ Feature: Manage FinPress menus
       """
     And the return code should be 1
 
-    When I run `fp menu create "My Menu"`
-    And I run `fp menu list --fields=name,slug`
+    When I run `fin menu create "My Menu"`
+    And I run `fin menu list --fields=name,slug`
     Then STDOUT should be a table containing rows:
       | name       | slug       |
       | My Menu    | my-menu    |
 
-    When I try `fp menu delete "My Menu" "Your menu"`
+    When I try `fin menu delete "My Menu" "Your menu"`
     Then STDERR should be:
       """
       Warning: Couldn't delete menu 'Your menu'.

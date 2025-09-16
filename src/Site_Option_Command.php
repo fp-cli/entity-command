@@ -1,8 +1,8 @@
 <?php
 
-use FP_CLI\Formatter;
-use FP_CLI\Traverser\RecursiveDataStructureTraverser;
-use FP_CLI\Utils;
+use FIN_CLI\Formatter;
+use FIN_CLI\Traverser\RecursiveDataStructureTraverser;
+use FIN_CLI\Utils;
 
 /**
  * Adds, updates, deletes, and lists site options in a multisite installation.
@@ -10,22 +10,22 @@ use FP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # Get site registration
- *     $ fp site option get registration
+ *     $ fin site option get registration
  *     none
  *
  *     # Add site option
- *     $ fp site option add my_option foobar
+ *     $ fin site option add my_option foobar
  *     Success: Added 'my_option' site option.
  *
  *     # Update site option
- *     $ fp site option update my_option '{"foo": "bar"}' --format=json
+ *     $ fin site option update my_option '{"foo": "bar"}' --format=json
  *     Success: Updated 'my_option' site option.
  *
  *     # Delete site option
- *     $ fp site option delete my_option
+ *     $ fin site option delete my_option
  *     Success: Deleted 'my_option' site option.
  */
-class Site_Option_Command extends FP_CLI_Command {
+class Site_Option_Command extends FIN_CLI_Command {
 
 	/**
 	 * Gets a site option.
@@ -48,7 +48,7 @@ class Site_Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Get site upload filetypes
-	 *     $ fp site option get upload_filetypes
+	 *     $ fin site option get upload_filetypes
 	 *     jpg jpeg png gif mov avi mpg
 	 */
 	public function get( $args, $assoc_args ) {
@@ -57,10 +57,10 @@ class Site_Option_Command extends FP_CLI_Command {
 		$value = get_site_option( $key );
 
 		if ( false === $value ) {
-			FP_CLI::halt( 1 );
+			FIN_CLI::halt( 1 );
 		}
 
-		FP_CLI::print_value( $value, $assoc_args );
+		FIN_CLI::print_value( $value, $assoc_args );
 	}
 
 	/**
@@ -86,19 +86,19 @@ class Site_Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Create a site option by reading a JSON file
-	 *     $ fp site option add my_option --format=json < config.json
+	 *     $ fin site option add my_option --format=json < config.json
 	 *     Success: Added 'my_option' site option.
 	 */
 	public function add( $args, $assoc_args ) {
 		$key = $args[0];
 
-		$value = FP_CLI::get_value_from_arg_or_stdin( $args, 1 );
-		$value = FP_CLI::read_value( $value, $assoc_args );
+		$value = FIN_CLI::get_value_from_arg_or_stdin( $args, 1 );
+		$value = FIN_CLI::read_value( $value, $assoc_args );
 
 		if ( ! add_site_option( $key, $value ) ) {
-			FP_CLI::error( "Could not add site option '{$key}'. Does it already exist?" );
+			FIN_CLI::error( "Could not add site option '{$key}'. Does it already exist?" );
 		} else {
-			FP_CLI::success( "Added '{$key}' site option." );
+			FIN_CLI::success( "Added '{$key}' site option." );
 		}
 	}
 
@@ -148,7 +148,7 @@ class Site_Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # List all site options beginning with "i2f_"
-	 *     $ fp site option list --search="i2f_*"
+	 *     $ fin site option list --search="i2f_*"
 	 *     +-------------+--------------+
 	 *     | meta_key    | meta_value   |
 	 *     +-------------+--------------+
@@ -159,7 +159,7 @@ class Site_Option_Command extends FP_CLI_Command {
 	 */
 	public function list_( $args, $assoc_args ) {
 
-		global $fpdb;
+		global $findb;
 		$pattern    = '%';
 		$fields     = [ 'meta_key', 'meta_value' ];
 		$size_query = ',LENGTH(meta_value) AS `size_bytes`';
@@ -180,22 +180,22 @@ class Site_Option_Command extends FP_CLI_Command {
 			$size_query = ',SUM(LENGTH(meta_value)) AS `size_bytes`';
 		}
 
-		$query = $fpdb->prepare(
+		$query = $findb->prepare(
 			'SELECT `meta_id`, `site_id`, `meta_key`,`meta_value`'
 				. $size_query // phpcs:ignore FinPress.DB.PreparedSQL.NotPrepared -- Hard-coded partial query without user input.
-				. " FROM `$fpdb->sitemeta` WHERE `meta_key` LIKE %s",
+				. " FROM `$findb->sitemeta` WHERE `meta_key` LIKE %s",
 			$pattern
 		);
 
 		$site_id = Utils\get_flag_value( $assoc_args, 'site_id' );
 		if ( $site_id ) {
-			$query .= $fpdb->prepare( ' AND site_id=%d', $site_id );
+			$query .= $findb->prepare( ' AND site_id=%d', $site_id );
 		}
 		// phpcs:ignore FinPress.DB.PreparedSQL.NotPrepared -- $query is already prepared above.
-		$results = $fpdb->get_results( $query );
+		$results = $findb->get_results( $query );
 
 		if ( Utils\get_flag_value( $assoc_args, 'format' ) === 'total_bytes' ) {
-			FP_CLI::line( $results[0]->size_bytes );
+			FIN_CLI::line( $results[0]->size_bytes );
 		} else {
 			$formatter = new Formatter(
 				$assoc_args,
@@ -228,7 +228,7 @@ class Site_Option_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Update a site option by reading from a file
-	 *     $ fp site option update my_option < value.txt
+	 *     $ fin site option update my_option < value.txt
 	 *     Success: Updated 'my_option' site option.
 	 *
 	 * @alias set
@@ -236,18 +236,18 @@ class Site_Option_Command extends FP_CLI_Command {
 	public function update( $args, $assoc_args ) {
 		$key = $args[0];
 
-		$value = FP_CLI::get_value_from_arg_or_stdin( $args, 1 );
-		$value = FP_CLI::read_value( $value, $assoc_args );
+		$value = FIN_CLI::get_value_from_arg_or_stdin( $args, 1 );
+		$value = FIN_CLI::read_value( $value, $assoc_args );
 
 		$value     = sanitize_option( $key, $value );
 		$old_value = sanitize_option( $key, get_site_option( $key ) );
 
 		if ( $value === $old_value ) {
-			FP_CLI::success( "Value passed for '{$key}' site option is unchanged." );
+			FIN_CLI::success( "Value passed for '{$key}' site option is unchanged." );
 		} elseif ( update_site_option( $key, $value ) ) {
-				FP_CLI::success( "Updated '{$key}' site option." );
+				FIN_CLI::success( "Updated '{$key}' site option." );
 		} else {
-			FP_CLI::error( "Could not update site option '{$key}'." );
+			FIN_CLI::error( "Could not update site option '{$key}'." );
 		}
 	}
 
@@ -261,16 +261,16 @@ class Site_Option_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp site option delete my_option
+	 *     $ fin site option delete my_option
 	 *     Success: Deleted 'my_option' site option.
 	 */
 	public function delete( $args ) {
 		list( $key ) = $args;
 
 		if ( ! delete_site_option( $key ) ) {
-			FP_CLI::error( "Could not delete '{$key}' site option. Does it exist?" );
+			FIN_CLI::error( "Could not delete '{$key}' site option. Does it exist?" );
 		} else {
-			FP_CLI::success( "Deleted '{$key}' site option." );
+			FIN_CLI::success( "Deleted '{$key}' site option." );
 		}
 	}
 
@@ -300,7 +300,7 @@ class Site_Option_Command extends FP_CLI_Command {
 		$value = get_site_option( $key );
 
 		if ( false === $value ) {
-			FP_CLI::halt( 1 );
+			FIN_CLI::halt( 1 );
 		}
 
 		$key_path = array_map(
@@ -321,7 +321,7 @@ class Site_Option_Command extends FP_CLI_Command {
 			die( 1 );
 		}
 
-		FP_CLI::print_value( $value, $assoc_args );
+		FIN_CLI::print_value( $value, $assoc_args );
 	}
 
 	/**
@@ -372,11 +372,11 @@ class Site_Option_Command extends FP_CLI_Command {
 			$patch_value = null;
 		} else {
 			$stdin_value = Utils\has_stdin()
-				? trim( FP_CLI::get_value_from_arg_or_stdin( $args, -1 ) )
+				? trim( FIN_CLI::get_value_from_arg_or_stdin( $args, -1 ) )
 				: null;
 			$patch_value = ! empty( $stdin_value )
-				? FP_CLI::read_value( $stdin_value, $assoc_args )
-				: FP_CLI::read_value( array_pop( $key_path ), $assoc_args );
+				? FIN_CLI::read_value( $stdin_value, $assoc_args )
+				: FIN_CLI::read_value( array_pop( $key_path ), $assoc_args );
 		}
 
 		/* Need to make a copy of $current_value here as it is modified by reference */
@@ -391,26 +391,26 @@ class Site_Option_Command extends FP_CLI_Command {
 		try {
 			$traverser->$action( $key_path, $patch_value );
 		} catch ( Exception $exception ) {
-			FP_CLI::error( $exception->getMessage() );
+			FIN_CLI::error( $exception->getMessage() );
 		}
 
 		$patched_value = sanitize_option( $key, $traverser->value() );
 
 		if ( $patched_value === $old_value ) {
-			FP_CLI::success( "Value passed for '{$key}' site option is unchanged." );
+			FIN_CLI::success( "Value passed for '{$key}' site option is unchanged." );
 		} elseif ( update_site_option( $key, $patched_value ) ) {
-				FP_CLI::success( "Updated '{$key}' site option." );
+				FIN_CLI::success( "Updated '{$key}' site option." );
 		} else {
-			FP_CLI::error( "Could not update site option '{$key}'." );
+			FIN_CLI::error( "Could not update site option '{$key}'." );
 		}
 	}
 
 	private static function esc_like( $old ) {
 		/**
-		 * @var \fpdb $fpdb
+		 * @var \findb $findb
 		 */
-		global $fpdb;
+		global $findb;
 
-		return $fpdb->esc_like( $old );
+		return $findb->esc_like( $old );
 	}
 }

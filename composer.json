@@ -1,8 +1,8 @@
 {
-    "name": "fp-cli/entity-command",
-    "type": "fp-cli-package",
+    "name": "fin-cli/entity-command",
+    "type": "fin-cli-package",
     "description": "Manage FinPress comments, menus, options, posts, sites, terms, and users.",
-    "homepage": "https://github.com/fp-cli/entity-command",
+    "homepage": "https://github.com/fin-cli/entity-command",
     "license": "MIT",
     "authors": [
         {
@@ -12,15 +12,15 @@
         }
     ],
     "require": {
-        "fp-cli/fp-cli": "^2.13"
+        "fin-cli/fin-cli": "^2.13"
     },
     "require-dev": {
-        "fp-cli/cache-command": "^1 || ^2",
-        "fp-cli/db-command": "^1.3 || ^2",
-        "fp-cli/extension-command": "^1.2 || ^2",
-        "fp-cli/media-command": "^1.1 || ^2",
-        "fp-cli/super-admin-command": "^1 || ^2",
-        "fp-cli/fp-cli-tests": "^5"
+        "fin-cli/cache-command": "^1 || ^2",
+        "fin-cli/db-command": "^1.3 || ^2",
+        "fin-cli/extension-command": "^1.2 || ^2",
+        "fin-cli/media-command": "^1.1 || ^2",
+        "fin-cli/super-admin-command": "^1 || ^2",
+        "fin-cli/fin-cli-tests": "^5"
     },
     "config": {
         "process-timeout": 7200,
@@ -245,6 +245,6 @@
         ]
     },
     "support": {
-        "issues": "https://github.com/fp-cli/entity-command/issues"
+        "issues": "https://github.com/fin-cli/entity-command/issues"
     }
 }

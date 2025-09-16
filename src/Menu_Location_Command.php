@@ -1,7 +1,7 @@
 <?php
 
-use FP_CLI\Formatter;
-use FP_CLI\Utils;
+use FIN_CLI\Formatter;
+use FIN_CLI\Utils;
 
 /**
  * Assigns, removes, and lists a menu's locations.
@@ -9,7 +9,7 @@ use FP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # List available menu locations
- *     $ fp menu location list
+ *     $ fin menu location list
  *     +----------+-------------------+
  *     | location | description       |
  *     +----------+-------------------+
@@ -18,14 +18,14 @@ use FP_CLI\Utils;
  *     +----------+-------------------+
  *
  *     # Assign the 'primary-menu' menu to the 'primary' location
- *     $ fp menu location assign primary-menu primary
+ *     $ fin menu location assign primary-menu primary
  *     Success: Assigned location primary to menu primary-menu.
  *
  *     # Remove the 'primary-menu' menu from the 'primary' location
- *     $ fp menu location remove primary-menu primary
+ *     $ fin menu location remove primary-menu primary
  *     Success: Removed location from menu.
  */
-class Menu_Location_Command extends FP_CLI_Command {
+class Menu_Location_Command extends FIN_CLI_Command {
 
 	/**
 	 * Lists locations for the current theme.
@@ -54,7 +54,7 @@ class Menu_Location_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu location list
+	 *     $ fin menu location list
 	 *     +----------+-------------------+
 	 *     | location | description       |
 	 *     +----------+-------------------+
@@ -103,7 +103,7 @@ class Menu_Location_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu location assign primary-menu primary
+	 *     $ fin menu location assign primary-menu primary
 	 *     Success: Assigned location primary to menu primary-menu.
 	 *
 	 * @subcommand assign
@@ -114,14 +114,14 @@ class Menu_Location_Command extends FP_CLI_Command {
 
 		list( $menu, $location ) = $args;
 
-		$menu_obj = fp_get_nav_menu_object( $menu );
+		$menu_obj = fin_get_nav_menu_object( $menu );
 		if ( ! $menu_obj ) {
-			FP_CLI::error( "Invalid menu {$menu}." );
+			FIN_CLI::error( "Invalid menu {$menu}." );
 		}
 
 		$locations = get_registered_nav_menus();
 		if ( ! array_key_exists( $location, $locations ) ) {
-			FP_CLI::error( "Invalid location {$location}." );
+			FIN_CLI::error( "Invalid location {$location}." );
 		}
 
 		$locations              = get_nav_menu_locations();
@@ -129,7 +129,7 @@ class Menu_Location_Command extends FP_CLI_Command {
 
 		set_theme_mod( 'nav_menu_locations', $locations );
 
-		FP_CLI::success( "Assigned location {$location} to menu {$menu}." );
+		FIN_CLI::success( "Assigned location {$location} to menu {$menu}." );
 	}
 
 	/**
@@ -145,7 +145,7 @@ class Menu_Location_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu location remove primary-menu primary
+	 *     $ fin menu location remove primary-menu primary
 	 *     Success: Removed location from menu.
 	 *
 	 * @subcommand remove
@@ -156,19 +156,19 @@ class Menu_Location_Command extends FP_CLI_Command {
 
 		list( $menu, $location ) = $args;
 
-		$menu = fp_get_nav_menu_object( $menu );
+		$menu = fin_get_nav_menu_object( $menu );
 		if ( false === $menu ) {
-			FP_CLI::error( 'Invalid menu.' );
+			FIN_CLI::error( 'Invalid menu.' );
 		}
 
 		$locations = get_nav_menu_locations();
 		if ( ( $locations[ $location ] ?? null ) !== $menu->term_id ) {
-			FP_CLI::error( "Menu isn't assigned to location." );
+			FIN_CLI::error( "Menu isn't assigned to location." );
 		}
 
 		$locations[ $location ] = 0;
 		set_theme_mod( 'nav_menu_locations', $locations );
 
-		FP_CLI::success( 'Removed location from menu.' );
+		FIN_CLI::success( 'Removed location from menu.' );
 	}
 }

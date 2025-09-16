@@ -1,100 +1,100 @@
 Feature: Manage post term
 
   Scenario: Postterm CRUD
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp post term add 1 category foo`
+    When I run `fin post term add 1 category foo`
     Then STDOUT should be:
       """
       Success: Added term.
       """
 
-    When I run `fp post term list 1 category --fields=name,slug,taxonomy`
+    When I run `fin post term list 1 category --fields=name,slug,taxonomy`
     Then STDOUT should be a table containing rows:
       | name | slug | taxonomy |
       | foo  | foo  | category |
 
-    When I run `fp post term add 1 category bar`
+    When I run `fin post term add 1 category bar`
     Then STDOUT should be:
       """
       Success: Added term.
       """
 
-    When I run `fp post term list 1 category --fields=name,slug,taxonomy`
+    When I run `fin post term list 1 category --fields=name,slug,taxonomy`
     Then STDOUT should be a table containing rows:
       | name | slug | taxonomy |
       | foo  | foo  | category |
       | bar  | bar  | category |
 
-    When I run `fp post term list 1 category --format=ids`
+    When I run `fin post term list 1 category --format=ids`
     Then STDOUT should be:
       """
       3 2 1
       """
 
-    When I try `fp post term list 1 foo2`
+    When I try `fin post term list 1 foo2`
     Then STDERR should be:
       """
       Error: Invalid taxonomy foo2.
       """
     And the return code should be 1
 
-    When I run `fp post term set 1 category new`
+    When I run `fin post term set 1 category new`
     Then STDOUT should be:
       """
       Success: Set term.
       """
 
-    When I run `fp post term list 1 category --fields=name,slug,taxonomy --format=count`
+    When I run `fin post term list 1 category --fields=name,slug,taxonomy --format=count`
     Then STDOUT should be:
       """
       1
       """
 
-    When I run `fp post term list 1 category --field=slug`
+    When I run `fin post term list 1 category --field=slug`
     Then STDOUT should be:
       """
       new
       """
 
-    When I run `fp post term remove 1 category new`
+    When I run `fin post term remove 1 category new`
     Then STDOUT should be:
       """
       Success: Removed term.
       """
 
-    When I run `fp post term list 1 category --fields=name,slug,taxonomy --format=count`
+    When I run `fin post term list 1 category --fields=name,slug,taxonomy --format=count`
     Then STDOUT should be:
       """
       0
       """
 
   Scenario: Multiple post term
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp post term add 1 category apple`
-    And I run `fp post term add 1 category apple`
+    When I run `fin post term add 1 category apple`
+    And I run `fin post term add 1 category apple`
     Then STDOUT should be:
       """
       Success: Added term.
       """
 
-    When I run `fp post term set 1 category apple1 apple2`
+    When I run `fin post term set 1 category apple1 apple2`
     Then STDOUT should be:
       """
       Success: Set terms.
       """
 
-    When I run `fp post term list 1 category --fields=name,slug,taxonomy`
+    When I run `fin post term list 1 category --fields=name,slug,taxonomy`
     Then STDOUT should be a table containing rows:
       | name   | slug   | taxonomy |
       | apple1 | apple1 | category |
       | apple2 | apple2 | category |
 
   Scenario: Invalid Post ID
-    Given a FP install
+    Given a FIN install
 
-    When I try `fp post term add 99999 category boo`
+    When I try `fin post term add 99999 category boo`
     Then the return code should be 1
     And STDERR should be:
       """
@@ -102,9 +102,9 @@ Feature: Manage post term
       """
 
   Scenario: Postterm Add invalid tax
-    Given a FP install
+    Given a FIN install
 
-    When I try `fp post term add 1 foo2 boo`
+    When I try `fin post term add 1 foo2 boo`
     Then the return code should be 1
     And STDERR should be:
       """
@@ -112,105 +112,105 @@ Feature: Manage post term
       """
 
   Scenario: Add terms by term id
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp term create post_tag 3 --porcelain`
+    When I run `fin term create post_tag 3 --porcelain`
     Then STDOUT should be:
       """
       2
       """
 
-    When I run `fp term create post_tag 4 --porcelain`
+    When I run `fin term create post_tag 4 --porcelain`
     Then STDOUT should be:
       """
       3
       """
 
-    When I run `fp term create post_tag 2 --porcelain`
+    When I run `fin term create post_tag 2 --porcelain`
     Then STDOUT should be:
       """
       4
       """
 
-    When I run `fp post term add 1 post_tag 4`
+    When I run `fin post term add 1 post_tag 4`
     Then STDOUT should contain:
       """
       Success: Added term.
       """
 
-    When I run `fp post term add 1 post_tag 2`
+    When I run `fin post term add 1 post_tag 2`
     Then STDOUT should contain:
       """
       Success: Added term.
       """
 
-    When I run `fp post term list 1 post_tag --fields=term_id,name,slug`
+    When I run `fin post term list 1 post_tag --fields=term_id,name,slug`
     Then STDOUT should be a table containing rows:
       | term_id | name | slug |
       | 4       | 2    | 2    |
       | 3       | 4    | 4    |
 
-    When I run `fp post term remove 1 post_tag 4 2`
+    When I run `fin post term remove 1 post_tag 4 2`
     Then STDOUT should be:
       """
       Success: Removed terms.
       """
 
-    When I run `fp post term add 1 post_tag 4 --by=id`
+    When I run `fin post term add 1 post_tag 4 --by=id`
     Then STDOUT should contain:
       """
       Success: Added term.
       """
 
-    When I run `fp post term list 1 post_tag --fields=term_id,name,slug`
+    When I run `fin post term list 1 post_tag --fields=term_id,name,slug`
     Then STDOUT should be a table containing rows:
       | term_id | name | slug |
       | 4       | 2    | 2    |
 
-    When I run `fp post term add 1 post_tag 3 --by=slug`
+    When I run `fin post term add 1 post_tag 3 --by=slug`
     Then STDOUT should contain:
       """
       Success: Added term.
       """
 
-    When I run `fp post term list 1 post_tag --fields=term_id,name,slug`
+    When I run `fin post term list 1 post_tag --fields=term_id,name,slug`
     Then STDOUT should be a table containing rows:
       | term_id | name | slug |
       | 2       | 3    | 3    |
       | 4       | 2    | 2    |
 
-    When I run `fp post term remove 1 post_tag 2 --by=id`
+    When I run `fin post term remove 1 post_tag 2 --by=id`
     Then STDOUT should be:
       """
       Success: Removed term.
       """
 
-    When I run `fp post term list 1 post_tag --fields=term_id,name,slug`
+    When I run `fin post term list 1 post_tag --fields=term_id,name,slug`
     Then STDOUT should be a table containing rows:
       | term_id | name | slug |
       | 4       | 2    | 2    |
 
-    When I run `fp post term set 1 post_tag 3 --by=id`
+    When I run `fin post term set 1 post_tag 3 --by=id`
     Then STDOUT should contain:
       """
       Success: Set term.
       """
 
-    When I run `fp post term list 1 post_tag --fields=term_id,name,slug`
+    When I run `fin post term list 1 post_tag --fields=term_id,name,slug`
     Then STDOUT should be a table containing rows:
       | term_id | name | slug |
       | 3       | 4    | 4    |
 
   Scenario: Remove all terms from post
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp post term remove 1 category --all`
+    When I run `fin post term remove 1 category --all`
     Then STDOUT should be:
       """
       Success: Removed all terms and set default term.
       """
 
-    When I try `fp post term remove 1 category cat1 cat2 --all`
+    When I try `fin post term remove 1 category cat1 cat2 --all`
     Then STDERR should be:
       """
       Error: No need to specify terms while removing all terms.

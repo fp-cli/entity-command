@@ -1,67 +1,67 @@
 Feature: Manage FinPress options
 
   Scenario: Option CRUD
-    Given a FP install
+    Given a FIN install
 
     # String values
-    When I run `fp option add str_opt 'bar'`
+    When I run `fin option add str_opt 'bar'`
     Then STDOUT should not be empty
 
-    When I run `fp option get str_opt`
+    When I run `fin option get str_opt`
     Then STDOUT should be:
       """
       bar
       """
 
-    When I run `fp option list`
+    When I run `fin option list`
     Then STDOUT should not be empty
 
-    When I run `fp option list`
+    When I run `fin option list`
     Then STDOUT should contain:
       """
       str_opt	bar
       """
 
-    When I run `fp option list --autoload=off`
+    When I run `fin option list --autoload=off`
     Then STDOUT should not contain:
       """
       str_opt	bar
       """
 
-    When I run `fp option list --search='str_o*'`
+    When I run `fin option list --search='str_o*'`
     Then STDOUT should be a table containing rows:
       | option_name  | option_value  |
       | str_opt      | bar           |
 
-    When I run `fp option list --search='str_o*' --format=total_bytes`
+    When I run `fin option list --search='str_o*' --format=total_bytes`
     Then STDOUT should be:
       """
       3
       """
 
-    When I run `fp option list`
+    When I run `fin option list`
     Then STDOUT should contain:
       """
       home	https://example.com
       """
 
-    When I run `fp option add auto_opt --autoload=no 'bar'`
+    When I run `fin option add auto_opt --autoload=no 'bar'`
     Then STDOUT should not be empty
 
-    When I run `fp option list --search='auto_opt' --autoload=off`
+    When I run `fin option list --search='auto_opt' --autoload=off`
     Then STDOUT should not be empty
 
-    When I run `fp option list | grep -q "str_opt"`
+    When I run `fin option list | grep -q "str_opt"`
     Then the return code should be 0
 
-    When I run `fp option delete str_opt`
+    When I run `fin option delete str_opt`
     Then STDOUT should not be empty
 
-    When I run `fp option add option_one "ONE"`
-    And I run `fp option add option_two "TWO"`
+    When I run `fin option add option_one "ONE"`
+    And I run `fin option add option_two "TWO"`
     Then STDOUT should not be empty
 
-    When I try `fp option delete option_one option_two option_three`
+    When I try `fin option delete option_one option_two option_three`
     Then STDOUT should be:
       """
       Success: Deleted 'option_one' option.
@@ -72,23 +72,23 @@ Feature: Manage FinPress options
       Warning: Could not delete 'option_three' option. Does it exist?
       """
 
-    When I run `fp option list`
+    When I run `fin option list`
     Then STDOUT should not contain:
       """
       str_opt	bar
       """
 
-    When I try `fp option get str_opt`
+    When I try `fin option get str_opt`
     Then STDERR should be:
       """
       Error: Could not get 'str_opt' option. Does it exist?
       """
 
     # Integer values
-    When I run `fp option update blog_public 1`
+    When I run `fin option update blog_public 1`
     Then STDOUT should not be empty
 
-    When I run `fp option update blog_public 0`
+    When I run `fin option update blog_public 0`
     Then STDOUT should contain:
       """
       Success: Updated 'blog_public' option.
@@ -100,20 +100,20 @@ Feature: Manage FinPress options
       Success: Value passed for 'blog_public' option is unchanged.
       """
 
-    When I run `fp option get blog_public`
+    When I run `fin option get blog_public`
     Then STDOUT should be:
       """
       0
       """
 
     # JSON values
-    When I run `fp option set json_opt '[ 1, 2 ]' --format=json`
+    When I run `fin option set json_opt '[ 1, 2 ]' --format=json`
     Then STDOUT should not be empty
 
     When I run the previous command again
     Then STDOUT should not be empty
 
-    When I run `fp option get json_opt --format=json`
+    When I run `fin option get json_opt --format=json`
     Then STDOUT should be:
       """
       [1,2]
@@ -127,8 +127,8 @@ Feature: Manage FinPress options
         "list": [1, 2, 3]
       }
       """
-    When I run `fp option set foo --format=json < value.json`
-    And I run `fp option get foo --format=json`
+    When I run `fin option set foo --format=json < value.json`
+    And I run `fin option get foo --format=json`
     Then STDOUT should be JSON containing:
       """
       {
@@ -137,131 +137,131 @@ Feature: Manage FinPress options
       }
       """
 
-  @require-fp-4.2
-  @less-than-fp-6.6
+  @require-fin-4.2
+  @less-than-fin-6.6
   Scenario: Update autoload value for custom option
-    Given a FP install
-    And I run `fp option add hello world --autoload=no`
+    Given a FIN install
+    And I run `fin option add hello world --autoload=no`
 
-    When I run `fp option update hello universe`
+    When I run `fin option update hello universe`
     Then STDOUT should not be empty
 
-    When I run `fp option list --search='hello' --fields=option_name,option_value,autoload`
+    When I run `fin option list --search='hello' --fields=option_name,option_value,autoload`
     Then STDOUT should be a table containing rows:
       | option_name  | option_value   | autoload |
       | hello        | universe       | no       |
 
-    When I run `fp option update hello island --autoload=yes`
+    When I run `fin option update hello island --autoload=yes`
     Then STDOUT should not be empty
 
-    When I run `fp option list --search='hello' --fields=option_name,option_value,autoload`
+    When I run `fin option list --search='hello' --fields=option_name,option_value,autoload`
     Then STDOUT should be a table containing rows:
       | option_name  | option_value   | autoload |
       | hello        | island         | yes      |
 
-  @require-fp-6.6
+  @require-fin-6.6
   Scenario: Update autoload value for custom option
-    Given a FP install
-    And I run `fp option add hello world --autoload=off`
+    Given a FIN install
+    And I run `fin option add hello world --autoload=off`
 
-    When I run `fp option update hello universe`
+    When I run `fin option update hello universe`
     Then STDOUT should not be empty
 
-    When I run `fp option list --search='hello' --fields=option_name,option_value,autoload`
+    When I run `fin option list --search='hello' --fields=option_name,option_value,autoload`
     Then STDOUT should be a table containing rows:
       | option_name  | option_value   | autoload |
       | hello        | universe       | off       |
 
-    When I run `fp option update hello island --autoload=on`
+    When I run `fin option update hello island --autoload=on`
     Then STDOUT should not be empty
 
-    When I run `fp option list --search='hello' --fields=option_name,option_value,autoload`
+    When I run `fin option list --search='hello' --fields=option_name,option_value,autoload`
     Then STDOUT should be a table containing rows:
       | option_name  | option_value   | autoload |
       | hello        | island         | on      |
 
-  @require-fp-4.2
-  @less-than-fp-6.6
+  @require-fin-4.2
+  @less-than-fin-6.6
   Scenario: Managed autoloaded options
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp option add fp_autoload_1 enabled --autoload=yes`
+    When I run `fin option add fin_autoload_1 enabled --autoload=yes`
     Then STDOUT should be:
       """
-      Success: Added 'fp_autoload_1' option.
+      Success: Added 'fin_autoload_1' option.
       """
     And STDERR should be empty
 
-    When I run `fp option add fp_autoload_2 implicit`
+    When I run `fin option add fin_autoload_2 implicit`
     Then STDOUT should be:
       """
-      Success: Added 'fp_autoload_2' option.
+      Success: Added 'fin_autoload_2' option.
       """
     And STDERR should be empty
 
-    When I run `fp option add fp_autoload_3 disabled --autoload=no`
+    When I run `fin option add fin_autoload_3 disabled --autoload=no`
     Then STDOUT should be:
       """
-      Success: Added 'fp_autoload_3' option.
+      Success: Added 'fin_autoload_3' option.
       """
     And STDERR should be empty
 
-    When I run `fp option list --search='fp_autoload*' --fields=option_name,option_value,autoload`
+    When I run `fin option list --search='fin_autoload*' --fields=option_name,option_value,autoload`
     Then STDOUT should be a table containing rows:
       | option_name   | option_value   | autoload |
-      | fp_autoload_1 | enabled        | yes      |
-      | fp_autoload_2 | implicit       | yes      |
-      | fp_autoload_3 | disabled       | no       |
+      | fin_autoload_1 | enabled        | yes      |
+      | fin_autoload_2 | implicit       | yes      |
+      | fin_autoload_3 | disabled       | no       |
 
-    When I run `fp option update fp_autoload_1 disabled --autoload=no`
+    When I run `fin option update fin_autoload_1 disabled --autoload=no`
     Then STDOUT should be:
       """
-      Success: Updated 'fp_autoload_1' option.
+      Success: Updated 'fin_autoload_1' option.
       """
     And STDERR should be empty
 
-    When I run `fp option update fp_autoload_2 implicit2`
+    When I run `fin option update fin_autoload_2 implicit2`
     Then STDOUT should be:
       """
-      Success: Updated 'fp_autoload_2' option.
+      Success: Updated 'fin_autoload_2' option.
       """
     And STDERR should be empty
 
-    When I run `fp option update fp_autoload_3 enabled --autoload=yes`
+    When I run `fin option update fin_autoload_3 enabled --autoload=yes`
     Then STDOUT should be:
       """
-      Success: Updated 'fp_autoload_3' option.
+      Success: Updated 'fin_autoload_3' option.
       """
     And STDERR should be empty
 
-    When I run `fp option list --search='fp_autoload*' --fields=option_name,option_value,autoload`
+    When I run `fin option list --search='fin_autoload*' --fields=option_name,option_value,autoload`
     Then STDOUT should be a table containing rows:
       | option_name   | option_value   | autoload |
-      | fp_autoload_1 | disabled       | no       |
-      | fp_autoload_2 | implicit2      | yes      |
-      | fp_autoload_3 | enabled        | yes      |
+      | fin_autoload_1 | disabled       | no       |
+      | fin_autoload_2 | implicit2      | yes      |
+      | fin_autoload_3 | enabled        | yes      |
 
   Scenario: Extra removetrailingslash sanitization for whitelisted options
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp option update home 'http://localhost/'`
+    When I run `fin option update home 'http://localhost/'`
     Then STDOUT should be:
       """
       Success: Updated 'home' option.
       """
 
-    When I run `fp option update home 'http://localhost/'`
+    When I run `fin option update home 'http://localhost/'`
     Then STDOUT should be:
       """
       Success: Value passed for 'home' option is unchanged.
       """
 
   Scenario: Bad values for autoload
-    Given a FP install
-    When I run `fp option add str_opt 'bar'`
+    Given a FIN install
+    When I run `fin option add str_opt 'bar'`
     Then STDOUT should not be empty
 
-    When I try `fp option list --search='auto_opt' --autoload`
+    When I try `fin option list --search='auto_opt' --autoload`
     Then STDOUT should not be empty
     And STDERR should be:
       """
@@ -269,7 +269,7 @@ Feature: Manage FinPress options
       """
     And the return code should be 0
 
-    When I try `fp option list --search='auto_opt' --autoload=nope`
+    When I try `fin option list --search='auto_opt' --autoload=nope`
     Then STDOUT should be empty
     And STDERR should contain:
       """
@@ -277,7 +277,7 @@ Feature: Manage FinPress options
       """
     And the return code should be 1
 
-    When I try `fp option add str_opt_foo 'bar' --autoload`
+    When I try `fin option add str_opt_foo 'bar' --autoload`
     Then STDOUT should not be empty
     And STDERR should be:
       """
@@ -285,7 +285,7 @@ Feature: Manage FinPress options
       """
     And the return code should be 0
 
-    When I try `fp option add str_opt_foo 'bar' --autoload=bad`
+    When I try `fin option add str_opt_foo 'bar' --autoload=bad`
     Then STDOUT should be empty
     And STDERR should contain:
       """

@@ -1,8 +1,8 @@
 <?php
 
-use FP_CLI\Fetchers\User as UserFetcher;
-use FP_CLI\Formatter;
-use FP_CLI\Utils;
+use FIN_CLI\Fetchers\User as UserFetcher;
+use FIN_CLI\Formatter;
+use FIN_CLI\Utils;
 
 /**
  * Destroys and lists a user's sessions.
@@ -10,17 +10,17 @@ use FP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # List a user's sessions.
- *     $ fp user session list admin@example.com --format=csv
+ *     $ fin user session list admin@example.com --format=csv
  *     login_time,expiration_time,ip,ua
  *     "2016-01-01 12:34:56","2016-02-01 12:34:56",127.0.0.1,"Mozilla/5.0..."
  *
  *     # Destroy the most recent session of the given user.
- *     $ fp user session destroy admin
+ *     $ fin user session destroy admin
  *     Success: Destroyed session. 3 sessions remaining.
  *
- * @package fp-cli
+ * @package fin-cli
  */
-class User_Session_Command extends FP_CLI_Command {
+class User_Session_Command extends FIN_CLI_Command {
 
 	private $fields = [
 		'token',
@@ -53,19 +53,19 @@ class User_Session_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Destroy the most recent session of the given user.
-	 *     $ fp user session destroy admin
+	 *     $ fin user session destroy admin
 	 *     Success: Destroyed session. 3 sessions remaining.
 	 *
 	 *     # Destroy a specific session of the given user.
-	 *     $ fp user session destroy admin e073ad8540a9c2...
+	 *     $ fin user session destroy admin e073ad8540a9c2...
 	 *     Success: Destroyed session. 2 sessions remaining.
 	 *
 	 *     # Destroy all the sessions of the given user.
-	 *     $ fp user session destroy admin --all
+	 *     $ fin user session destroy admin --all
 	 *     Success: Destroyed all sessions.
 	 *
 	 *     # Destroy all sessions for all users.
-	 *     $ fp user list --field=ID | xargs -n 1 fp user session destroy --all
+	 *     $ fin user list --field=ID | xargs -n 1 fin user session destroy --all
 	 *     Success: Destroyed all sessions.
 	 *     Success: Destroyed all sessions.
 	 */
@@ -73,15 +73,15 @@ class User_Session_Command extends FP_CLI_Command {
 		$user    = $this->fetcher->get_check( $args[0] );
 		$token   = $args[1] ?? null;
 		$all     = (bool) Utils\get_flag_value( $assoc_args, 'all', false );
-		$manager = FP_Session_Tokens::get_instance( $user->ID );
+		$manager = FIN_Session_Tokens::get_instance( $user->ID );
 
 		if ( $token && $all ) {
-			FP_CLI::error( 'The --all flag cannot be specified along with a session token.' );
+			FIN_CLI::error( 'The --all flag cannot be specified along with a session token.' );
 		}
 
 		if ( $all ) {
 			$manager->destroy_all();
-			FP_CLI::success( 'Destroyed all sessions.' );
+			FIN_CLI::success( 'Destroyed all sessions.' );
 			return;
 		}
 
@@ -89,20 +89,20 @@ class User_Session_Command extends FP_CLI_Command {
 
 		if ( ! $token ) {
 			if ( empty( $sessions ) ) {
-				FP_CLI::success( 'No sessions to destroy.' );
+				FIN_CLI::success( 'No sessions to destroy.' );
 			}
 			$last  = end( $sessions );
 			$token = $last['token'];
 		}
 
 		if ( ! isset( $sessions[ $token ] ) ) {
-			FP_CLI::error( 'Session not found.' );
+			FIN_CLI::error( 'Session not found.' );
 		}
 
 		$this->destroy_session( $manager, $token );
 		$remaining = count( $manager->get_all() );
 
-		FP_CLI::success( "Destroyed session. {$remaining} remaining." );
+		FIN_CLI::success( "Destroyed session. {$remaining} remaining." );
 	}
 
 	/**
@@ -151,7 +151,7 @@ class User_Session_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # List a user's sessions.
-	 *     $ fp user session list admin@example.com --format=csv
+	 *     $ fin user session list admin@example.com --format=csv
 	 *     login_time,expiration_time,ip,ua
 	 *     "2016-01-01 12:34:56","2016-02-01 12:34:56",127.0.0.1,"Mozilla/5.0..."
 	 *
@@ -160,7 +160,7 @@ class User_Session_Command extends FP_CLI_Command {
 	public function list_( $args, $assoc_args ) {
 		$user      = $this->fetcher->get_check( $args[0] );
 		$formatter = $this->get_formatter( $assoc_args );
-		$manager   = FP_Session_Tokens::get_instance( $user->ID );
+		$manager   = FIN_Session_Tokens::get_instance( $user->ID );
 		$sessions  = $this->get_all_sessions( $manager );
 
 		if ( 'ids' === $formatter->format ) {
@@ -170,8 +170,8 @@ class User_Session_Command extends FP_CLI_Command {
 		}
 	}
 
-	protected function get_all_sessions( FP_Session_Tokens $manager ) {
-		// Make the private session data accessible to FP-CLI
+	protected function get_all_sessions( FIN_Session_Tokens $manager ) {
+		// Make the private session data accessible to FIN-CLI
 		$get_sessions = new ReflectionMethod( $manager, 'get_sessions' );
 		if ( PHP_VERSION_ID < 80100 ) {
 			$get_sessions->setAccessible( true );
@@ -194,7 +194,7 @@ class User_Session_Command extends FP_CLI_Command {
 		return $sessions;
 	}
 
-	protected function destroy_session( FP_Session_Tokens $manager, $token ) {
+	protected function destroy_session( FIN_Session_Tokens $manager, $token ) {
 		$update_session = new ReflectionMethod( $manager, 'update_session' );
 		if ( PHP_VERSION_ID < 80100 ) {
 			$update_session->setAccessible( true );

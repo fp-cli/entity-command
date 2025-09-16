@@ -1,36 +1,36 @@
 Feature: Manage term custom fields
 
-  @require-fp-4.4
+  @require-fin-4.4
   Scenario: Term meta CRUD
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp term meta add 1 foo 'bar'`
+    When I run `fin term meta add 1 foo 'bar'`
     Then STDOUT should not be empty
 
-    When I run `fp term meta get 1 foo`
+    When I run `fin term meta get 1 foo`
     Then STDOUT should be:
       """
       bar
       """
 
-    When I try `fp term meta get 999999 foo`
+    When I try `fin term meta get 999999 foo`
     Then STDERR should be:
       """
       Error: Could not find the term with ID 999999.
       """
     And the return code should be 1
 
-    When I run `fp term meta set 1 foo '[ "1", "2" ]' --format=json`
+    When I run `fin term meta set 1 foo '[ "1", "2" ]' --format=json`
     Then STDOUT should not be empty
 
-    When I run `fp term meta get 1 foo --format=json`
+    When I run `fin term meta get 1 foo --format=json`
     Then STDOUT should be:
       """
       ["1","2"]
       """
 
-    When I run `fp term meta delete 1 foo`
+    When I run `fin term meta delete 1 foo`
     Then STDOUT should not be empty
 
-    When I try `fp term meta get 1 foo`
+    When I try `fin term meta get 1 foo`
     Then the return code should be 1

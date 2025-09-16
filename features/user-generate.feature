@@ -1,23 +1,23 @@
-Feature: Generate FP users
+Feature: Generate FIN users
 
   Background:
-    Given a FP install
+    Given a FIN install
 
   Scenario: Generating and deleting users
-    When I run `fp user list --role=editor --format=count`
+    When I run `fin user list --role=editor --format=count`
     Then STDOUT should be:
       """
       0
       """
 
-    When I run `fp user generate --count=10 --role=editor`
-    And I run `fp user list --role=editor --format=count`
+    When I run `fin user generate --count=10 --role=editor`
+    And I run `fin user list --role=editor --format=count`
     Then STDOUT should be:
       """
       10
       """
 
-    When I try `fp user list --field=ID | xargs fp user delete invalid-user --yes`
+    When I try `fin user list --field=ID | xargs fin user delete invalid-user --yes`
     Then STDOUT should contain:
       """
       Success: Removed user
@@ -28,17 +28,17 @@ Feature: Generate FP users
       """
     And the return code should be 0
 
-    When I run `fp user list --format=count`
+    When I run `fin user list --format=count`
     Then STDOUT should be:
       """
       0
       """
 
   Scenario: Generating users and outputting ids
-    When I run `fp user generate --count=1 --format=ids`
+    When I run `fin user generate --count=1 --format=ids`
     Then save STDOUT as {USER_ID}
 
-    When I run `fp user update {USER_ID} --display_name="foo"`
+    When I run `fin user update {USER_ID} --display_name="foo"`
     Then STDOUT should contain:
       """
       Success:

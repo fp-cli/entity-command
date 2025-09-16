@@ -1,18 +1,18 @@
 <?php
 
-namespace FP_CLI;
+namespace FIN_CLI;
 
-use FP_CLI;
-use FP_CLI_Command;
-use FP_CLI\Utils;
-use FP_Error;
+use FIN_CLI;
+use FIN_CLI_Command;
+use FIN_CLI\Utils;
+use FIN_Error;
 
 /**
- * Base class for FP-CLI commands that deal with database objects.
+ * Base class for FIN-CLI commands that deal with database objects.
  *
- * @package fp-cli
+ * @package fin-cli
  */
-abstract class CommandWithDBObject extends FP_CLI_Command {
+abstract class CommandWithDBObject extends FIN_CLI_Command {
 
 	/**
 	 * @var string $object_type FinPress' expected name for the object.
@@ -42,14 +42,14 @@ abstract class CommandWithDBObject extends FP_CLI_Command {
 
 		$obj_id = $callback( $assoc_args );
 
-		if ( is_fp_error( $obj_id ) ) {
-			FP_CLI::error( $obj_id );
+		if ( is_fin_error( $obj_id ) ) {
+			FIN_CLI::error( $obj_id );
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
-			FP_CLI::line( $obj_id );
+			FIN_CLI::line( $obj_id );
 		} else {
-			FP_CLI::success( "Created {$this->obj_type} {$obj_id}." );
+			FIN_CLI::success( "Created {$this->obj_type} {$obj_id}." );
 		}
 	}
 
@@ -65,18 +65,18 @@ abstract class CommandWithDBObject extends FP_CLI_Command {
 		$status = 0;
 
 		if ( empty( $assoc_args ) ) {
-			FP_CLI::error( 'Need some fields to update.' );
+			FIN_CLI::error( 'Need some fields to update.' );
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'defer-term-counting' ) ) {
-			fp_defer_term_counting( true );
+			fin_defer_term_counting( true );
 		}
 
 		foreach ( $args as $obj_id ) {
 			$params = array_merge( $assoc_args, [ $this->obj_id_key => $obj_id ] );
 
 			$status = $this->success_or_failure(
-				$this->fp_error_to_resp(
+				$this->fin_error_to_resp(
 					$callback( $params ),
 					"Updated {$this->obj_type} {$obj_id}."
 				)
@@ -84,7 +84,7 @@ abstract class CommandWithDBObject extends FP_CLI_Command {
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'defer-term-counting' ) ) {
-			fp_defer_term_counting( false );
+			fin_defer_term_counting( false );
 		}
 
 		exit( $status );
@@ -117,7 +117,7 @@ abstract class CommandWithDBObject extends FP_CLI_Command {
 		$status = 0;
 
 		if ( Utils\get_flag_value( $assoc_args, 'defer-term-counting' ) ) {
-			fp_defer_term_counting( true );
+			fin_defer_term_counting( true );
 		}
 
 		foreach ( $args as $obj_id ) {
@@ -126,7 +126,7 @@ abstract class CommandWithDBObject extends FP_CLI_Command {
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'defer-term-counting' ) ) {
-			fp_defer_term_counting( false );
+			fin_defer_term_counting( false );
 		}
 
 		exit( $status );
@@ -135,12 +135,12 @@ abstract class CommandWithDBObject extends FP_CLI_Command {
 	/**
 	 * Format callback response to consistent format.
 	 *
-	 * @param FP_Error|true $response Response from CRUD callback.
+	 * @param FIN_Error|true $response Response from CRUD callback.
 	 * @param string        $success_msg
 	 * @return array
 	 */
-	protected function fp_error_to_resp( $response, $success_msg ) {
-		return is_fp_error( $response )
+	protected function fin_error_to_resp( $response, $success_msg ) {
+		return is_fin_error( $response )
 			? [ 'error', $response->get_error_message() ]
 			: [ 'success', $success_msg ];
 	}
@@ -155,10 +155,10 @@ abstract class CommandWithDBObject extends FP_CLI_Command {
 		list( $type, $msg ) = $response;
 
 		if ( 'success' === $type ) {
-			FP_CLI::success( $msg );
+			FIN_CLI::success( $msg );
 			$status = 0;
 		} else {
-			FP_CLI::warning( $msg );
+			FIN_CLI::warning( $msg );
 			$status = 1;
 		}
 

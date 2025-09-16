@@ -1,9 +1,9 @@
-fp-cli/entity-command
+fin-cli/entity-command
 =====================
 
 Manage FinPress comments, menus, options, posts, sites, terms, and users.
 
-[![Testing](https://github.com/fp-cli/entity-command/actions/workflows/testing.yml/badge.svg)](https://github.com/fp-cli/entity-command/actions/workflows/testing.yml)
+[![Testing](https://github.com/fin-cli/entity-command/actions/workflows/testing.yml/badge.svg)](https://github.com/fin-cli/entity-command/actions/workflows/testing.yml)
 
 Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contributing) | [Support](#support)
 
@@ -11,41 +11,41 @@ Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contr
 
 This package implements the following commands:
 
-### fp comment
+### fin comment
 
 Creates, updates, deletes, and moderates comments.
 
 ~~~
-fp comment
+fin comment
 ~~~
 
 **EXAMPLES**
 
     # Create a new comment.
-    $ fp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fp-cli"
+    $ fin comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fin-cli"
     Success: Created comment 932.
 
     # Update an existing comment.
-    $ fp comment update 123 --comment_author='That Guy'
+    $ fin comment update 123 --comment_author='That Guy'
     Success: Updated comment 123.
 
     # Delete an existing comment.
-    $ fp comment delete 1337 --force
+    $ fin comment delete 1337 --force
     Success: Deleted comment 1337.
 
     # Trash all spam comments.
-    $ fp comment delete $(fp comment list --status=spam --format=ids)
+    $ fin comment delete $(fin comment list --status=spam --format=ids)
     Success: Trashed comment 264.
     Success: Trashed comment 262.
 
 
 
-### fp comment approve
+### fin comment approve
 
 Approves a comment.
 
 ~~~
-fp comment approve <id>...
+fin comment approve <id>...
 ~~~
 
 **OPTIONS**
@@ -56,17 +56,17 @@ fp comment approve <id>...
 **EXAMPLES**
 
     # Approve comment.
-    $ fp comment approve 1337
+    $ fin comment approve 1337
     Success: Approved comment 1337.
 
 
 
-### fp comment count
+### fin comment count
 
 Counts comments, on whole blog or on a given post.
 
 ~~~
-fp comment count [<post-id>]
+fin comment count [<post-id>]
 ~~~
 
 **OPTIONS**
@@ -77,7 +77,7 @@ fp comment count [<post-id>]
 **EXAMPLES**
 
     # Count comments on whole blog.
-    $ fp comment count
+    $ fin comment count
     approved:        33
     spam:            3
     trash:           1
@@ -87,7 +87,7 @@ fp comment count [<post-id>]
     total_comments:  37
 
     # Count comments in a post.
-    $ fp comment count 42
+    $ fin comment count 42
     approved:        19
     spam:            0
     trash:           0
@@ -98,18 +98,18 @@ fp comment count [<post-id>]
 
 
 
-### fp comment create
+### fin comment create
 
 Creates a new comment.
 
 ~~~
-fp comment create [--<field>=<value>] [--porcelain]
+fin comment create [--<field>=<value>] [--porcelain]
 ~~~
 
 **OPTIONS**
 
 	[--<field>=<value>]
-		Associative args for the new comment. See fp_insert_comment().
+		Associative args for the new comment. See fin_insert_comment().
 
 	[--porcelain]
 		Output just the new comment id.
@@ -117,17 +117,17 @@ fp comment create [--<field>=<value>] [--porcelain]
 **EXAMPLES**
 
     # Create comment.
-    $ fp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fp-cli"
+    $ fin comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fin-cli"
     Success: Created comment 932.
 
 
 
-### fp comment delete
+### fin comment delete
 
 Deletes a comment.
 
 ~~~
-fp comment delete <id>... [--force]
+fin comment delete <id>... [--force]
 ~~~
 
 **OPTIONS**
@@ -141,22 +141,22 @@ fp comment delete <id>... [--force]
 **EXAMPLES**
 
     # Delete comment.
-    $ fp comment delete 1337 --force
+    $ fin comment delete 1337 --force
     Success: Deleted comment 1337.
 
     # Delete multiple comments.
-    $ fp comment delete 1337 2341 --force
+    $ fin comment delete 1337 2341 --force
     Success: Deleted comment 1337.
     Success: Deleted comment 2341.
 
 
 
-### fp comment exists
+### fin comment exists
 
 Verifies whether a comment exists.
 
 ~~~
-fp comment exists <id>
+fin comment exists <id>
 ~~~
 
 Displays a success message if the comment does exist.
@@ -169,17 +169,17 @@ Displays a success message if the comment does exist.
 **EXAMPLES**
 
     # Check whether comment exists.
-    $ fp comment exists 1337
+    $ fin comment exists 1337
     Success: Comment with ID 1337 exists.
 
 
 
-### fp comment generate
+### fin comment generate
 
 Generates some number of new dummy comments.
 
 ~~~
-fp comment generate [--count=<number>] [--post_id=<post-id>] [--format=<format>]
+fin comment generate [--count=<number>] [--post_id=<post-id>] [--format=<format>]
 ~~~
 
 Creates a specified number of new comments with dummy data.
@@ -207,23 +207,23 @@ Creates a specified number of new comments with dummy data.
 **EXAMPLES**
 
     # Generate comments for the given post.
-    $ fp comment generate --format=ids --count=3 --post_id=123
+    $ fin comment generate --format=ids --count=3 --post_id=123
     138 139 140
 
     # Add meta to every generated comment.
-    $ fp comment generate --format=ids --count=3 | xargs -d ' ' -I % fp comment meta add % foo bar
+    $ fin comment generate --format=ids --count=3 | xargs -d ' ' -I % fin comment meta add % foo bar
     Success: Added custom field.
     Success: Added custom field.
     Success: Added custom field.
 
 
 
-### fp comment get
+### fin comment get
 
 Gets the data of a single comment.
 
 ~~~
-fp comment get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin comment get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -251,26 +251,26 @@ fp comment get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
 **EXAMPLES**
 
     # Get comment.
-    $ fp comment get 21 --field=content
+    $ fin comment get 21 --field=content
     Thanks for all the comments, everyone!
 
 
 
-### fp comment list
+### fin comment list
 
 Gets a list of comments.
 
 ~~~
-fp comment list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin comment list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 Display comments based on all arguments supported by
-[FP_Comment_Query()](https://developer.finpress.org/reference/classes/FP_Comment_Query/__construct/).
+[FIN_Comment_Query()](https://developer.finpress.org/reference/classes/FIN_Comment_Query/__construct/).
 
 **OPTIONS**
 
 	[--<field>=<value>]
-		One or more args to pass to FP_Comment_Query.
+		One or more args to pass to FIN_Comment_Query.
 
 	[--field=<field>]
 		Prints the value of a single field for each comment.
@@ -318,13 +318,13 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List comment IDs.
-    $ fp comment list --field=ID
+    $ fin comment list --field=ID
     22
     23
     24
 
     # List comments of a post.
-    $ fp comment list --post_id=1 --fields=ID,comment_date,comment_author
+    $ fin comment list --post_id=1 --fields=ID,comment_date,comment_author
     +------------+---------------------+----------------+
     | comment_ID | comment_date        | comment_author |
     +------------+---------------------+----------------+
@@ -332,7 +332,7 @@ These fields are optionally available:
     +------------+---------------------+----------------+
 
     # List approved comments.
-    $ fp comment list --number=3 --status=approve --fields=ID,comment_date,comment_author
+    $ fin comment list --number=3 --status=approve --fields=ID,comment_date,comment_author
     +------------+---------------------+----------------+
     | comment_ID | comment_date        | comment_author |
     +------------+---------------------+----------------+
@@ -342,7 +342,7 @@ These fields are optionally available:
     +------------+---------------------+----------------+
 
     # List unapproved comments.
-    $ fp comment list --number=3 --status=hold --fields=ID,comment_date,comment_author
+    $ fin comment list --number=3 --status=hold --fields=ID,comment_date,comment_author
     +------------+---------------------+----------------+
     | comment_ID | comment_date        | comment_author |
     +------------+---------------------+----------------+
@@ -352,7 +352,7 @@ These fields are optionally available:
     +------------+---------------------+----------------+
 
     # List comments marked as spam.
-    $ fp comment list --status=spam --fields=ID,comment_date,comment_author
+    $ fin comment list --status=spam --fields=ID,comment_date,comment_author
     +------------+---------------------+----------------+
     | comment_ID | comment_date        | comment_author |
     +------------+---------------------+----------------+
@@ -360,7 +360,7 @@ These fields are optionally available:
     +------------+---------------------+----------------+
 
     # List comments in trash.
-    $ fp comment list --status=trash --fields=ID,comment_date,comment_author
+    $ fin comment list --status=trash --fields=ID,comment_date,comment_author
     +------------+---------------------+----------------+
     | comment_ID | comment_date        | comment_author |
     +------------+---------------------+----------------+
@@ -369,42 +369,42 @@ These fields are optionally available:
 
 
 
-### fp comment meta
+### fin comment meta
 
 Adds, updates, deletes, and lists comment custom fields.
 
 ~~~
-fp comment meta
+fin comment meta
 ~~~
 
 **EXAMPLES**
 
     # Set comment meta
-    $ fp comment meta set 123 description "Mary is a FinPress developer."
+    $ fin comment meta set 123 description "Mary is a FinPress developer."
     Success: Updated custom field 'description'.
 
     # Get comment meta
-    $ fp comment meta get 123 description
+    $ fin comment meta get 123 description
     Mary is a FinPress developer.
 
     # Update comment meta
-    $ fp comment meta update 123 description "Mary is an awesome FinPress developer."
+    $ fin comment meta update 123 description "Mary is an awesome FinPress developer."
     Success: Updated custom field 'description'.
 
     # Delete comment meta
-    $ fp comment meta delete 123 description
+    $ fin comment meta delete 123 description
     Success: Deleted custom field.
 
 
 
 
 
-### fp comment meta add
+### fin comment meta add
 
 Add a meta field.
 
 ~~~
-fp comment meta add <id> <key> [<value>] [--format=<format>]
+fin comment meta add <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -429,12 +429,12 @@ fp comment meta add <id> <key> [<value>] [--format=<format>]
 
 
 
-### fp comment meta delete
+### fin comment meta delete
 
 Delete a meta field.
 
 ~~~
-fp comment meta delete <id> [<key>] [<value>] [--all]
+fin comment meta delete <id> [<key>] [<value>] [--all]
 ~~~
 
 **OPTIONS**
@@ -453,12 +453,12 @@ fp comment meta delete <id> [<key>] [<value>] [--all]
 
 
 
-### fp comment meta get
+### fin comment meta get
 
 Get meta field value.
 
 ~~~
-fp comment meta get <id> <key> [--format=<format>]
+fin comment meta get <id> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -481,12 +481,12 @@ fp comment meta get <id> <key> [--format=<format>]
 
 
 
-### fp comment meta list
+### fin comment meta list
 
 List all metadata associated with an object.
 
 ~~~
-fp comment meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fin comment meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -536,12 +536,12 @@ fp comment meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>
 
 
 
-### fp comment meta patch
+### fin comment meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-fp comment meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fin comment meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -578,12 +578,12 @@ fp comment meta patch <action> <id> <key> <key-path>... [<value>] [--format=<for
 
 
 
-### fp comment meta pluck
+### fin comment meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-fp comment meta pluck <id> <key> <key-path>... [--format=<format>]
+fin comment meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -608,12 +608,12 @@ fp comment meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### fp comment meta update
+### fin comment meta update
 
 Update a meta field.
 
 ~~~
-fp comment meta update <id> <key> [<value>] [--format=<format>]
+fin comment meta update <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -638,12 +638,12 @@ fp comment meta update <id> <key> [<value>] [--format=<format>]
 
 
 
-### fp comment recount
+### fin comment recount
 
 Recalculates the comment_count value for one or more posts.
 
 ~~~
-fp comment recount <id>...
+fin comment recount <id>...
 ~~~
 
 **OPTIONS**
@@ -654,17 +654,17 @@ fp comment recount <id>...
 **EXAMPLES**
 
     # Recount comment for the post.
-    $ fp comment recount 123
+    $ fin comment recount 123
     Updated post 123 comment count to 67.
 
 
 
-### fp comment spam
+### fin comment spam
 
 Marks a comment as spam.
 
 ~~~
-fp comment spam <id>...
+fin comment spam <id>...
 ~~~
 
 **OPTIONS**
@@ -675,17 +675,17 @@ fp comment spam <id>...
 **EXAMPLES**
 
     # Spam comment.
-    $ fp comment spam 1337
+    $ fin comment spam 1337
     Success: Marked as spam comment 1337.
 
 
 
-### fp comment status
+### fin comment status
 
 Gets the status of a comment.
 
 ~~~
-fp comment status <id>
+fin comment status <id>
 ~~~
 
 **OPTIONS**
@@ -696,17 +696,17 @@ fp comment status <id>
 **EXAMPLES**
 
     # Get status of comment.
-    $ fp comment status 1337
+    $ fin comment status 1337
     approved
 
 
 
-### fp comment trash
+### fin comment trash
 
 Trashes a comment.
 
 ~~~
-fp comment trash <id>...
+fin comment trash <id>...
 ~~~
 
 **OPTIONS**
@@ -717,17 +717,17 @@ fp comment trash <id>...
 **EXAMPLES**
 
     # Trash comment.
-    $ fp comment trash 1337
+    $ fin comment trash 1337
     Success: Trashed comment 1337.
 
 
 
-### fp comment unapprove
+### fin comment unapprove
 
 Unapproves a comment.
 
 ~~~
-fp comment unapprove <id>...
+fin comment unapprove <id>...
 ~~~
 
 **OPTIONS**
@@ -738,17 +738,17 @@ fp comment unapprove <id>...
 **EXAMPLES**
 
     # Unapprove comment.
-    $ fp comment unapprove 1337
+    $ fin comment unapprove 1337
     Success: Unapproved comment 1337.
 
 
 
-### fp comment unspam
+### fin comment unspam
 
 Unmarks a comment as spam.
 
 ~~~
-fp comment unspam <id>...
+fin comment unspam <id>...
 ~~~
 
 **OPTIONS**
@@ -759,17 +759,17 @@ fp comment unspam <id>...
 **EXAMPLES**
 
     # Unspam comment.
-    $ fp comment unspam 1337
+    $ fin comment unspam 1337
     Success: Unspammed comment 1337.
 
 
 
-### fp comment untrash
+### fin comment untrash
 
 Untrashes a comment.
 
 ~~~
-fp comment untrash <id>...
+fin comment untrash <id>...
 ~~~
 
 **OPTIONS**
@@ -780,17 +780,17 @@ fp comment untrash <id>...
 **EXAMPLES**
 
     # Untrash comment.
-    $ fp comment untrash 1337
+    $ fin comment untrash 1337
     Success: Untrashed comment 1337.
 
 
 
-### fp comment update
+### fin comment update
 
 Updates one or more comments.
 
 ~~~
-fp comment update <id>... --<field>=<value>
+fin comment update <id>... --<field>=<value>
 ~~~
 
 **OPTIONS**
@@ -799,22 +799,22 @@ fp comment update <id>... --<field>=<value>
 		One or more IDs of comments to update.
 
 	--<field>=<value>
-		One or more fields to update. See fp_update_comment().
+		One or more fields to update. See fin_update_comment().
 
 **EXAMPLES**
 
     # Update comment.
-    $ fp comment update 123 --comment_author='That Guy'
+    $ fin comment update 123 --comment_author='That Guy'
     Success: Updated comment 123.
 
 
 
-### fp menu
+### fin menu
 
 Lists, creates, assigns, and deletes the active theme's navigation menus.
 
 ~~~
-fp menu
+fin menu
 ~~~
 
 See the [Navigation Menus](https://developer.finpress.org/themes/functionality/navigation-menus/) reference in the Theme Handbook.
@@ -822,11 +822,11 @@ See the [Navigation Menus](https://developer.finpress.org/themes/functionality/n
 **EXAMPLES**
 
     # Create a new menu
-    $ fp menu create "My Menu"
+    $ fin menu create "My Menu"
     Success: Created menu 200.
 
     # List existing menus
-    $ fp menu list
+    $ fin menu list
     +---------+----------+----------+-----------+-------+
     | term_id | name     | slug     | locations | count |
     +---------+----------+----------+-----------+-------+
@@ -835,21 +835,21 @@ See the [Navigation Menus](https://developer.finpress.org/themes/functionality/n
     +---------+----------+----------+-----------+-------+
 
     # Create a new menu link item
-    $ fp menu item add-custom my-menu Apple http://apple.com --porcelain
+    $ fin menu item add-custom my-menu Apple http://apple.com --porcelain
     1922
 
     # Assign the 'my-menu' menu to the 'primary' location
-    $ fp menu location assign my-menu primary
+    $ fin menu location assign my-menu primary
     Success: Assigned location primary to menu my-menu.
 
 
 
-### fp menu create
+### fin menu create
 
 Creates a new menu.
 
 ~~~
-fp menu create <menu-name> [--porcelain]
+fin menu create <menu-name> [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -862,17 +862,17 @@ fp menu create <menu-name> [--porcelain]
 
 **EXAMPLES**
 
-    $ fp menu create "My Menu"
+    $ fin menu create "My Menu"
     Success: Created menu 200.
 
 
 
-### fp menu delete
+### fin menu delete
 
 Deletes one or more menus.
 
 ~~~
-fp menu delete <menu>...
+fin menu delete <menu>...
 ~~~
 
 **OPTIONS**
@@ -882,44 +882,44 @@ fp menu delete <menu>...
 
 **EXAMPLES**
 
-    $ fp menu delete "My Menu"
+    $ fin menu delete "My Menu"
     Deleted menu 'My Menu'.
     Success: Deleted 1 of 1 menus.
 
 
 
-### fp menu item
+### fin menu item
 
 List, add, and delete items associated with a menu.
 
 ~~~
-fp menu item
+fin menu item
 ~~~
 
 **EXAMPLES**
 
     # Add an existing post to an existing menu
-    $ fp menu item add-post sidebar-menu 33 --title="Custom Test Post"
+    $ fin menu item add-post sidebar-menu 33 --title="Custom Test Post"
     Success: Menu item added.
 
     # Create a new menu link item
-    $ fp menu item add-custom sidebar-menu Apple http://apple.com
+    $ fin menu item add-custom sidebar-menu Apple http://apple.com
     Success: Menu item added.
 
     # Delete menu item
-    $ fp menu item delete 45
+    $ fin menu item delete 45
     Success: Deleted 1 of 1 menu items.
 
 
 
 
 
-### fp menu item add-custom
+### fin menu item add-custom
 
 Adds a custom menu item.
 
 ~~~
-fp menu item add-custom <menu> <title> <link> [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
+fin menu item add-custom <menu> <title> <link> [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -956,17 +956,17 @@ fp menu item add-custom <menu> <title> <link> [--description=<description>] [--a
 
 **EXAMPLES**
 
-    $ fp menu item add-custom sidebar-menu Apple http://apple.com
+    $ fin menu item add-custom sidebar-menu Apple http://apple.com
     Success: Menu item added.
 
 
 
-### fp menu item add-post
+### fin menu item add-post
 
 Adds a post as a menu item.
 
 ~~~
-fp menu item add-post <menu> <post-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
+fin menu item add-post <menu> <post-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -1006,17 +1006,17 @@ fp menu item add-post <menu> <post-id> [--title=<title>] [--link=<link>] [--desc
 
 **EXAMPLES**
 
-    $ fp menu item add-post sidebar-menu 33 --title="Custom Test Post"
+    $ fin menu item add-post sidebar-menu 33 --title="Custom Test Post"
     Success: Menu item added.
 
 
 
-### fp menu item add-term
+### fin menu item add-term
 
 Adds a taxonomy term as a menu item.
 
 ~~~
-fp menu item add-term <menu> <taxonomy> <term-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
+fin menu item add-term <menu> <taxonomy> <term-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -1059,17 +1059,17 @@ fp menu item add-term <menu> <taxonomy> <term-id> [--title=<title>] [--link=<lin
 
 **EXAMPLES**
 
-    $ fp menu item add-term sidebar-menu post_tag 24
+    $ fin menu item add-term sidebar-menu post_tag 24
     Success: Menu item added.
 
 
 
-### fp menu item delete
+### fin menu item delete
 
 Deletes one or more items from a menu.
 
 ~~~
-fp menu item delete <db-id>...
+fin menu item delete <db-id>...
 ~~~
 
 **OPTIONS**
@@ -1079,17 +1079,17 @@ fp menu item delete <db-id>...
 
 **EXAMPLES**
 
-    $ fp menu item delete 45
+    $ fin menu item delete 45
     Success: Deleted 1 of 1 menu items.
 
 
 
-### fp menu item list
+### fin menu item list
 
 Gets a list of items associated with a menu.
 
 ~~~
-fp menu item list <menu> [--fields=<fields>] [--format=<format>]
+fin menu item list <menu> [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1138,7 +1138,7 @@ These fields are optionally available:
 
 **EXAMPLES**
 
-    $ fp menu item list main-menu
+    $ fin menu item list main-menu
     +-------+-----------+-------------+---------------------------------+----------+
     | db_id | type      | title       | link                            | position |
     +-------+-----------+-------------+---------------------------------+----------+
@@ -1148,12 +1148,12 @@ These fields are optionally available:
 
 
 
-### fp menu item update
+### fin menu item update
 
 Updates a menu item.
 
 ~~~
-fp menu item update <db-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>]
+fin menu item update <db-id> [--title=<title>] [--link=<link>] [--description=<description>] [--attr-title=<attr-title>] [--target=<target>] [--classes=<classes>] [--position=<position>] [--parent-id=<parent-id>]
 ~~~
 
 **OPTIONS**
@@ -1187,17 +1187,17 @@ fp menu item update <db-id> [--title=<title>] [--link=<link>] [--description=<de
 
 **EXAMPLES**
 
-    $ fp menu item update 45 --title=FinPress --link='http://finpress.org' --target=_blank --position=2
+    $ fin menu item update 45 --title=FinPress --link='http://finpress.org' --target=_blank --position=2
     Success: Menu item updated.
 
 
 
-### fp menu list
+### fin menu list
 
 Gets a list of menus.
 
 ~~~
-fp menu list [--fields=<fields>] [--format=<format>]
+fin menu list [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1238,7 +1238,7 @@ These fields are optionally available:
 
 **EXAMPLES**
 
-    $ fp menu list
+    $ fin menu list
     +---------+----------+----------+-----------+-------+
     | term_id | name     | slug     | locations | count |
     +---------+----------+----------+-----------+-------+
@@ -1248,18 +1248,18 @@ These fields are optionally available:
 
 
 
-### fp menu location
+### fin menu location
 
 Assigns, removes, and lists a menu's locations.
 
 ~~~
-fp menu location
+fin menu location
 ~~~
 
 **EXAMPLES**
 
     # List available menu locations
-    $ fp menu location list
+    $ fin menu location list
     +----------+-------------------+
     | location | description       |
     +----------+-------------------+
@@ -1268,23 +1268,23 @@ fp menu location
     +----------+-------------------+
 
     # Assign the 'primary-menu' menu to the 'primary' location
-    $ fp menu location assign primary-menu primary
+    $ fin menu location assign primary-menu primary
     Success: Assigned location primary to menu primary-menu.
 
     # Remove the 'primary-menu' menu from the 'primary' location
-    $ fp menu location remove primary-menu primary
+    $ fin menu location remove primary-menu primary
     Success: Removed location from menu.
 
 
 
 
 
-### fp menu location assign
+### fin menu location assign
 
 Assigns a location to a menu.
 
 ~~~
-fp menu location assign <menu> <location>
+fin menu location assign <menu> <location>
 ~~~
 
 **OPTIONS**
@@ -1297,17 +1297,17 @@ fp menu location assign <menu> <location>
 
 **EXAMPLES**
 
-    $ fp menu location assign primary-menu primary
+    $ fin menu location assign primary-menu primary
     Success: Assigned location primary to menu primary-menu.
 
 
 
-### fp menu location list
+### fin menu location list
 
 Lists locations for the current theme.
 
 ~~~
-fp menu location list [--format=<format>]
+fin menu location list [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1334,7 +1334,7 @@ These fields will be displayed by default for each location:
 
 **EXAMPLES**
 
-    $ fp menu location list
+    $ fin menu location list
     +----------+-------------------+
     | location | description       |
     +----------+-------------------+
@@ -1344,12 +1344,12 @@ These fields will be displayed by default for each location:
 
 
 
-### fp menu location remove
+### fin menu location remove
 
 Removes a location from a menu.
 
 ~~~
-fp menu location remove <menu> <location>
+fin menu location remove <menu> <location>
 ~~~
 
 **OPTIONS**
@@ -1362,35 +1362,35 @@ fp menu location remove <menu> <location>
 
 **EXAMPLES**
 
-    $ fp menu location remove primary-menu primary
+    $ fin menu location remove primary-menu primary
     Success: Removed location from menu.
 
 
 
-### fp network meta
+### fin network meta
 
 Gets, adds, updates, deletes, and lists network custom fields.
 
 ~~~
-fp network meta
+fin network meta
 ~~~
 
 **EXAMPLES**
 
     # Get a list of super-admins
-    $ fp network meta get 1 site_admins
+    $ fin network meta get 1 site_admins
     array (
       0 => 'supervisor',
     )
 
 
 
-### fp network meta add
+### fin network meta add
 
 Add a meta field.
 
 ~~~
-fp network meta add <id> <key> [<value>] [--format=<format>]
+fin network meta add <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1415,12 +1415,12 @@ fp network meta add <id> <key> [<value>] [--format=<format>]
 
 
 
-### fp network meta delete
+### fin network meta delete
 
 Delete a meta field.
 
 ~~~
-fp network meta delete <id> [<key>] [<value>] [--all]
+fin network meta delete <id> [<key>] [<value>] [--all]
 ~~~
 
 **OPTIONS**
@@ -1439,12 +1439,12 @@ fp network meta delete <id> [<key>] [<value>] [--all]
 
 
 
-### fp network meta get
+### fin network meta get
 
 Get meta field value.
 
 ~~~
-fp network meta get <id> <key> [--format=<format>]
+fin network meta get <id> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1467,12 +1467,12 @@ fp network meta get <id> <key> [--format=<format>]
 
 
 
-### fp network meta list
+### fin network meta list
 
 List all metadata associated with an object.
 
 ~~~
-fp network meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fin network meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -1522,12 +1522,12 @@ fp network meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>
 
 
 
-### fp network meta patch
+### fin network meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-fp network meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fin network meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1564,12 +1564,12 @@ fp network meta patch <action> <id> <key> <key-path>... [<value>] [--format=<for
 
 
 
-### fp network meta pluck
+### fin network meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-fp network meta pluck <id> <key> <key-path>... [--format=<format>]
+fin network meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1594,12 +1594,12 @@ fp network meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### fp network meta update
+### fin network meta update
 
 Update a meta field.
 
 ~~~
-fp network meta update <id> <key> [<value>] [--format=<format>]
+fin network meta update <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1624,12 +1624,12 @@ fp network meta update <id> <key> [<value>] [--format=<format>]
 
 
 
-### fp option
+### fin option
 
 Retrieves and sets site options, including plugin and FinPress settings.
 
 ~~~
-fp option
+fin option
 ~~~
 
 See the [Plugin Settings API](https://developer.finpress.org/plugins/settings/settings-api/) and the [Theme Options](https://developer.finpress.org/themes/customize-api/) for more information on adding customized options.
@@ -1637,29 +1637,29 @@ See the [Plugin Settings API](https://developer.finpress.org/plugins/settings/se
 **EXAMPLES**
 
     # Get site URL.
-    $ fp option get siteurl
+    $ fin option get siteurl
     http://example.com
 
     # Add option.
-    $ fp option add my_option foobar
+    $ fin option add my_option foobar
     Success: Added 'my_option' option.
 
     # Update option.
-    $ fp option update my_option '{"foo": "bar"}' --format=json
+    $ fin option update my_option '{"foo": "bar"}' --format=json
     Success: Updated 'my_option' option.
 
     # Delete option.
-    $ fp option delete my_option
+    $ fin option delete my_option
     Success: Deleted 'my_option' option.
 
 
 
-### fp option add
+### fin option add
 
 Adds a new option value.
 
 ~~~
-fp option add <key> [<value>] [--format=<format>] [--autoload=<autoload>]
+fin option add <key> [<value>] [--format=<format>] [--autoload=<autoload>]
 ~~~
 
 Errors if the option already exists.
@@ -1694,17 +1694,17 @@ Errors if the option already exists.
 **EXAMPLES**
 
     # Create an option by reading a JSON file.
-    $ fp option add my_option --format=json < config.json
+    $ fin option add my_option --format=json < config.json
     Success: Added 'my_option' option.
 
 
 
-### fp option delete
+### fin option delete
 
 Deletes an option.
 
 ~~~
-fp option delete <key>...
+fin option delete <key>...
 ~~~
 
 **OPTIONS**
@@ -1715,23 +1715,23 @@ fp option delete <key>...
 **EXAMPLES**
 
     # Delete an option.
-    $ fp option delete my_option
+    $ fin option delete my_option
     Success: Deleted 'my_option' option.
 
     # Delete multiple options.
-    $ fp option delete option_one option_two option_three
+    $ fin option delete option_one option_two option_three
     Success: Deleted 'option_one' option.
     Success: Deleted 'option_two' option.
     Warning: Could not delete 'option_three' option. Does it exist?
 
 
 
-### fp option get
+### fin option get
 
 Gets the value for an option.
 
 ~~~
-fp option get <key> [--format=<format>]
+fin option get <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1752,33 +1752,33 @@ fp option get <key> [--format=<format>]
 **EXAMPLES**
 
     # Get option.
-    $ fp option get home
+    $ fin option get home
     http://example.com
 
     # Get blog description.
-    $ fp option get blogdescription
+    $ fin option get blogdescription
     A random blog description
 
     # Get blog name
-    $ fp option get blogname
+    $ fin option get blogname
     A random blog name
 
     # Get admin email.
-    $ fp option get admin_email
+    $ fin option get admin_email
     someone@example.com
 
     # Get option in JSON format.
-    $ fp option get active_plugins --format=json
+    $ fin option get active_plugins --format=json
     {"0":"dynamically-dynamic-sidebar\/dynamically-dynamic-sidebar.php","1":"monster-widget\/monster-widget.php","2":"show-current-template\/show-current-template.php","3":"theme-check\/theme-check.php","5":"finpress-importer\/finpress-importer.php"}
 
 
 
-### fp option list
+### fin option list
 
 Lists options and their values.
 
 ~~~
-fp option list [--search=<pattern>] [--exclude=<pattern>] [--autoload=<value>] [--transients] [--unserialize] [--field=<field>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>]
+fin option list [--search=<pattern>] [--exclude=<pattern>] [--autoload=<value>] [--transients] [--unserialize] [--field=<field>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>]
 ~~~
 
 **OPTIONS**
@@ -1851,11 +1851,11 @@ These fields are optionally available:
 **EXAMPLES**
 
     # Get the total size of all autoload options.
-    $ fp option list --autoload=on --format=total_bytes
+    $ fin option list --autoload=on --format=total_bytes
     33198
 
     # Find biggest transients.
-    $ fp option list --search="*_transient_*" --fields=option_name,size_bytes | sort -n -k 2 | tail
+    $ fin option list --search="*_transient_*" --fields=option_name,size_bytes | sort -n -k 2 | tail
     option_name size_bytes
     _site_transient_timeout_theme_roots 10
     _site_transient_theme_roots 76
@@ -1864,7 +1864,7 @@ These fields are optionally available:
     _site_transient_update_plugins  6645
 
     # List all options beginning with "i2f_".
-    $ fp option list --search="i2f_*"
+    $ fin option list --search="i2f_*"
     +-------------+--------------+
     | option_name | option_value |
     +-------------+--------------+
@@ -1872,19 +1872,19 @@ These fields are optionally available:
     +-------------+--------------+
 
     # Delete all options beginning with "theme_mods_".
-    $ fp option list --search="theme_mods_*" --field=option_name | xargs -I % fp option delete %
+    $ fin option list --search="theme_mods_*" --field=option_name | xargs -I % fin option delete %
     Success: Deleted 'theme_mods_twentysixteen' option.
     Success: Deleted 'theme_mods_twentyfifteen' option.
     Success: Deleted 'theme_mods_twentyfourteen' option.
 
 
 
-### fp option patch
+### fin option patch
 
 Updates a nested value in an option.
 
 ~~~
-fp option patch <action> <key> <key-path>... [<value>] [--format=<format>]
+fin option patch <action> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1919,37 +1919,37 @@ fp option patch <action> <key> <key-path>... [<value>] [--format=<format>]
 **EXAMPLES**
 
     # Add 'bar' to the 'foo' key on an option with name 'option_name'
-    $ fp option patch insert option_name foo bar
+    $ fin option patch insert option_name foo bar
     Success: Updated 'option_name' option.
 
     # Update the value of 'foo' key to 'new' on an option with name 'option_name'
-    $ fp option patch update option_name foo new
+    $ fin option patch update option_name foo new
     Success: Updated 'option_name' option.
 
     # Set nested value of 'bar' key to value we have in the patch file on an option with name 'option_name'.
-    $ fp option patch update option_name foo bar < patch
+    $ fin option patch update option_name foo bar < patch
     Success: Updated 'option_name' option.
 
     # Update the value for the key 'not-a-key' which is not exist on an option with name 'option_name'.
-    $ fp option patch update option_name foo not-a-key new-value
+    $ fin option patch update option_name foo not-a-key new-value
     Error: No data exists for key "not-a-key"
 
     # Update the value for the key 'foo' without passing value on an option with name 'option_name'.
-    $ fp option patch update option_name foo
+    $ fin option patch update option_name foo
     Error: Please provide value to update.
 
     # Delete the nested key 'bar' under 'foo' key on an option with name 'option_name'.
-    $ fp option patch delete option_name foo bar
+    $ fin option patch delete option_name foo bar
     Success: Updated 'option_name' option.
 
 
 
-### fp option pluck
+### fin option pluck
 
 Gets a nested value from an option.
 
 ~~~
-fp option pluck <key> <key-path>... [--format=<format>]
+fin option pluck <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1972,12 +1972,12 @@ fp option pluck <key> <key-path>... [--format=<format>]
 
 
 
-### fp option update
+### fin option update
 
 Updates an option value.
 
 ~~~
-fp option update <key> [<value>] [--autoload=<autoload>] [--format=<format>]
+fin option update <key> [<value>] [--autoload=<autoload>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -1989,7 +1989,7 @@ fp option update <key> [<value>] [--autoload=<autoload>] [--format=<format>]
 		The new value. If omitted, the value is read from STDIN.
 
 	[--autoload=<autoload>]
-		Requires FP 4.2. Should this option be automatically loaded.
+		Requires FIN 4.2. Should this option be automatically loaded.
 		---
 		options:
 		  - 'on'
@@ -2010,42 +2010,42 @@ fp option update <key> [<value>] [--autoload=<autoload>] [--format=<format>]
 **EXAMPLES**
 
     # Update an option by reading from a file.
-    $ fp option update my_option < value.txt
+    $ fin option update my_option < value.txt
     Success: Updated 'my_option' option.
 
     # Update one option on multiple sites using xargs.
-    $ fp site list --field=url | xargs -n1 -I {} sh -c 'fp --url={} option update my_option my_value'
+    $ fin site list --field=url | xargs -n1 -I {} sh -c 'fin --url={} option update my_option my_value'
     Success: Updated 'my_option' option.
     Success: Updated 'my_option' option.
 
     # Update site blog name.
-    $ fp option update blogname "Random blog name"
+    $ fin option update blogname "Random blog name"
     Success: Updated 'blogname' option.
 
     # Update site blog description.
-    $ fp option update blogdescription "Some random blog description"
+    $ fin option update blogdescription "Some random blog description"
     Success: Updated 'blogdescription' option.
 
     # Update admin email address.
-    $ fp option update admin_email someone@example.com
+    $ fin option update admin_email someone@example.com
     Success: Updated 'admin_email' option.
 
     # Set the default role.
-    $ fp option update default_role author
+    $ fin option update default_role author
     Success: Updated 'default_role' option.
 
     # Set the timezone string.
-    $ fp option update timezone_string "America/New_York"
+    $ fin option update timezone_string "America/New_York"
     Success: Updated 'timezone_string' option.
 
 
 
-### fp option set-autoload
+### fin option set-autoload
 
 Sets the 'autoload' value for an option.
 
 ~~~
-fp option set-autoload <key> <autoload>
+fin option set-autoload <key> <autoload>
 ~~~
 
 **OPTIONS**
@@ -2066,17 +2066,17 @@ fp option set-autoload <key> <autoload>
 **EXAMPLES**
 
     # Set the 'autoload' value for an option.
-    $ fp option set-autoload abc_options no
+    $ fin option set-autoload abc_options no
     Success: Updated autoload value for 'abc_options' option.
 
 
 
-### fp option get-autoload
+### fin option get-autoload
 
 Gets the 'autoload' value for an option.
 
 ~~~
-fp option get-autoload <key>
+fin option get-autoload <key>
 ~~~
 
 **OPTIONS**
@@ -2087,41 +2087,41 @@ fp option get-autoload <key>
 **EXAMPLES**
 
     # Get the 'autoload' value for an option.
-    $ fp option get-autoload blogname
+    $ fin option get-autoload blogname
     yes
 
 
 
-### fp post
+### fin post
 
 Manages posts, content, and meta.
 
 ~~~
-fp post
+fin post
 ~~~
 
 **EXAMPLES**
 
     # Create a new post.
-    $ fp post create --post_type=post --post_title='A sample post'
+    $ fin post create --post_type=post --post_title='A sample post'
     Success: Created post 123.
 
     # Update an existing post.
-    $ fp post update 123 --post_status=draft
+    $ fin post update 123 --post_status=draft
     Success: Updated post 123.
 
     # Delete an existing post.
-    $ fp post delete 123
+    $ fin post delete 123
     Success: Trashed post 123.
 
 
 
-### fp post create
+### fin post create
 
 Creates a new post.
 
 ~~~
-fp post create [--post_author=<post_author>] [--post_date=<post_date>] [--post_date_gmt=<post_date_gmt>] [--post_content=<post_content>] [--post_content_filtered=<post_content_filtered>] [--post_title=<post_title>] [--post_excerpt=<post_excerpt>] [--post_status=<post_status>] [--post_type=<post_type>] [--comment_status=<comment_status>] [--ping_status=<ping_status>] [--post_password=<post_password>] [--post_name=<post_name>] [--from-post=<post_id>] [--to_ping=<to_ping>] [--pinged=<pinged>] [--post_modified=<post_modified>] [--post_modified_gmt=<post_modified_gmt>] [--post_parent=<post_parent>] [--menu_order=<menu_order>] [--post_mime_type=<post_mime_type>] [--guid=<guid>] [--post_category=<post_category>] [--tags_input=<tags_input>] [--tax_input=<tax_input>] [--meta_input=<meta_input>] [<file>] [--<field>=<value>] [--edit] [--porcelain]
+fin post create [--post_author=<post_author>] [--post_date=<post_date>] [--post_date_gmt=<post_date_gmt>] [--post_content=<post_content>] [--post_content_filtered=<post_content_filtered>] [--post_title=<post_title>] [--post_excerpt=<post_excerpt>] [--post_status=<post_status>] [--post_type=<post_type>] [--comment_status=<comment_status>] [--ping_status=<ping_status>] [--post_password=<post_password>] [--post_name=<post_name>] [--from-post=<post_id>] [--to_ping=<to_ping>] [--pinged=<pinged>] [--post_modified=<post_modified>] [--post_modified_gmt=<post_modified_gmt>] [--post_parent=<post_parent>] [--menu_order=<menu_order>] [--post_mime_type=<post_mime_type>] [--guid=<guid>] [--post_category=<post_category>] [--tags_input=<tags_input>] [--tax_input=<tax_input>] [--meta_input=<meta_input>] [<file>] [--<field>=<value>] [--edit] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -2212,7 +2212,7 @@ fp post create [--post_author=<post_author>] [--post_date=<post_date>] [--post_d
   be read from STDIN.
 
 	[--<field>=<value>]
-		Associative args for the new post. See fp_insert_post().
+		Associative args for the new post. See fin_insert_post().
 
 	[--edit]
 		Immediately open system's editor to write or edit post content.
@@ -2227,29 +2227,29 @@ fp post create [--post_author=<post_author>] [--post_date=<post_date>] [--post_d
 **EXAMPLES**
 
     # Create post and schedule for future
-    $ fp post create --post_type=post --post_title='A future post' --post_status=future --post_date='2030-12-01 07:00:00'
+    $ fin post create --post_type=post --post_title='A future post' --post_status=future --post_date='2030-12-01 07:00:00'
     Success: Created post 1921.
 
     # Create post with content from given file
-    $ fp post create ./post-content.txt --post_category=201,345 --post_title='Post from file'
+    $ fin post create ./post-content.txt --post_category=201,345 --post_title='Post from file'
     Success: Created post 1922.
 
     # Create a post with multiple meta values.
-    $ fp post create --post_title='A post' --post_content='Just a small post.' --meta_input='{"key1":"value1","key2":"value2"}'
+    $ fin post create --post_title='A post' --post_content='Just a small post.' --meta_input='{"key1":"value1","key2":"value2"}'
     Success: Created post 1923.
 
     # Create a duplicate post from existing posts.
-    $ fp post create --from-post=123 --post_title='Different Title'
+    $ fin post create --from-post=123 --post_title='Different Title'
     Success: Created post 2350.
 
 
 
-### fp post delete
+### fin post delete
 
 Deletes an existing post.
 
 ~~~
-fp post delete <id>... [--force] [--defer-term-counting]
+fin post delete <id>... [--force] [--defer-term-counting]
 ~~~
 
 **OPTIONS**
@@ -2266,33 +2266,33 @@ fp post delete <id>... [--force] [--defer-term-counting]
 **EXAMPLES**
 
     # Delete post skipping trash
-    $ fp post delete 123 --force
+    $ fin post delete 123 --force
     Success: Deleted post 123.
 
     # Delete multiple posts
-    $ fp post delete 123 456 789
+    $ fin post delete 123 456 789
     Success: Trashed post 123.
     Success: Trashed post 456.
     Success: Trashed post 789.
 
     # Delete all pages
-    $ fp post delete $(fp post list --post_type='page' --format=ids)
+    $ fin post delete $(fin post list --post_type='page' --format=ids)
     Success: Trashed post 1164.
     Success: Trashed post 1186.
 
     # Delete all posts in the trash
-    $ fp post delete $(fp post list --post_status=trash --format=ids)
+    $ fin post delete $(fin post list --post_status=trash --format=ids)
     Success: Deleted post 1268.
     Success: Deleted post 1294.
 
 
 
-### fp post edit
+### fin post edit
 
 Launches system editor to edit post content.
 
 ~~~
-fp post edit <id>
+fin post edit <id>
 ~~~
 
 **OPTIONS**
@@ -2303,16 +2303,16 @@ fp post edit <id>
 **EXAMPLES**
 
     # Launch system editor to edit post
-    $ fp post edit 123
+    $ fin post edit 123
 
 
 
-### fp post exists
+### fin post exists
 
 Verifies whether a post exists.
 
 ~~~
-fp post exists <id>
+fin post exists <id>
 ~~~
 
 Displays a success message if the post does exist.
@@ -2325,24 +2325,24 @@ Displays a success message if the post does exist.
 **EXAMPLES**
 
     # The post exists.
-    $ fp post exists 1337
+    $ fin post exists 1337
     Success: Post with ID 1337 exists.
     $ echo $?
     0
 
     # The post does not exist.
-    $ fp post exists 10000
+    $ fin post exists 10000
     $ echo $?
     1
 
 
 
-### fp post generate
+### fin post generate
 
 Generates some posts.
 
 ~~~
-fp post generate [--count=<number>] [--post_type=<type>] [--post_status=<status>] [--post_title=<post_title>] [--post_author=<login>] [--post_date=<yyyy-mm-dd-hh-ii-ss>] [--post_date_gmt=<yyyy-mm-dd-hh-ii-ss>] [--post_content] [--max_depth=<number>] [--format=<format>]
+fin post generate [--count=<number>] [--post_type=<type>] [--post_status=<status>] [--post_title=<post_title>] [--post_author=<login>] [--post_date=<yyyy-mm-dd-hh-ii-ss>] [--post_date_gmt=<yyyy-mm-dd-hh-ii-ss>] [--post_content] [--max_depth=<number>] [--format=<format>]
 ~~~
 
 Creates a specified number of new posts with dummy data.
@@ -2406,30 +2406,30 @@ Creates a specified number of new posts with dummy data.
 **EXAMPLES**
 
     # Generate posts.
-    $ fp post generate --count=10 --post_type=page --post_date=1999-01-04
+    $ fin post generate --count=10 --post_type=page --post_date=1999-01-04
     Generating posts  100% [================================================] 0:01 / 0:04
 
     # Generate posts with fetched content.
-    $ curl -N https://loripsum.net/api/5 | fp post generate --post_content --count=10
+    $ curl -N https://loripsum.net/api/5 | fin post generate --post_content --count=10
       % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                      Dload  Upload   Total   Spent    Left  Speed
     100  2509  100  2509    0     0    616      0  0:00:04  0:00:04 --:--:--   616
     Generating posts  100% [================================================] 0:01 / 0:04
 
     # Add meta to every generated posts.
-    $ fp post generate --format=ids | xargs -d ' ' -I % fp post meta add % foo bar
+    $ fin post generate --format=ids | xargs -d ' ' -I % fin post meta add % foo bar
     Success: Added custom field.
     Success: Added custom field.
     Success: Added custom field.
 
 
 
-### fp post get
+### fin post get
 
 Gets details about a post.
 
 ~~~
-fp post get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin post get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2457,25 +2457,25 @@ fp post get <id> [--field=<field>] [--fields=<fields>] [--format=<format>]
 **EXAMPLES**
 
     # Save the post content to a file
-    $ fp post get 123 --field=content > file.txt
+    $ fin post get 123 --field=content > file.txt
 
 
 
-### fp post list
+### fin post list
 
 Gets a list of posts.
 
 ~~~
-fp post list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin post list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
-Display posts based on all arguments supported by [FP_Query()](https://developer.finpress.org/reference/classes/fp_query/).
+Display posts based on all arguments supported by [FIN_Query()](https://developer.finpress.org/reference/classes/fin_query/).
 Only shows post types marked as post by default.
 
 **OPTIONS**
 
 	[--<field>=<value>]
-		One or more args to pass to FP_Query.
+		One or more args to pass to FIN_Query.
 
 	[--field=<field>]
 		Prints the value of a single field for each post.
@@ -2532,18 +2532,18 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List post
-    $ fp post list --field=ID
+    $ fin post list --field=ID
     568
     829
     1329
     1695
 
     # List posts in JSON
-    $ fp post list --post_type=post --posts_per_page=5 --format=json
+    $ fin post list --post_type=post --posts_per_page=5 --format=json
     [{"ID":1,"post_title":"Hello world!","post_name":"hello-world","post_date":"2015-06-20 09:00:10","post_status":"publish"},{"ID":1178,"post_title":"Markup: HTML Tags and Formatting","post_name":"markup-html-tags-and-formatting","post_date":"2013-01-11 20:22:19","post_status":"draft"}]
 
     # List all pages
-    $ fp post list --post_type=page --fields=post_title,post_status
+    $ fin post list --post_type=page --fields=post_title,post_status
     +-------------+-------------+
     | post_title  | post_status |
     +-------------+-------------+
@@ -2551,11 +2551,11 @@ These fields are optionally available:
     +-------------+-------------+
 
     # List ids of all pages and posts
-    $ fp post list --post_type=page,post --format=ids
+    $ fin post list --post_type=page,post --format=ids
     15 25 34 37 198
 
     # List given posts
-    $ fp post list --post__in=1,3
+    $ fin post list --post__in=1,3
     +----+--------------+-------------+---------------------+-------------+
     | ID | post_title   | post_name   | post_date           | post_status |
     +----+--------------+-------------+---------------------+-------------+
@@ -2564,7 +2564,7 @@ These fields are optionally available:
     +----+--------------+-------------+---------------------+-------------+
 
     # List given post by a specific author
-    $ fp post list --author=2
+    $ fin post list --author=2
     +----+-------------------+-------------------+---------------------+-------------+
     | ID | post_title        | post_name         | post_date           | post_status |
     +----+-------------------+-------------------+---------------------+-------------+
@@ -2573,42 +2573,42 @@ These fields are optionally available:
 
 
 
-### fp post meta
+### fin post meta
 
 Adds, updates, deletes, and lists post custom fields.
 
 ~~~
-fp post meta
+fin post meta
 ~~~
 
 **EXAMPLES**
 
     # Set post meta
-    $ fp post meta set 123 _fp_page_template about.php
-    Success: Updated custom field '_fp_page_template'.
+    $ fin post meta set 123 _fin_page_template about.php
+    Success: Updated custom field '_fin_page_template'.
 
     # Get post meta
-    $ fp post meta get 123 _fp_page_template
+    $ fin post meta get 123 _fin_page_template
     about.php
 
     # Update post meta
-    $ fp post meta update 123 _fp_page_template contact.php
-    Success: Updated custom field '_fp_page_template'.
+    $ fin post meta update 123 _fin_page_template contact.php
+    Success: Updated custom field '_fin_page_template'.
 
     # Delete post meta
-    $ fp post meta delete 123 _fp_page_template
+    $ fin post meta delete 123 _fin_page_template
     Success: Deleted custom field.
 
 
 
 
 
-### fp post meta add
+### fin post meta add
 
 Add a meta field.
 
 ~~~
-fp post meta add <id> <key> [<value>] [--format=<format>]
+fin post meta add <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2633,12 +2633,12 @@ fp post meta add <id> <key> [<value>] [--format=<format>]
 
 
 
-### fp post meta clean-duplicates
+### fin post meta clean-duplicates
 
 Cleans up duplicate post meta values on a post.
 
 ~~~
-fp post meta clean-duplicates <id> <key>
+fin post meta clean-duplicates <id> <key>
 ~~~
 
 **OPTIONS**
@@ -2652,17 +2652,17 @@ fp post meta clean-duplicates <id> <key>
 **EXAMPLES**
 
     # Delete duplicate post meta.
-    fp post meta clean-duplicates 1234 enclosure
+    fin post meta clean-duplicates 1234 enclosure
     Success: Cleaned up duplicate 'enclosure' meta values.
 
 
 
-### fp post meta delete
+### fin post meta delete
 
 Delete a meta field.
 
 ~~~
-fp post meta delete <id> [<key>] [<value>] [--all]
+fin post meta delete <id> [<key>] [<value>] [--all]
 ~~~
 
 **OPTIONS**
@@ -2681,12 +2681,12 @@ fp post meta delete <id> [<key>] [<value>] [--all]
 
 
 
-### fp post meta get
+### fin post meta get
 
 Get meta field value.
 
 ~~~
-fp post meta get <id> <key> [--format=<format>]
+fin post meta get <id> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2709,12 +2709,12 @@ fp post meta get <id> <key> [--format=<format>]
 
 
 
-### fp post meta list
+### fin post meta list
 
 List all metadata associated with an object.
 
 ~~~
-fp post meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fin post meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -2764,12 +2764,12 @@ fp post meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [
 
 
 
-### fp post meta patch
+### fin post meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-fp post meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fin post meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2806,12 +2806,12 @@ fp post meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format
 
 
 
-### fp post meta pluck
+### fin post meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-fp post meta pluck <id> <key> <key-path>... [--format=<format>]
+fin post meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2836,12 +2836,12 @@ fp post meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### fp post meta update
+### fin post meta update
 
 Update a meta field.
 
 ~~~
-fp post meta update <id> <key> [<value>] [--format=<format>]
+fin post meta update <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2866,26 +2866,26 @@ fp post meta update <id> <key> [<value>] [--format=<format>]
 
 
 
-### fp post term
+### fin post term
 
 Adds, updates, removes, and lists post terms.
 
 ~~~
-fp post term
+fin post term
 ~~~
 
 **EXAMPLES**
 
     # Set category post term `test` to the post ID 123
-    $ fp post term set 123 test category
+    $ fin post term set 123 test category
     Success: Set term.
 
     # Set category post terms `test` and `apple` to the post ID 123
-    $ fp post term set 123 test apple category
+    $ fin post term set 123 test apple category
     Success: Set terms.
 
     # List category post terms for the post ID 123
-    $ fp post term list 123 category --fields=term_id,slug
+    $ fin post term list 123 category --fields=term_id,slug
     +---------+-------+
     | term_id | slug  |
     +---------+-------+
@@ -2894,19 +2894,19 @@ fp post term
     +----------+------+
 
     # Remove category post terms `test` and `apple` for the post ID 123
-    $ fp post term remove 123 category test apple
+    $ fin post term remove 123 category test apple
     Success: Removed terms.
 
 
 
 
 
-### fp post term add
+### fin post term add
 
 Add a term to an object.
 
 ~~~
-fp post term add <id> <taxonomy> <term>... [--by=<field>]
+fin post term add <id> <taxonomy> <term>... [--by=<field>]
 ~~~
 
 Append the term to the existing set of terms on the object.
@@ -2933,12 +2933,12 @@ Append the term to the existing set of terms on the object.
 
 
 
-### fp post term list
+### fin post term list
 
 List all terms associated with an object.
 
 ~~~
-fp post term list <id> <taxonomy>... [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin post term list <id> <taxonomy>... [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -2987,12 +2987,12 @@ These fields are optionally available:
 
 
 
-### fp post term remove
+### fin post term remove
 
 Remove a term from an object.
 
 ~~~
-fp post term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
+fin post term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
 ~~~
 
 **OPTIONS**
@@ -3020,12 +3020,12 @@ fp post term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
 
 
 
-### fp post term set
+### fin post term set
 
 Set object terms.
 
 ~~~
-fp post term set <id> <taxonomy> <term>... [--by=<field>]
+fin post term set <id> <taxonomy> <term>... [--by=<field>]
 ~~~
 
 Replaces existing terms on the object.
@@ -3052,12 +3052,12 @@ Replaces existing terms on the object.
 
 
 
-### fp post update
+### fin post update
 
 Updates one or more existing posts.
 
 ~~~
-fp post update <id>... [--post_author=<post_author>] [--post_date=<post_date>] [--post_date_gmt=<post_date_gmt>] [--post_content=<post_content>] [--post_content_filtered=<post_content_filtered>] [--post_title=<post_title>] [--post_excerpt=<post_excerpt>] [--post_status=<post_status>] [--post_type=<post_type>] [--comment_status=<comment_status>] [--ping_status=<ping_status>] [--post_password=<post_password>] [--post_name=<post_name>] [--to_ping=<to_ping>] [--pinged=<pinged>] [--post_modified=<post_modified>] [--post_modified_gmt=<post_modified_gmt>] [--post_parent=<post_parent>] [--menu_order=<menu_order>] [--post_mime_type=<post_mime_type>] [--guid=<guid>] [--post_category=<post_category>] [--tags_input=<tags_input>] [--tax_input=<tax_input>] [--meta_input=<meta_input>] [<file>] --<field>=<value> [--defer-term-counting]
+fin post update <id>... [--post_author=<post_author>] [--post_date=<post_date>] [--post_date_gmt=<post_date_gmt>] [--post_content=<post_content>] [--post_content_filtered=<post_content_filtered>] [--post_title=<post_title>] [--post_excerpt=<post_excerpt>] [--post_status=<post_status>] [--post_type=<post_type>] [--comment_status=<comment_status>] [--ping_status=<ping_status>] [--post_password=<post_password>] [--post_name=<post_name>] [--to_ping=<to_ping>] [--pinged=<pinged>] [--post_modified=<post_modified>] [--post_modified_gmt=<post_modified_gmt>] [--post_parent=<post_parent>] [--menu_order=<menu_order>] [--post_mime_type=<post_mime_type>] [--guid=<guid>] [--post_category=<post_category>] [--tags_input=<tags_input>] [--tax_input=<tax_input>] [--meta_input=<meta_input>] [<file>] --<field>=<value> [--defer-term-counting]
 ~~~
 
 **OPTIONS**
@@ -3148,38 +3148,38 @@ fp post update <id>... [--post_author=<post_author>] [--post_date=<post_date>] [
   be read from STDIN.
 
 	--<field>=<value>
-		One or more fields to update. See fp_insert_post().
+		One or more fields to update. See fin_insert_post().
 
 	[--defer-term-counting]
 		Recalculate term count in batch, for a performance boost.
 
 **EXAMPLES**
 
-    $ fp post update 123 --post_name=something --post_status=draft
+    $ fin post update 123 --post_name=something --post_status=draft
     Success: Updated post 123.
 
     # Update a post with multiple meta values.
-    $ fp post update 123 --meta_input='{"key1":"value1","key2":"value2"}'
+    $ fin post update 123 --meta_input='{"key1":"value1","key2":"value2"}'
     Success: Updated post 123.
 
     # Update multiple posts at once.
-    $ fp post update 123 456 --post_author=789
+    $ fin post update 123 456 --post_author=789
     Success: Updated post 123.
     Success: Updated post 456.
 
     # Update all posts of a given post type at once.
-    $ fp post update $(fp post list --post_type=page --format=ids) --post_author=123
+    $ fin post update $(fin post list --post_type=page --format=ids) --post_author=123
     Success: Updated post 123.
     Success: Updated post 456.
 
 
 
-### fp post url-to-id
+### fin post url-to-id
 
 Gets the post ID for a given URL.
 
 ~~~
-fp post url-to-id <url>
+fin post url-to-id <url>
 ~~~
 
 **OPTIONS**
@@ -3190,17 +3190,17 @@ fp post url-to-id <url>
 **EXAMPLES**
 
     # Get post ID by URL
-    $ fp post url-to-id https://example.com/?p=1
+    $ fin post url-to-id https://example.com/?p=1
     1
 
 
 
-### fp post-type
+### fin post-type
 
 Retrieves details on the site's registered post types.
 
 ~~~
-fp post-type
+fin post-type
 ~~~
 
 Get information on FinPress' built-in and the site's [custom post types](https://developer.finpress.org/plugins/post-types/).
@@ -3208,11 +3208,11 @@ Get information on FinPress' built-in and the site's [custom post types](https:/
 **EXAMPLES**
 
     # Get details about a post type
-    $ fp post-type get page --fields=name,label,hierarchical --format=json
+    $ fin post-type get page --fields=name,label,hierarchical --format=json
     {"name":"page","label":"Pages","hierarchical":true}
 
     # List post types with 'post' capability type
-    $ fp post-type list --capability_type=post --fields=name,public
+    $ fin post-type list --capability_type=post --fields=name,public
     +---------------+--------+
     | name          | public |
     +---------------+--------+
@@ -3224,12 +3224,12 @@ Get information on FinPress' built-in and the site's [custom post types](https:/
 
 
 
-### fp post-type get
+### fin post-type get
 
 Gets details about a registered post type.
 
 ~~~
-fp post-type get <post-type> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin post-type get <post-type> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3275,17 +3275,17 @@ These fields are optionally available:
 **EXAMPLES**
 
     # Get details about the 'page' post type.
-    $ fp post-type get page --fields=name,label,hierarchical --format=json
+    $ fin post-type get page --fields=name,label,hierarchical --format=json
     {"name":"page","label":"Pages","hierarchical":true}
 
 
 
-### fp post-type list
+### fin post-type list
 
 Lists registered post types.
 
 ~~~
-fp post-type list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin post-type list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3329,7 +3329,7 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List registered post types
-    $ fp post-type list --format=csv
+    $ fin post-type list --format=csv
     name,label,description,hierarchical,public,capability_type
     post,Posts,,,1,post
     page,Pages,,1,1,page
@@ -3338,7 +3338,7 @@ These fields are optionally available:
     nav_menu_item,"Navigation Menu Items",,,,post
 
     # List post types with 'post' capability type
-    $ fp post-type list --capability_type=post --fields=name,public
+    $ fin post-type list --capability_type=post --fields=name,public
     +---------------+--------+
     | name          | public |
     +---------------+--------+
@@ -3350,38 +3350,38 @@ These fields are optionally available:
 
 
 
-### fp site
+### fin site
 
 Creates, deletes, empties, moderates, and lists one or more sites on a multisite installation.
 
 ~~~
-fp site
+fin site
 ~~~
 
 **EXAMPLES**
 
     # Create site
-    $ fp site create --slug=example
+    $ fin site create --slug=example
     Success: Site 3 created: www.example.com/example/
 
     # Output a simple list of site URLs
-    $ fp site list --field=url
+    $ fin site list --field=url
     http://www.example.com/
     http://www.example.com/subdir/
 
     # Delete site
-    $ fp site delete 123
+    $ fin site delete 123
     Are you sure you want to delete the 'http://www.example.com/example' site? [y/n] y
     Success: The site at 'http://www.example.com/example' was deleted.
 
 
 
-### fp site activate
+### fin site activate
 
 Activates one or more sites.
 
 ~~~
-fp site activate [<id>...] [--slug=<slug>]
+fin site activate [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -3394,20 +3394,20 @@ fp site activate [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ fp site activate 123
+    $ fin site activate 123
     Success: Site 123 activated.
 
-     $ fp site activate --slug=demo
+     $ fin site activate --slug=demo
      Success: Site 123 marked as activated.
 
 
 
-### fp site archive
+### fin site archive
 
 Archives one or more sites.
 
 ~~~
-fp site archive [<id>...] [--slug=<slug>]
+fin site archive [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -3420,20 +3420,20 @@ fp site archive [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ fp site archive 123
+    $ fin site archive 123
     Success: Site 123 archived.
 
-    $ fp site archive --slug=demo
+    $ fin site archive --slug=demo
     Success: Site 123 archived.
 
 
 
-### fp site create
+### fin site create
 
 Creates a site in a multisite installation.
 
 ~~~
-fp site create --slug=<slug> [--title=<title>] [--email=<email>] [--network_id=<network-id>] [--private] [--porcelain]
+fin site create --slug=<slug> [--title=<title>] [--email=<email>] [--network_id=<network-id>] [--private] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -3458,17 +3458,17 @@ fp site create --slug=<slug> [--title=<title>] [--email=<email>] [--network_id=<
 
 **EXAMPLES**
 
-    $ fp site create --slug=example
+    $ fin site create --slug=example
     Success: Site 3 created: http://www.example.com/example/
 
 
 
-### fp site generate
+### fin site generate
 
 Generate some sites.
 
 ~~~
-fp site generate [--count=<number>] [--slug=<slug>] [--email=<email>] [--network_id=<network-id>] [--private] [--format=<format>]
+fin site generate [--count=<number>] [--slug=<slug>] [--email=<email>] [--network_id=<network-id>] [--private] [--format=<format>]
 ~~~
 
 Creates a specified number of new sites.
@@ -3505,17 +3505,17 @@ Creates a specified number of new sites.
 **EXAMPLES**
 
    # Generate 10 sites.
-   $ fp site generate --count=10
+   $ fin site generate --count=10
    Generating sites  100% [================================================] 0:01 / 0:04
 
 
 
-### fp site deactivate
+### fin site deactivate
 
 Deactivates one or more sites.
 
 ~~~
-fp site deactivate [<id>...] [--slug=<slug>]
+fin site deactivate [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -3528,20 +3528,20 @@ fp site deactivate [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ fp site deactivate 123
+    $ fin site deactivate 123
     Success: Site 123 deactivated.
 
-    $ fp site deactivate --slug=demo
+    $ fin site deactivate --slug=demo
     Success: Site 123 deactivated.
 
 
 
-### fp site delete
+### fin site delete
 
 Deletes a site in a multisite installation.
 
 ~~~
-fp site delete [<site-id>] [--slug=<slug>] [--yes] [--keep-tables]
+fin site delete [<site-id>] [--slug=<slug>] [--yes] [--keep-tables]
 ~~~
 
 **OPTIONS**
@@ -3560,18 +3560,18 @@ fp site delete [<site-id>] [--slug=<slug>] [--yes] [--keep-tables]
 
 **EXAMPLES**
 
-    $ fp site delete 123
+    $ fin site delete 123
     Are you sure you want to delete the http://www.example.com/example site? [y/n] y
     Success: The site at 'http://www.example.com/example' was deleted.
 
 
 
-### fp site empty
+### fin site empty
 
 Empties a site of its content (posts, comments, terms, and meta).
 
 ~~~
-fp site empty [--uploads] [--yes]
+fin site empty [--uploads] [--yes]
 ~~~
 
 Truncates posts, comments, and terms tables to empty a site of its
@@ -3584,11 +3584,11 @@ To also empty custom database tables, you'll need to hook into command
 execution:
 
 ```
-FP_CLI::add_hook( 'after_invoke:site empty', function(){
-    global $fpdb;
+FIN_CLI::add_hook( 'after_invoke:site empty', function(){
+    global $findb;
     foreach( array( 'p2p', 'p2pmeta' ) as $table ) {
-        $table = $fpdb->$table;
-        $fpdb->query( "TRUNCATE $table" );
+        $table = $findb->$table;
+        $findb->query( "TRUNCATE $table" );
     }
 });
 ```
@@ -3603,18 +3603,18 @@ FP_CLI::add_hook( 'after_invoke:site empty', function(){
 
 **EXAMPLES**
 
-    $ fp site empty
+    $ fin site empty
     Are you sure you want to empty the site at http://www.example.com of all posts, links, comments, and terms? [y/n] y
     Success: The site at 'http://www.example.com' was emptied.
 
 
 
-### fp site list
+### fin site list
 
 Lists all sites in a multisite installation.
 
 ~~~
-fp site list [--network=<id>] [--<field>=<value>] [--site__in=<value>] [--site_user=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin site list [--network=<id>] [--<field>=<value>] [--site__in=<value>] [--site_user=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3624,7 +3624,7 @@ fp site list [--network=<id>] [--<field>=<value>] [--site__in=<value>] [--site_u
 
 	[--<field>=<value>]
 		Filter by one or more fields (see "Available Fields" section). However,
-		'url' isn't an available filter, as it comes from 'home' in fp_options.
+		'url' isn't an available filter, as it comes from 'home' in fin_options.
 
 	[--site__in=<value>]
 		Only list the sites with these blog_id values (comma-separated).
@@ -3675,18 +3675,18 @@ These fields are optionally available:
 **EXAMPLES**
 
     # Output a simple list of site URLs
-    $ fp site list --field=url
+    $ fin site list --field=url
     http://www.example.com/
     http://www.example.com/subdir/
 
 
 
-### fp site mature
+### fin site mature
 
 Sets one or more sites as mature.
 
 ~~~
-fp site mature [<id>...] [--slug=<slug>]
+fin site mature [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -3699,50 +3699,50 @@ fp site mature [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ fp site mature 123
+    $ fin site mature 123
     Success: Site 123 marked as mature.
 
-    $ fp site mature --slug=demo
+    $ fin site mature --slug=demo
     Success: Site 123 marked as mature.
 
 
 
-### fp site meta
+### fin site meta
 
 Adds, updates, deletes, and lists site custom fields.
 
 ~~~
-fp site meta
+fin site meta
 ~~~
 
 **EXAMPLES**
 
     # Set site meta
-    $ fp site meta set 123 bio "Mary is a FinPress developer."
+    $ fin site meta set 123 bio "Mary is a FinPress developer."
     Success: Updated custom field 'bio'.
 
     # Get site meta
-    $ fp site meta get 123 bio
+    $ fin site meta get 123 bio
     Mary is a FinPress developer.
 
     # Update site meta
-    $ fp site meta update 123 bio "Mary is an awesome FinPress developer."
+    $ fin site meta update 123 bio "Mary is an awesome FinPress developer."
     Success: Updated custom field 'bio'.
 
     # Delete site meta
-    $ fp site meta delete 123 bio
+    $ fin site meta delete 123 bio
     Success: Deleted custom field.
 
 
 
 
 
-### fp site meta add
+### fin site meta add
 
 Add a meta field.
 
 ~~~
-fp site meta add <id> <key> [<value>] [--format=<format>]
+fin site meta add <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3767,12 +3767,12 @@ fp site meta add <id> <key> [<value>] [--format=<format>]
 
 
 
-### fp site meta delete
+### fin site meta delete
 
 Delete a meta field.
 
 ~~~
-fp site meta delete <id> [<key>] [<value>] [--all]
+fin site meta delete <id> [<key>] [<value>] [--all]
 ~~~
 
 **OPTIONS**
@@ -3791,12 +3791,12 @@ fp site meta delete <id> [<key>] [<value>] [--all]
 
 
 
-### fp site meta get
+### fin site meta get
 
 Get meta field value.
 
 ~~~
-fp site meta get <id> <key> [--format=<format>]
+fin site meta get <id> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3819,12 +3819,12 @@ fp site meta get <id> <key> [--format=<format>]
 
 
 
-### fp site meta list
+### fin site meta list
 
 List all metadata associated with an object.
 
 ~~~
-fp site meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fin site meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -3874,12 +3874,12 @@ fp site meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [
 
 
 
-### fp site meta patch
+### fin site meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-fp site meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fin site meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3916,12 +3916,12 @@ fp site meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format
 
 
 
-### fp site meta pluck
+### fin site meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-fp site meta pluck <id> <key> <key-path>... [--format=<format>]
+fin site meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3946,12 +3946,12 @@ fp site meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### fp site meta update
+### fin site meta update
 
 Update a meta field.
 
 ~~~
-fp site meta update <id> <key> [<value>] [--format=<format>]
+fin site meta update <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3976,42 +3976,42 @@ fp site meta update <id> <key> [<value>] [--format=<format>]
 
 
 
-### fp site option
+### fin site option
 
 Adds, updates, deletes, and lists site options in a multisite installation.
 
 ~~~
-fp site option
+fin site option
 ~~~
 
 **EXAMPLES**
 
     # Get site registration
-    $ fp site option get registration
+    $ fin site option get registration
     none
 
     # Add site option
-    $ fp site option add my_option foobar
+    $ fin site option add my_option foobar
     Success: Added 'my_option' site option.
 
     # Update site option
-    $ fp site option update my_option '{"foo": "bar"}' --format=json
+    $ fin site option update my_option '{"foo": "bar"}' --format=json
     Success: Updated 'my_option' site option.
 
     # Delete site option
-    $ fp site option delete my_option
+    $ fin site option delete my_option
     Success: Deleted 'my_option' site option.
 
 
 
 
 
-### fp site private
+### fin site private
 
 Sets one or more sites as private.
 
 ~~~
-fp site private [<id>...] [--slug=<slug>]
+fin site private [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4024,20 +4024,20 @@ fp site private [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ fp site private 123
+    $ fin site private 123
     Success: Site 123 marked as private.
 
-    $ fp site private --slug=demo
+    $ fin site private --slug=demo
     Success: Site 123 marked as private.
 
 
 
-### fp site public
+### fin site public
 
 Sets one or more sites as public.
 
 ~~~
-fp site public [<id>...] [--slug=<slug>]
+fin site public [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4050,20 +4050,20 @@ fp site public [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ fp site public 123
+    $ fin site public 123
     Success: Site 123 marked as public.
 
-     $ fp site public --slug=demo
+     $ fin site public --slug=demo
      Success: Site 123 marked as public.
 
 
 
-### fp site spam
+### fin site spam
 
 Marks one or more sites as spam.
 
 ~~~
-fp site spam [<id>...] [--slug=<slug>]
+fin site spam [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4076,17 +4076,17 @@ fp site spam [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ fp site spam 123
+    $ fin site spam 123
     Success: Site 123 marked as spam.
 
 
 
-### fp site unarchive
+### fin site unarchive
 
 Unarchives one or more sites.
 
 ~~~
-fp site unarchive [<id>...] [--slug=<slug>]
+fin site unarchive [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4099,20 +4099,20 @@ fp site unarchive [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ fp site unarchive 123
+    $ fin site unarchive 123
     Success: Site 123 unarchived.
 
-    $ fp site unarchive --slug=demo
+    $ fin site unarchive --slug=demo
     Success: Site 123 unarchived.
 
 
 
-### fp site unmature
+### fin site unmature
 
 Sets one or more sites as immature.
 
 ~~~
-fp site unmature [<id>...] [--slug=<slug>]
+fin site unmature [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4125,20 +4125,20 @@ fp site unmature [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ fp site unmature 123
+    $ fin site unmature 123
     Success: Site 123 marked as unmature.
 
-    $ fp site unmature --slug=demo
+    $ fin site unmature --slug=demo
     Success: Site 123 marked as unmature.
 
 
 
-### fp site unspam
+### fin site unspam
 
 Removes one or more sites from spam.
 
 ~~~
-fp site unspam [<id>...] [--slug=<slug>]
+fin site unspam [<id>...] [--slug=<slug>]
 ~~~
 
 **OPTIONS**
@@ -4151,17 +4151,17 @@ fp site unspam [<id>...] [--slug=<slug>]
 
 **EXAMPLES**
 
-    $ fp site unspam 123
+    $ fin site unspam 123
     Success: Site 123 removed from spam.
 
 
 
-### fp taxonomy
+### fin taxonomy
 
 Retrieves information about registered taxonomies.
 
 ~~~
-fp taxonomy
+fin taxonomy
 ~~~
 
 See references for [built-in taxonomies](https://developer.finpress.org/themes/basics/categories-tags-custom-taxonomies/) and [custom taxonomies](https://developer.finpress.org/plugins/taxonomies/working-with-custom-taxonomies/).
@@ -4169,7 +4169,7 @@ See references for [built-in taxonomies](https://developer.finpress.org/themes/b
 **EXAMPLES**
 
     # List all taxonomies with 'post' object type.
-    $ fp taxonomy list --object_type=post --fields=name,public
+    $ fin taxonomy list --object_type=post --fields=name,public
     +-------------+--------+
     | name        | public |
     +-------------+--------+
@@ -4179,17 +4179,17 @@ See references for [built-in taxonomies](https://developer.finpress.org/themes/b
     +-------------+--------+
 
     # Get capabilities of 'post_tag' taxonomy.
-    $ fp taxonomy get post_tag --field=cap
+    $ fin taxonomy get post_tag --field=cap
     {"manage_terms":"manage_categories","edit_terms":"manage_categories","delete_terms":"manage_categories","assign_terms":"edit_posts"}
 
 
 
-### fp taxonomy get
+### fin taxonomy get
 
 Gets details about a registered taxonomy.
 
 ~~~
-fp taxonomy get <taxonomy> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin taxonomy get <taxonomy> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4235,7 +4235,7 @@ These fields are optionally available:
 **EXAMPLES**
 
     # Get details of `category` taxonomy.
-    $ fp taxonomy get category --fields=name,label,object_type
+    $ fin taxonomy get category --fields=name,label,object_type
     +-------------+------------+
     | Field       | Value      |
     +-------------+------------+
@@ -4245,17 +4245,17 @@ These fields are optionally available:
     +-------------+------------+
 
     # Get capabilities of 'post_tag' taxonomy.
-    $ fp taxonomy get post_tag --field=cap
+    $ fin taxonomy get post_tag --field=cap
     {"manage_terms":"manage_categories","edit_terms":"manage_categories","delete_terms":"manage_categories","assign_terms":"edit_posts"}
 
 
 
-### fp taxonomy list
+### fin taxonomy list
 
 Lists registered taxonomies.
 
 ~~~
-fp taxonomy list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin taxonomy list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4300,7 +4300,7 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List all taxonomies.
-    $ fp taxonomy list --format=csv
+    $ fin taxonomy list --format=csv
     name,label,description,object_type,show_tagcloud,hierarchical,public
     category,Categories,,post,1,1,1
     post_tag,Tags,,post,1,,1
@@ -4309,7 +4309,7 @@ These fields are optionally available:
     post_format,Format,,post,,,1
 
     # List all taxonomies with 'post' object type.
-    $ fp taxonomy list --object_type=post --fields=name,public
+    $ fin taxonomy list --object_type=post --fields=name,public
     +-------------+--------+
     | name        | public |
     +-------------+--------+
@@ -4320,12 +4320,12 @@ These fields are optionally available:
 
 
 
-### fp term
+### fin term
 
 Manages taxonomy terms and term meta, with create, delete, and list commands.
 
 ~~~
-fp term
+fin term
 ~~~
 
 See reference for [taxonomies and their terms](https://codex.finpress.org/Taxonomies).
@@ -4333,38 +4333,38 @@ See reference for [taxonomies and their terms](https://codex.finpress.org/Taxono
 **EXAMPLES**
 
     # Create a new term.
-    $ fp term create category Apple --description="A type of fruit"
+    $ fin term create category Apple --description="A type of fruit"
     Success: Created category 199.
 
     # Get details about a term.
-    $ fp term get category 199 --format=json --fields=term_id,name,slug,count
+    $ fin term get category 199 --format=json --fields=term_id,name,slug,count
     {"term_id":199,"name":"Apple","slug":"apple","count":1}
 
     # Update an existing term.
-    $ fp term update category 15 --name=Apple
+    $ fin term update category 15 --name=Apple
     Success: Term updated.
 
     # Get the term's URL.
-    $ fp term list post_tag --include=123 --field=url
+    $ fin term list post_tag --include=123 --field=url
     http://example.com/tag/tips-and-tricks
 
     # Delete post category
-    $ fp term delete category 15
+    $ fin term delete category 15
     Success: Deleted category 15.
 
     # Recount posts assigned to each categories and tags
-    $ fp term recount category post_tag
+    $ fin term recount category post_tag
     Success: Updated category term count
     Success: Updated post_tag term count
 
 
 
-### fp term create
+### fin term create
 
 Creates a new term.
 
 ~~~
-fp term create <taxonomy> <term> [--slug=<slug>] [--description=<description>] [--parent=<term-id>] [--porcelain]
+fin term create <taxonomy> <term> [--slug=<slug>] [--description=<description>] [--parent=<term-id>] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -4390,17 +4390,17 @@ fp term create <taxonomy> <term> [--slug=<slug>] [--description=<description>] [
 **EXAMPLES**
 
     # Create a new category "Apple" with a description.
-    $ fp term create category Apple --description="A type of fruit"
+    $ fin term create category Apple --description="A type of fruit"
     Success: Created category 199.
 
 
 
-### fp term delete
+### fin term delete
 
 Deletes an existing term.
 
 ~~~
-fp term delete <taxonomy> <term>... [--by=<field>]
+fin term delete <taxonomy> <term>... [--by=<field>]
 ~~~
 
 Errors if the term doesn't exist, or there was a problem in deleting it.
@@ -4425,17 +4425,17 @@ Errors if the term doesn't exist, or there was a problem in deleting it.
 **EXAMPLES**
 
     # Delete post category by id
-    $ fp term delete category 15
+    $ fin term delete category 15
     Deleted category 15.
     Success: Deleted 1 of 1 terms.
 
     # Delete post category by slug
-    $ fp term delete category apple --by=slug
+    $ fin term delete category apple --by=slug
     Deleted category 15.
     Success: Deleted 1 of 1 terms.
 
     # Delete all post tags
-    $ fp term list post_tag --field=term_id | xargs fp term delete post_tag
+    $ fin term list post_tag --field=term_id | xargs fin term delete post_tag
     Deleted post_tag 159.
     Deleted post_tag 160.
     Deleted post_tag 161.
@@ -4443,12 +4443,12 @@ Errors if the term doesn't exist, or there was a problem in deleting it.
 
 
 
-### fp term generate
+### fin term generate
 
 Generates some terms.
 
 ~~~
-fp term generate <taxonomy> [--count=<number>] [--max_depth=<number>] [--format=<format>]
+fin term generate <taxonomy> [--count=<number>] [--max_depth=<number>] [--format=<format>]
 ~~~
 
 Creates a specified number of new terms with dummy data.
@@ -4482,23 +4482,23 @@ Creates a specified number of new terms with dummy data.
 **EXAMPLES**
 
     # Generate post categories.
-    $ fp term generate category --count=10
+    $ fin term generate category --count=10
     Generating terms  100% [=========] 0:02 / 0:02
 
     # Add meta to every generated term.
-    $ fp term generate category --format=ids --count=3 | xargs -d ' ' -I % fp term meta add % foo bar
+    $ fin term generate category --format=ids --count=3 | xargs -d ' ' -I % fin term meta add % foo bar
     Success: Added custom field.
     Success: Added custom field.
     Success: Added custom field.
 
 
 
-### fp term get
+### fin term get
 
 Gets details about a term.
 
 ~~~
-fp term get <taxonomy> <term> [--by=<field>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin term get <taxonomy> <term> [--by=<field>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4538,21 +4538,21 @@ fp term get <taxonomy> <term> [--by=<field>] [--field=<field>] [--fields=<fields
 **EXAMPLES**
 
     # Get details about a category with id 199.
-    $ fp term get category 199 --format=json
+    $ fin term get category 199 --format=json
     {"term_id":199,"name":"Apple","slug":"apple","term_group":0,"term_taxonomy_id":199,"taxonomy":"category","description":"A type of fruit","parent":0,"count":0,"filter":"raw"}
 
     # Get details about a category with slug apple.
-    $ fp term get category apple --by=slug --format=json
+    $ fin term get category apple --by=slug --format=json
     {"term_id":199,"name":"Apple","slug":"apple","term_group":0,"term_taxonomy_id":199,"taxonomy":"category","description":"A type of fruit","parent":0,"count":0,"filter":"raw"}
 
 
 
-### fp term list
+### fin term list
 
 Lists terms in a taxonomy.
 
 ~~~
-fp term list <taxonomy>... [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin term list <taxonomy>... [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4601,7 +4601,7 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List post categories
-    $ fp term list category --format=csv
+    $ fin term list category --format=csv
     term_id,term_taxonomy_id,name,slug,description,parent,count
     2,2,aciform,aciform,,0,1
     3,3,antiquarianism,antiquarianism,,0,1
@@ -4609,7 +4609,7 @@ These fields are optionally available:
     5,5,asmodeus,asmodeus,,0,1
 
     # List post tags
-    $ fp term list post_tag --fields=name,slug
+    $ fin term list post_tag --fields=name,slug
     +-----------+-------------+
     | name      | slug        |
     +-----------+-------------+
@@ -4621,42 +4621,42 @@ These fields are optionally available:
 
 
 
-### fp term meta
+### fin term meta
 
 Adds, updates, deletes, and lists term custom fields.
 
 ~~~
-fp term meta
+fin term meta
 ~~~
 
 **EXAMPLES**
 
     # Set term meta
-    $ fp term meta set 123 bio "Mary is a FinPress developer."
+    $ fin term meta set 123 bio "Mary is a FinPress developer."
     Success: Updated custom field 'bio'.
 
     # Get term meta
-    $ fp term meta get 123 bio
+    $ fin term meta get 123 bio
     Mary is a FinPress developer.
 
     # Update term meta
-    $ fp term meta update 123 bio "Mary is an awesome FinPress developer."
+    $ fin term meta update 123 bio "Mary is an awesome FinPress developer."
     Success: Updated custom field 'bio'.
 
     # Delete term meta
-    $ fp term meta delete 123 bio
+    $ fin term meta delete 123 bio
     Success: Deleted custom field.
 
 
 
 
 
-### fp term meta add
+### fin term meta add
 
 Add a meta field.
 
 ~~~
-fp term meta add <id> <key> [<value>] [--format=<format>]
+fin term meta add <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4681,12 +4681,12 @@ fp term meta add <id> <key> [<value>] [--format=<format>]
 
 
 
-### fp term meta delete
+### fin term meta delete
 
 Delete a meta field.
 
 ~~~
-fp term meta delete <id> [<key>] [<value>] [--all]
+fin term meta delete <id> [<key>] [<value>] [--all]
 ~~~
 
 **OPTIONS**
@@ -4705,12 +4705,12 @@ fp term meta delete <id> [<key>] [<value>] [--all]
 
 
 
-### fp term meta get
+### fin term meta get
 
 Get meta field value.
 
 ~~~
-fp term meta get <id> <key> [--format=<format>]
+fin term meta get <id> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4733,12 +4733,12 @@ fp term meta get <id> <key> [--format=<format>]
 
 
 
-### fp term meta list
+### fin term meta list
 
 List all metadata associated with an object.
 
 ~~~
-fp term meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fin term meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -4788,12 +4788,12 @@ fp term meta list <id> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [
 
 
 
-### fp term meta patch
+### fin term meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-fp term meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fin term meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4830,12 +4830,12 @@ fp term meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format
 
 
 
-### fp term meta pluck
+### fin term meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-fp term meta pluck <id> <key> <key-path>... [--format=<format>]
+fin term meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4860,12 +4860,12 @@ fp term meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### fp term meta update
+### fin term meta update
 
 Update a meta field.
 
 ~~~
-fp term meta update <id> <key> [<value>] [--format=<format>]
+fin term meta update <id> <key> [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -4890,19 +4890,19 @@ fp term meta update <id> <key> [<value>] [--format=<format>]
 
 
 
-### fp term recount
+### fin term recount
 
 Recalculates number of posts assigned to each term.
 
 ~~~
-fp term recount <taxonomy>...
+fin term recount <taxonomy>...
 ~~~
 
 In instances where manual updates are made to the terms assigned to
 posts in the database, the number of posts associated with a term
 can become out-of-sync with the actual number of posts.
 
-This command runs fp_update_term_count() on the taxonomy's terms
+This command runs fin_update_term_count() on the taxonomy's terms
 to bring the count back to the correct value.
 
 **OPTIONS**
@@ -4913,12 +4913,12 @@ to bring the count back to the correct value.
 **EXAMPLES**
 
     # Recount posts assigned to each categories and tags
-    $ fp term recount category post_tag
+    $ fin term recount category post_tag
     Success: Updated category term count.
     Success: Updated post_tag term count.
 
     # Recount all listed taxonomies
-    $ fp taxonomy list --field=name | xargs fp term recount
+    $ fin taxonomy list --field=name | xargs fin term recount
     Success: Updated category term count.
     Success: Updated post_tag term count.
     Success: Updated nav_menu term count.
@@ -4927,12 +4927,12 @@ to bring the count back to the correct value.
 
 
 
-### fp term update
+### fin term update
 
 Updates an existing term.
 
 ~~~
-fp term update <taxonomy> <term> [--by=<field>] [--name=<name>] [--slug=<slug>] [--description=<description>] [--parent=<term-id>]
+fin term update <taxonomy> <term> [--by=<field>] [--name=<name>] [--slug=<slug>] [--description=<description>] [--parent=<term-id>]
 ~~~
 
 **OPTIONS**
@@ -4967,52 +4967,52 @@ fp term update <taxonomy> <term> [--by=<field>] [--name=<name>] [--slug=<slug>] 
 **EXAMPLES**
 
     # Change category with id 15 to use the name "Apple"
-    $ fp term update category 15 --name=Apple
+    $ fin term update category 15 --name=Apple
     Success: Term updated.
 
     # Change category with slug apple to use the name "Apple"
-    $ fp term update category apple --by=slug --name=Apple
+    $ fin term update category apple --by=slug --name=Apple
     Success: Term updated.
 
 
 
-### fp user
+### fin user
 
 Manages users, along with their roles, capabilities, and meta.
 
 ~~~
-fp user
+fin user
 ~~~
 
-See references for [Roles and Capabilities](https://codex.finpress.org/Roles_and_Capabilities) and [FP User class](https://codex.finpress.org/Class_Reference/FP_User).
+See references for [Roles and Capabilities](https://codex.finpress.org/Roles_and_Capabilities) and [FIN User class](https://codex.finpress.org/Class_Reference/FIN_User).
 
 **EXAMPLES**
 
     # List user IDs
-    $ fp user list --field=ID
+    $ fin user list --field=ID
     1
 
     # Create a new user.
-    $ fp user create bob bob@example.com --role=author
+    $ fin user create bob bob@example.com --role=author
     Success: Created user 3.
     Password: k9**&I4vNH(&
 
     # Update an existing user.
-    $ fp user update 123 --display_name=Mary --user_pass=marypass
+    $ fin user update 123 --display_name=Mary --user_pass=marypass
     Success: Updated user 123.
 
     # Delete user 123 and reassign posts to user 567
-    $ fp user delete 123 --reassign=567
+    $ fin user delete 123 --reassign=567
     Success: Removed user 123 from http://example.com.
 
 
 
-### fp user add-cap
+### fin user add-cap
 
 Adds a capability to a user.
 
 ~~~
-fp user add-cap <user> <cap>
+fin user add-cap <user> <cap>
 ~~~
 
 **OPTIONS**
@@ -5026,21 +5026,21 @@ fp user add-cap <user> <cap>
 **EXAMPLES**
 
     # Add a capability for a user
-    $ fp user add-cap john create_premium_item
+    $ fin user add-cap john create_premium_item
     Success: Added 'create_premium_item' capability for john (16).
 
     # Add a capability for a user
-    $ fp user add-cap 15 edit_product
+    $ fin user add-cap 15 edit_product
     Success: Added 'edit_product' capability for johndoe (15).
 
 
 
-### fp user add-role
+### fin user add-role
 
 Adds a role for a user.
 
 ~~~
-fp user add-role <user> [<role>...]
+fin user add-role <user> [<role>...]
 ~~~
 
 **OPTIONS**
@@ -5053,26 +5053,26 @@ fp user add-role <user> [<role>...]
 
 **EXAMPLES**
 
-    $ fp user add-role 12 author
+    $ fin user add-role 12 author
     Success: Added 'author' role for johndoe (12).
 
-    $ fp user add-role 12 author editor
+    $ fin user add-role 12 author editor
     Success: Added 'author', 'editor' roles for johndoe (12).
 
 
 
-### fp user application-password
+### fin user application-password
 
 Creates, updates, deletes, lists and retrieves application passwords.
 
 ~~~
-fp user application-password
+fin user application-password
 ~~~
 
 **EXAMPLES**
 
     # List user application passwords and only show app name and password hash
-    $ fp user application-password list 123 --fields=name,password
+    $ fin user application-password list 123 --fields=name,password
     +--------+------------------------------------+
     | name   | password                           |
     +--------+------------------------------------+
@@ -5080,7 +5080,7 @@ fp user application-password
     +--------+------------------------------------+
 
     # Get a specific application password and only show app name and created timestamp
-    $ fp user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
+    $ fin user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
     +--------+------------+
     | name   | created    |
     +--------+------------+
@@ -5088,42 +5088,42 @@ fp user application-password
     +--------+------------+
 
     # Create user application password
-    $ fp user application-password create 123 myapp
+    $ fin user application-password create 123 myapp
     Success: Created application password.
     Password: ZG1bxdxdzjTwhsY8vK8l1C65
 
     # Only print the password without any chrome
-    $ fp user application-password create 123 myapp --porcelain
+    $ fin user application-password create 123 myapp --porcelain
     ZG1bxdxdzjTwhsY8vK8l1C65
 
     # Update an existing application password
-    $ fp user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
+    $ fin user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
     Success: Updated application password.
 
     # Delete an existing application password
-    $ fp user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
+    $ fin user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
     Success: Deleted 1 of 1 application password.
 
     # Check if an application password for a given application exists
-    $ fp user application-password exists 123 myapp
+    $ fin user application-password exists 123 myapp
     $ echo $?
     1
 
     # Bash script for checking whether an application password exists and creating one if not
-    if ! fp user application-password exists 123 myapp; then
-        PASSWORD=$(fp user application-password create 123 myapp --porcelain)
+    if ! fin user application-password exists 123 myapp; then
+        PASSWORD=$(fin user application-password create 123 myapp --porcelain)
     fi
 
 
 
 
 
-### fp user application-password create
+### fin user application-password create
 
 Creates a new application password.
 
 ~~~
-fp user application-password create <user> <app-name> [--app-id=<app-id>] [--porcelain]
+fin user application-password create <user> <app-name> [--app-id=<app-id>] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -5143,26 +5143,26 @@ fp user application-password create <user> <app-name> [--app-id=<app-id>] [--por
 **EXAMPLES**
 
     # Create user application password
-    $ fp user application-password create 123 myapp
+    $ fin user application-password create 123 myapp
     Success: Created application password.
     Password: ZG1bxdxdzjTwhsY8vK8l1C65
 
     # Only print the password without any chrome
-    $ fp user application-password create 123 myapp --porcelain
+    $ fin user application-password create 123 myapp --porcelain
     ZG1bxdxdzjTwhsY8vK8l1C65
 
     # Create user application with a custom application ID for internal tracking
-    $ fp user application-password create 123 myapp --app-id=42 --porcelain
+    $ fin user application-password create 123 myapp --app-id=42 --porcelain
     ZG1bxdxdzjTwhsY8vK8l1C65
 
 
 
-### fp user application-password delete
+### fin user application-password delete
 
 Delete an existing application password.
 
 ~~~
-fp user application-password delete <user> [<uuid>...] [--all]
+fin user application-password delete <user> [<uuid>...] [--all]
 ~~~
 
 **OPTIONS**
@@ -5179,21 +5179,21 @@ fp user application-password delete <user> [<uuid>...] [--all]
 **EXAMPLES**
 
     # Delete an existing application password
-    $ fp user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
+    $ fin user application-password delete 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
     Success: Deleted 1 of 1 application password.
 
     # Delete all of the user's application passwords
-    $ fp user application-password delete 123 --all
+    $ fin user application-password delete 123 --all
     Success: Deleted all application passwords.
 
 
 
-### fp user application-password exists
+### fin user application-password exists
 
 Checks whether an application password for a given application exists.
 
 ~~~
-fp user application-password exists <user> <app-name>
+fin user application-password exists <user> <app-name>
 ~~~
 
 **OPTIONS**
@@ -5207,23 +5207,23 @@ fp user application-password exists <user> <app-name>
 **EXAMPLES**
 
     # Check if an application password for a given application exists
-    $ fp user application-password exists 123 myapp
+    $ fin user application-password exists 123 myapp
     $ echo $?
     1
 
     # Bash script for checking whether an application password exists and creating one if not
-    if ! fp user application-password exists 123 myapp; then
-        PASSWORD=$(fp user application-password create 123 myapp --porcelain)
+    if ! fin user application-password exists 123 myapp; then
+        PASSWORD=$(fin user application-password create 123 myapp --porcelain)
     fi
 
 
 
-### fp user application-password get
+### fin user application-password get
 
 Gets a specific application password.
 
 ~~~
-fp user application-password get <user> <uuid> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin user application-password get <user> <uuid> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -5254,7 +5254,7 @@ fp user application-password get <user> <uuid> [--field=<field>] [--fields=<fiel
 **EXAMPLES**
 
     # Get a specific application password and only show app name and created timestamp
-    $ fp user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
+    $ fin user application-password get 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --fields=name,created
     +--------+------------+
     | name   | created    |
     +--------+------------+
@@ -5263,12 +5263,12 @@ fp user application-password get <user> <uuid> [--field=<field>] [--fields=<fiel
 
 
 
-### fp user application-password list
+### fin user application-password list
 
 Lists all application passwords associated with a user.
 
 ~~~
-fp user application-password list <user> [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>]
+fin user application-password list <user> [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>]
 ~~~
 
 **OPTIONS**
@@ -5324,7 +5324,7 @@ fp user application-password list <user> [--<field>=<value>] [--field=<field>] [
 **EXAMPLES**
 
     # List user application passwords and only show app name and password hash
-    $ fp user application-password list 123 --fields=name,password
+    $ fin user application-password list 123 --fields=name,password
     +--------+------------------------------------+
     | name   | password                           |
     +--------+------------------------------------+
@@ -5333,12 +5333,12 @@ fp user application-password list <user> [--<field>=<value>] [--field=<field>] [
 
 
 
-### fp user application-password record-usage
+### fin user application-password record-usage
 
 Record usage of an application password.
 
 ~~~
-fp user application-password record-usage <user> <uuid>
+fin user application-password record-usage <user> <uuid>
 ~~~
 
 **OPTIONS**
@@ -5352,17 +5352,17 @@ fp user application-password record-usage <user> <uuid>
 **EXAMPLES**
 
     # Record usage of an application password
-    $ fp user application-password record-usage 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
+    $ fin user application-password record-usage 123 6633824d-c1d7-4f79-9dd5-4586f734d69e
     Success: Recorded application password usage.
 
 
 
-### fp user application-password update
+### fin user application-password update
 
 Updates an existing application password.
 
 ~~~
-fp user application-password update <user> <uuid> [--<field>=<value>]
+fin user application-password update <user> <uuid> [--<field>=<value>]
 ~~~
 
 **OPTIONS**
@@ -5379,17 +5379,17 @@ fp user application-password update <user> <uuid> [--<field>=<value>]
 **EXAMPLES**
 
     # Update an existing application password
-    $ fp user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
+    $ fin user application-password update 123 6633824d-c1d7-4f79-9dd5-4586f734d69e --name=newappname
     Success: Updated application password.
 
 
 
-### fp user create
+### fin user create
 
 Creates a new user.
 
 ~~~
-fp user create <user-login> <user-email> [--role=<role>] [--user_pass=<password>] [--user_registered=<yyyy-mm-dd-hh-ii-ss>] [--display_name=<name>] [--user_nicename=<nice_name>] [--user_url=<url>] [--nickname=<nickname>] [--first_name=<first_name>] [--last_name=<last_name>] [--description=<description>] [--rich_editing=<rich_editing>] [--send-email] [--porcelain]
+fin user create <user-login> <user-email> [--role=<role>] [--user_pass=<password>] [--user_registered=<yyyy-mm-dd-hh-ii-ss>] [--display_name=<name>] [--user_nicename=<nice_name>] [--user_url=<url>] [--nickname=<nickname>] [--first_name=<first_name>] [--last_name=<last_name>] [--description=<description>] [--rich_editing=<rich_editing>] [--send-email] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -5443,25 +5443,25 @@ fp user create <user-login> <user-email> [--role=<role>] [--user_pass=<password>
 **EXAMPLES**
 
     # Create user
-    $ fp user create bob bob@example.com --role=author
+    $ fin user create bob bob@example.com --role=author
     Success: Created user 3.
     Password: k9**&I4vNH(&
 
     # Create user without showing password upon success
-    $ fp user create ann ann@example.com --porcelain
+    $ fin user create ann ann@example.com --porcelain
     4
 
 
 
-### fp user delete
+### fin user delete
 
 Deletes one or more users from the current site.
 
 ~~~
-fp user delete <user>... [--network] [--reassign=<user-id>] [--yes]
+fin user delete <user>... [--network] [--reassign=<user-id>] [--yes]
 ~~~
 
-On multisite, `fp user delete` only removes the user from the current
+On multisite, `fin user delete` only removes the user from the current
 site. Include `--network` to also remove the user from the database, but
 make sure to reassign their posts prior to deleting the user.
 
@@ -5482,25 +5482,25 @@ make sure to reassign their posts prior to deleting the user.
 **EXAMPLES**
 
     # Delete user 123 and reassign posts to user 567
-    $ fp user delete 123 --reassign=567
+    $ fin user delete 123 --reassign=567
     Success: Removed user 123 from http://example.com.
 
     # Delete all contributors and reassign their posts to user 2
-    $ fp user delete $(fp user list --role=contributor --field=ID) --reassign=2
+    $ fin user delete $(fin user list --role=contributor --field=ID) --reassign=2
     Success: Removed user 813 from http://example.com.
     Success: Removed user 578 from http://example.com.
 
-    # Delete all contributors in batches of 100 (avoid error: argument list too long: fp)
-    $ fp user delete $(fp user list --role=contributor --field=ID | head -n 100)
+    # Delete all contributors in batches of 100 (avoid error: argument list too long: fin)
+    $ fin user delete $(fin user list --role=contributor --field=ID | head -n 100)
 
 
 
-### fp user exists
+### fin user exists
 
 Verifies whether a user exists.
 
 ~~~
-fp user exists <id>
+fin user exists <id>
 ~~~
 
 Displays a success message if the user does exist.
@@ -5513,24 +5513,24 @@ Displays a success message if the user does exist.
 **EXAMPLES**
 
     # The user exists.
-    $ fp user exists 1337
+    $ fin user exists 1337
     Success: User with ID 1337 exists.
     $ echo $?
     0
 
     # The user does not exist.
-    $ fp user exists 10000
+    $ fin user exists 10000
     $ echo $?
     1
 
 
 
-### fp user generate
+### fin user generate
 
 Generates some users.
 
 ~~~
-fp user generate [--count=<number>] [--role=<role>] [--format=<format>]
+fin user generate [--count=<number>] [--role=<role>] [--format=<format>]
 ~~~
 
 Creates a specified number of new users with dummy data.
@@ -5544,7 +5544,7 @@ Creates a specified number of new users with dummy data.
 		---
 
 	[--role=<role>]
-		The role of the generated users. Default: default role from FP
+		The role of the generated users. Default: default role from FIN
 
 	[--format=<format>]
 		Render output in a particular format.
@@ -5558,19 +5558,19 @@ Creates a specified number of new users with dummy data.
 **EXAMPLES**
 
     # Add meta to every generated users.
-    $ fp user generate --format=ids --count=3 | xargs -d ' ' -I % fp user meta add % foo bar
+    $ fin user generate --format=ids --count=3 | xargs -d ' ' -I % fin user meta add % foo bar
     Success: Added custom field.
     Success: Added custom field.
     Success: Added custom field.
 
 
 
-### fp user get
+### fin user get
 
 Gets details about a user.
 
 ~~~
-fp user get <user> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin user get <user> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -5598,20 +5598,20 @@ fp user get <user> [--field=<field>] [--fields=<fields>] [--format=<format>]
 **EXAMPLES**
 
     # Get user
-    $ fp user get 12 --field=login
+    $ fin user get 12 --field=login
     supervisor
 
     # Get user and export to JSON file
-    $ fp user get bob --format=json > bob.json
+    $ fin user get bob --format=json > bob.json
 
 
 
-### fp user import-csv
+### fin user import-csv
 
 Imports users from a CSV file.
 
 ~~~
-fp user import-csv <file> [--send-email] [--skip-update]
+fin user import-csv <file> [--send-email] [--skip-update]
 ~~~
 
 If the user already exists (matching the email address or login), then
@@ -5631,13 +5631,13 @@ the user is updated unless the `--skip-update` flag is used.
 **EXAMPLES**
 
     # Import users from local CSV file
-    $ fp user import-csv /path/to/users.csv
+    $ fin user import-csv /path/to/users.csv
     Success: bobjones created.
     Success: newuser1 created.
     Success: existinguser created.
 
     # Import users from remote CSV file
-    $ fp user import-csv http://example.com/users.csv
+    $ fin user import-csv http://example.com/users.csv
 
     Sample users.csv file:
 
@@ -5648,16 +5648,16 @@ the user is updated unless the `--skip-update` flag is used.
 
 
 
-### fp user list
+### fin user list
 
 Lists users.
 
 ~~~
-fp user list [--role=<role>] [--<field>=<value>] [--network] [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin user list [--role=<role>] [--<field>=<value>] [--network] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 Display FinPress users based on all arguments supported by
-[FP_User_Query()](https://developer.finpress.org/reference/classes/fp_user_query/prepare_query/).
+[FIN_User_Query()](https://developer.finpress.org/reference/classes/fin_user_query/prepare_query/).
 
 **OPTIONS**
 
@@ -5665,7 +5665,7 @@ Display FinPress users based on all arguments supported by
 		Only display users with a certain role.
 
 	[--<field>=<value>]
-		Control output by one or more arguments of FP_User_Query().
+		Control output by one or more arguments of FIN_User_Query().
 
 	[--network]
 		List all users in the network for multisite.
@@ -5718,29 +5718,29 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List user IDs
-    $ fp user list --field=ID
+    $ fin user list --field=ID
     1
 
     # List users with administrator role
-    $ fp user list --role=administrator --format=csv
+    $ fin user list --role=administrator --format=csv
     ID,user_login,display_name,user_email,user_registered,roles
     1,supervisor,supervisor,supervisor@gmail.com,"2016-06-03 04:37:00",administrator
 
     # List users with only given fields
-    $ fp user list --fields=display_name,user_email --format=json
+    $ fin user list --fields=display_name,user_email --format=json
     [{"display_name":"supervisor","user_email":"supervisor@gmail.com"}]
 
     # List users ordered by the 'last_activity' meta value.
-    $ fp user list --meta_key=last_activity --orderby=meta_value_num
+    $ fin user list --meta_key=last_activity --orderby=meta_value_num
 
 
 
-### fp user list-caps
+### fin user list-caps
 
 Lists all capabilities for a user.
 
 ~~~
-fp user list-caps <user> [--format=<format>] [--origin=<origin>] [--exclude-role-names]
+fin user list-caps <user> [--format=<format>] [--origin=<origin>] [--exclude-role-names]
 ~~~
 
 **OPTIONS**
@@ -5776,54 +5776,54 @@ fp user list-caps <user> [--format=<format>] [--origin=<origin>] [--exclude-role
 
 **EXAMPLES**
 
-    $ fp user list-caps 21
+    $ fin user list-caps 21
     edit_product
     create_premium_item
 
 
 
-### fp user meta
+### fin user meta
 
 Adds, updates, deletes, and lists user custom fields.
 
 ~~~
-fp user meta
+fin user meta
 ~~~
 
 **EXAMPLES**
 
     # Add user meta
-    $ fp user meta add 123 bio "Mary is an FinPress developer."
+    $ fin user meta add 123 bio "Mary is an FinPress developer."
     Success: Added custom field.
 
     # List user meta
-    $ fp user meta list 123 --keys=nickname,description,fp_capabilities
+    $ fin user meta list 123 --keys=nickname,description,fin_capabilities
     +---------+-----------------+--------------------------------+
     | user_id | meta_key        | meta_value                     |
     +---------+-----------------+--------------------------------+
     | 123     | nickname        | supervisor                     |
     | 123     | description     | Mary is a FinPress developer. |
-    | 123     | fp_capabilities | {"administrator":true}         |
+    | 123     | fin_capabilities | {"administrator":true}         |
     +---------+-----------------+--------------------------------+
 
     # Update user meta
-    $ fp user meta update 123 bio "Mary is an awesome FinPress developer."
+    $ fin user meta update 123 bio "Mary is an awesome FinPress developer."
     Success: Updated custom field 'bio'.
 
     # Delete user meta
-    $ fp user meta delete 123 bio
+    $ fin user meta delete 123 bio
     Success: Deleted custom field.
 
 
 
 
 
-### fp user meta add
+### fin user meta add
 
 Adds a meta field.
 
 ~~~
-fp user meta add <user> <key> <value> [--format=<format>]
+fin user meta add <user> <key> <value> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -5849,17 +5849,17 @@ fp user meta add <user> <key> <value> [--format=<format>]
 **EXAMPLES**
 
     # Add user meta
-    $ fp user meta add 123 bio "Mary is an FinPress developer."
+    $ fin user meta add 123 bio "Mary is an FinPress developer."
     Success: Added custom field.
 
 
 
-### fp user meta delete
+### fin user meta delete
 
 Deletes a meta field.
 
 ~~~
-fp user meta delete <user> <key> [<value>]
+fin user meta delete <user> <key> [<value>]
 ~~~
 
 **OPTIONS**
@@ -5876,17 +5876,17 @@ fp user meta delete <user> <key> [<value>]
 **EXAMPLES**
 
     # Delete user meta
-    $ fp user meta delete 123 bio
+    $ fin user meta delete 123 bio
     Success: Deleted custom field.
 
 
 
-### fp user meta get
+### fin user meta get
 
 Gets meta field value.
 
 ~~~
-fp user meta get <user> <key> [--format=<format>]
+fin user meta get <user> <key> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -5911,21 +5911,21 @@ fp user meta get <user> <key> [--format=<format>]
 **EXAMPLES**
 
     # Get user meta
-    $ fp user meta get 123 bio
+    $ fin user meta get 123 bio
     Mary is an FinPress developer.
 
     # Get the primary site of a user (for multisite)
-    $ fp user meta get 2 primary_blog
+    $ fin user meta get 2 primary_blog
     3
 
 
 
-### fp user meta list
+### fin user meta list
 
 Lists all metadata associated with a user.
 
 ~~~
-fp user meta list <user> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
+fin user meta list <user> [--keys=<keys>] [--fields=<fields>] [--format=<format>] [--orderby=<fields>] [--order=<order>] [--unserialize]
 ~~~
 
 **OPTIONS**
@@ -5976,23 +5976,23 @@ fp user meta list <user> [--keys=<keys>] [--fields=<fields>] [--format=<format>]
 **EXAMPLES**
 
     # List user meta
-    $ fp user meta list 123 --keys=nickname,description,fp_capabilities
+    $ fin user meta list 123 --keys=nickname,description,fin_capabilities
     +---------+-----------------+--------------------------------+
     | user_id | meta_key        | meta_value                     |
     +---------+-----------------+--------------------------------+
     | 123     | nickname        | supervisor                     |
     | 123     | description     | Mary is a FinPress developer. |
-    | 123     | fp_capabilities | {"administrator":true}         |
+    | 123     | fin_capabilities | {"administrator":true}         |
     +---------+-----------------+--------------------------------+
 
 
 
-### fp user meta patch
+### fin user meta patch
 
 Update a nested value for a meta field.
 
 ~~~
-fp user meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
+fin user meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -6029,12 +6029,12 @@ fp user meta patch <action> <id> <key> <key-path>... [<value>] [--format=<format
 
 
 
-### fp user meta pluck
+### fin user meta pluck
 
 Get a nested value from a meta field.
 
 ~~~
-fp user meta pluck <id> <key> <key-path>... [--format=<format>]
+fin user meta pluck <id> <key> <key-path>... [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -6059,12 +6059,12 @@ fp user meta pluck <id> <key> <key-path>... [--format=<format>]
 
 
 
-### fp user meta update
+### fin user meta update
 
 Updates a meta field.
 
 ~~~
-fp user meta update <user> <key> <value> [--format=<format>]
+fin user meta update <user> <key> <value> [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -6090,17 +6090,17 @@ fp user meta update <user> <key> <value> [--format=<format>]
 **EXAMPLES**
 
     # Update user meta
-    $ fp user meta update 123 bio "Mary is an awesome FinPress developer."
+    $ fin user meta update 123 bio "Mary is an awesome FinPress developer."
     Success: Updated custom field 'bio'.
 
 
 
-### fp user remove-cap
+### fin user remove-cap
 
 Removes a user's capability.
 
 ~~~
-fp user remove-cap <user> <cap>
+fin user remove-cap <user> <cap>
 ~~~
 
 **OPTIONS**
@@ -6113,23 +6113,23 @@ fp user remove-cap <user> <cap>
 
 **EXAMPLES**
 
-    $ fp user remove-cap 11 publish_newsletters
+    $ fin user remove-cap 11 publish_newsletters
     Success: Removed 'publish_newsletters' cap for supervisor (11).
 
-    $ fp user remove-cap 11 publish_posts
+    $ fin user remove-cap 11 publish_posts
     Error: The 'publish_posts' cap for supervisor (11) is inherited from a role.
 
-    $ fp user remove-cap 11 nonexistent_cap
+    $ fin user remove-cap 11 nonexistent_cap
     Error: No such 'nonexistent_cap' cap for supervisor (11).
 
 
 
-### fp user remove-role
+### fin user remove-role
 
 Removes a user's role.
 
 ~~~
-fp user remove-role <user> [<role>...]
+fin user remove-role <user> [<role>...]
 ~~~
 
 **OPTIONS**
@@ -6142,20 +6142,20 @@ fp user remove-role <user> [<role>...]
 
 **EXAMPLES**
 
-    $ fp user remove-role 12 author
+    $ fin user remove-role 12 author
     Success: Removed 'author' role for johndoe (12).
 
-    $ fp user remove-role 12 author editor
+    $ fin user remove-role 12 author editor
     Success: Removed 'author', 'editor' roles for johndoe (12).
 
 
 
-### fp user reset-password
+### fin user reset-password
 
 Resets the password for one or more users.
 
 ~~~
-fp user reset-password <user>... [--skip-email] [--show-password] [--porcelain]
+fin user reset-password <user>... [--skip-email] [--show-password] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -6175,64 +6175,64 @@ fp user reset-password <user>... [--skip-email] [--show-password] [--porcelain]
 **EXAMPLES**
 
     # Reset the password for two users and send them the change email.
-    $ fp user reset-password admin editor
+    $ fin user reset-password admin editor
     Reset password for admin.
     Reset password for editor.
     Success: Passwords reset for 2 users.
 
     # Reset and display the password.
-    $ fp user reset-password editor --show-password
+    $ fin user reset-password editor --show-password
     Reset password for editor.
     Password: N6hAau0fXZMN#rLCIirdEGOh
     Success: Password reset for 1 user.
 
     # Reset the password for one user, displaying only the new password, and not sending the change email.
-    $ fp user reset-password admin --skip-email --porcelain
+    $ fin user reset-password admin --skip-email --porcelain
     yV6BP*!d70wg
 
     # Reset password for all users.
-    $ fp user reset-password $(fp user list --format=ids)
+    $ fin user reset-password $(fin user list --format=ids)
     Reset password for admin.
     Reset password for editor.
     Reset password for subscriber.
     Success: Passwords reset for 3 users.
 
     # Reset password for all users with a particular role.
-    $ fp user reset-password $(fp user list --format=ids --role=administrator)
+    $ fin user reset-password $(fin user list --format=ids --role=administrator)
     Reset password for admin.
     Success: Password reset for 1 user.
 
 
 
-### fp user session
+### fin user session
 
 Destroys and lists a user's sessions.
 
 ~~~
-fp user session
+fin user session
 ~~~
 
 **EXAMPLES**
 
     # List a user's sessions.
-    $ fp user session list admin@example.com --format=csv
+    $ fin user session list admin@example.com --format=csv
     login_time,expiration_time,ip,ua
     "2016-01-01 12:34:56","2016-02-01 12:34:56",127.0.0.1,"Mozilla/5.0..."
 
     # Destroy the most recent session of the given user.
-    $ fp user session destroy admin
+    $ fin user session destroy admin
     Success: Destroyed session. 3 sessions remaining.
 
 
 
 
 
-### fp user session destroy
+### fin user session destroy
 
 Destroy a session for the given user.
 
 ~~~
-fp user session destroy <user> [<token>] [--all]
+fin user session destroy <user> [<token>] [--all]
 ~~~
 
 **OPTIONS**
@@ -6249,30 +6249,30 @@ fp user session destroy <user> [<token>] [--all]
 **EXAMPLES**
 
     # Destroy the most recent session of the given user.
-    $ fp user session destroy admin
+    $ fin user session destroy admin
     Success: Destroyed session. 3 sessions remaining.
 
     # Destroy a specific session of the given user.
-    $ fp user session destroy admin e073ad8540a9c2...
+    $ fin user session destroy admin e073ad8540a9c2...
     Success: Destroyed session. 2 sessions remaining.
 
     # Destroy all the sessions of the given user.
-    $ fp user session destroy admin --all
+    $ fin user session destroy admin --all
     Success: Destroyed all sessions.
 
     # Destroy all sessions for all users.
-    $ fp user list --field=ID | xargs -n 1 fp user session destroy --all
+    $ fin user list --field=ID | xargs -n 1 fin user session destroy --all
     Success: Destroyed all sessions.
     Success: Destroyed all sessions.
 
 
 
-### fp user session list
+### fin user session list
 
 List sessions for the given user.
 
 ~~~
-fp user session list <user> [--fields=<fields>] [--format=<format>]
+fin user session list <user> [--fields=<fields>] [--format=<format>]
 ~~~
 
 Note: The `token` field does not return the actual token, but a hash of
@@ -6318,18 +6318,18 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List a user's sessions.
-    $ fp user session list admin@example.com --format=csv
+    $ fin user session list admin@example.com --format=csv
     login_time,expiration_time,ip,ua
     "2016-01-01 12:34:56","2016-02-01 12:34:56",127.0.0.1,"Mozilla/5.0..."
 
 
 
-### fp user set-role
+### fin user set-role
 
 Sets the user role.
 
 ~~~
-fp user set-role <user> [<role>]
+fin user set-role <user> [<role>]
 ~~~
 
 **OPTIONS**
@@ -6343,23 +6343,23 @@ fp user set-role <user> [<role>]
 
 **EXAMPLES**
 
-    $ fp user set-role 12 author
+    $ fin user set-role 12 author
     Success: Added johndoe (12) to http://example.com as author.
 
 
 
-### fp user signup
+### fin user signup
 
 Manages signups on a multisite installation.
 
 ~~~
-fp user signup
+fin user signup
 ~~~
 
 **EXAMPLES**
 
     # List signups.
-    $ fp user signup list
+    $ fin user signup list
     +-----------+------------+---------------------+---------------------+--------+------------------+
     | signup_id | user_login | user_email          | registered          | active | activation_key   |
     +-----------+------------+---------------------+---------------------+--------+------------------+
@@ -6368,12 +6368,12 @@ fp user signup
     +-----------+------------+---------------------+---------------------+--------+------------------+
 
     # Activate signup.
-    $ fp user signup activate 2
+    $ fin user signup activate 2
     Signup 2 activated. Password: bZFSGsfzb9xs
     Success: Activated 1 of 1 signups.
 
     # Delete signup.
-    $ fp user signup delete 3
+    $ fin user signup delete 3
     Signup 3 deleted.
     Success: Deleted 1 of 1 signups.
 
@@ -6381,12 +6381,12 @@ fp user signup
 
 
 
-### fp user signup activate
+### fin user signup activate
 
 Activates one or more signups.
 
 ~~~
-fp user signup activate <signup>...
+fin user signup activate <signup>...
 ~~~
 
 **OPTIONS**
@@ -6397,18 +6397,18 @@ fp user signup activate <signup>...
 **EXAMPLES**
 
     # Activate signup.
-    $ fp user signup activate 2
+    $ fin user signup activate 2
     Signup 2 activated. Password: bZFSGsfzb9xs
     Success: Activated 1 of 1 signups.
 
 
 
-### fp user signup delete
+### fin user signup delete
 
 Deletes one or more signups.
 
 ~~~
-fp user signup delete [<signup>...] [--all]
+fin user signup delete [<signup>...] [--all]
 ~~~
 
 **OPTIONS**
@@ -6422,18 +6422,18 @@ fp user signup delete [<signup>...] [--all]
 **EXAMPLES**
 
     # Delete signup.
-    $ fp user signup delete 3
+    $ fin user signup delete 3
     Signup 3 deleted.
     Success: Deleted 1 of 1 signups.
 
 
 
-### fp user signup get
+### fin user signup get
 
 Gets details about a signup.
 
 ~~~
-fp user signup get <signup> [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin user signup get <signup> [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -6461,20 +6461,20 @@ fp user signup get <signup> [--field=<field>] [--fields=<fields>] [--format=<for
 **EXAMPLES**
 
     # Get signup.
-    $ fp user signup get 1 --field=user_login
+    $ fin user signup get 1 --field=user_login
     bobuser
 
     # Get signup and export to JSON file.
-    $ fp user signup get bobuser --format=json > bobuser.json
+    $ fin user signup get bobuser --format=json > bobuser.json
 
 
 
-### fp user signup list
+### fin user signup list
 
 Lists signups.
 
 ~~~
-fp user signup list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>] [--per_page=<per_page>]
+fin user signup list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>] [--per_page=<per_page>]
 ~~~
 
 	[--<field>=<value>]
@@ -6524,11 +6524,11 @@ These fields are optionally available:
 **EXAMPLES**
 
     # List signup IDs.
-    $ fp user signup list --field=signup_id
+    $ fin user signup list --field=signup_id
     1
 
     # List all signups.
-    $ fp user signup list
+    $ fin user signup list
     +-----------+------------+---------------------+---------------------+--------+------------------+
     | signup_id | user_login | user_email          | registered          | active | activation_key   |
     +-----------+------------+---------------------+---------------------+--------+------------------+
@@ -6538,12 +6538,12 @@ These fields are optionally available:
 
 
 
-### fp user spam
+### fin user spam
 
 Marks one or more users as spam on multisite.
 
 ~~~
-fp user spam <user>...
+fin user spam <user>...
 ~~~
 
 **OPTIONS**
@@ -6554,36 +6554,36 @@ fp user spam <user>...
 **EXAMPLES**
 
     # Mark user as spam.
-    $ fp user spam 123
+    $ fin user spam 123
     User 123 marked as spam.
     Success: Spammed 1 of 1 users.
 
 
 
-### fp user term
+### fin user term
 
 Adds, updates, removes, and lists user terms.
 
 ~~~
-fp user term
+fin user term
 ~~~
 
 **EXAMPLES**
 
     # Set user terms
-    $ fp user term set 123 test category
+    $ fin user term set 123 test category
     Success: Set terms.
 
 
 
 
 
-### fp user term add
+### fin user term add
 
 Add a term to an object.
 
 ~~~
-fp user term add <id> <taxonomy> <term>... [--by=<field>]
+fin user term add <id> <taxonomy> <term>... [--by=<field>]
 ~~~
 
 Append the term to the existing set of terms on the object.
@@ -6610,12 +6610,12 @@ Append the term to the existing set of terms on the object.
 
 
 
-### fp user term list
+### fin user term list
 
 List all terms associated with an object.
 
 ~~~
-fp user term list <id> <taxonomy>... [--field=<field>] [--fields=<fields>] [--format=<format>]
+fin user term list <id> <taxonomy>... [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -6664,12 +6664,12 @@ These fields are optionally available:
 
 
 
-### fp user term remove
+### fin user term remove
 
 Remove a term from an object.
 
 ~~~
-fp user term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
+fin user term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
 ~~~
 
 **OPTIONS**
@@ -6697,12 +6697,12 @@ fp user term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
 
 
 
-### fp user term set
+### fin user term set
 
 Set object terms.
 
 ~~~
-fp user term set <id> <taxonomy> <term>... [--by=<field>]
+fin user term set <id> <taxonomy> <term>... [--by=<field>]
 ~~~
 
 Replaces existing terms on the object.
@@ -6729,12 +6729,12 @@ Replaces existing terms on the object.
 
 
 
-### fp user unspam
+### fin user unspam
 
 Removes one or more users from spam on multisite.
 
 ~~~
-fp user unspam <user>...
+fin user unspam <user>...
 ~~~
 
 **OPTIONS**
@@ -6745,18 +6745,18 @@ fp user unspam <user>...
 **EXAMPLES**
 
     # Remove user from spam.
-    $ fp user unspam 123
+    $ fin user unspam 123
     User 123 removed from spam.
     Success: Unspamed 1 of 1 users.
 
 
 
-### fp user update
+### fin user update
 
 Updates an existing user.
 
 ~~~
-fp user update <user>... [--user_pass=<password>] [--user_nicename=<nice_name>] [--user_url=<url>] [--user_email=<email>] [--display_name=<display_name>] [--nickname=<nickname>] [--first_name=<first_name>] [--last_name=<last_name>] [--description=<description>] [--rich_editing=<rich_editing>] [--user_registered=<yyyy-mm-dd-hh-ii-ss>] [--role=<role>] --<field>=<value> [--skip-email]
+fin user update <user>... [--user_pass=<password>] [--user_nicename=<nice_name>] [--user_url=<url>] [--user_email=<email>] [--display_name=<display_name>] [--nickname=<nickname>] [--first_name=<first_name>] [--last_name=<last_name>] [--description=<description>] [--rich_editing=<rich_editing>] [--user_registered=<yyyy-mm-dd-hh-ii-ss>] [--role=<role>] --<field>=<value> [--skip-email]
 ~~~
 
 **OPTIONS**
@@ -6801,7 +6801,7 @@ fp user update <user>... [--user_pass=<password>] [--user_nicename=<nice_name>] 
 		A string used to set the user's role.
 
 	--<field>=<value>
-		One or more fields to update. For accepted fields, see fp_update_user().
+		One or more fields to update. For accepted fields, see fin_update_user().
 
 	[--skip-email]
 		Don't send an email notification to the user.
@@ -6809,16 +6809,16 @@ fp user update <user>... [--user_pass=<password>] [--user_nicename=<nice_name>] 
 **EXAMPLES**
 
     # Update user
-    $ fp user update 123 --display_name=Mary --user_pass=marypass
+    $ fin user update 123 --display_name=Mary --user_pass=marypass
     Success: Updated user 123.
 
 ## Installing
 
-This package is included with FP-CLI itself, no additional installation necessary.
+This package is included with FIN-CLI itself, no additional installation necessary.
 
-To install the latest version of this package over what's included in FP-CLI, run:
+To install the latest version of this package over what's included in FIN-CLI, run:
 
-    fp package install git@github.com:fp-cli/entity-command.git
+    fin package install git@github.com:fin-cli/entity-command.git
 
 ## Contributing
 
@@ -6826,25 +6826,25 @@ We appreciate you taking the initiative to contribute to this project.
 
 Contributing isn’t limited to just code. We encourage you to contribute in the way that best fits your abilities, by writing tutorials, giving a demo at your local meetup, helping other users with their support questions, or revising our documentation.
 
-For a more thorough introduction, [check out FP-CLI's guide to contributing](https://make.finpress.org/cli/handbook/contributing/). This package follows those policy and guidelines.
+For a more thorough introduction, [check out FIN-CLI's guide to contributing](https://make.finpress.org/cli/handbook/contributing/). This package follows those policy and guidelines.
 
 ### Reporting a bug
 
 Think you’ve found a bug? We’d love for you to help us get it fixed.
 
-Before you create a new issue, you should [search existing issues](https://github.com/fp-cli/entity-command/issues?q=label%3Abug%20) to see if there’s an existing resolution to it, or if it’s already been fixed in a newer version.
+Before you create a new issue, you should [search existing issues](https://github.com/fin-cli/entity-command/issues?q=label%3Abug%20) to see if there’s an existing resolution to it, or if it’s already been fixed in a newer version.
 
-Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/fp-cli/entity-command/issues/new). Include as much detail as you can, and clear steps to reproduce if possible. For more guidance, [review our bug report documentation](https://make.finpress.org/cli/handbook/bug-reports/).
+Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/fin-cli/entity-command/issues/new). Include as much detail as you can, and clear steps to reproduce if possible. For more guidance, [review our bug report documentation](https://make.finpress.org/cli/handbook/bug-reports/).
 
 ### Creating a pull request
 
-Want to contribute a new feature? Please first [open a new issue](https://github.com/fp-cli/entity-command/issues/new) to discuss whether the feature is a good fit for the project.
+Want to contribute a new feature? Please first [open a new issue](https://github.com/fin-cli/entity-command/issues/new) to discuss whether the feature is a good fit for the project.
 
 Once you've decided to commit the time to seeing your pull request through, [please follow our guidelines for creating a pull request](https://make.finpress.org/cli/handbook/pull-requests/) to make sure it's a pleasant experience. See "[Setting up](https://make.finpress.org/cli/handbook/pull-requests/#setting-up)" for details specific to working on this package locally.
 
 ## Support
 
-GitHub issues aren't for general support questions, but there are other venues you can try: https://fp-cli.org/#support
+GitHub issues aren't for general support questions, but there are other venues you can try: https://fin-cli.org/#support
 
 
-*This README.md is generated dynamically from the project's codebase using `fp scaffold package-readme` ([doc](https://github.com/fp-cli/scaffold-package-command#fp-scaffold-package-readme)). To suggest changes, please submit a pull request against the corresponding part of the codebase.*
+*This README.md is generated dynamically from the project's codebase using `fin scaffold package-readme` ([doc](https://github.com/fin-cli/scaffold-package-command#fin-scaffold-package-readme)). To suggest changes, please submit a pull request against the corresponding part of the codebase.*

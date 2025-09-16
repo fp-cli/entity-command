@@ -1,7 +1,7 @@
 <?php
 
-use FP_CLI\CommandWithMeta;
-use FP_CLI\Fetchers\Comment as CommentFetcher;
+use FIN_CLI\CommandWithMeta;
+use FIN_CLI\Fetchers\Comment as CommentFetcher;
 
 /**
  * Adds, updates, deletes, and lists comment custom fields.
@@ -9,19 +9,19 @@ use FP_CLI\Fetchers\Comment as CommentFetcher;
  * ## EXAMPLES
  *
  *     # Set comment meta
- *     $ fp comment meta set 123 description "Mary is a FinPress developer."
+ *     $ fin comment meta set 123 description "Mary is a FinPress developer."
  *     Success: Updated custom field 'description'.
  *
  *     # Get comment meta
- *     $ fp comment meta get 123 description
+ *     $ fin comment meta get 123 description
  *     Mary is a FinPress developer.
  *
  *     # Update comment meta
- *     $ fp comment meta update 123 description "Mary is an awesome FinPress developer."
+ *     $ fin comment meta update 123 description "Mary is an awesome FinPress developer."
  *     Success: Updated custom field 'description'.
  *
  *     # Delete comment meta
- *     $ fp comment meta delete 123 description
+ *     $ fin comment meta delete 123 description
  *     Success: Deleted custom field.
  */
 class Comment_Meta_Command extends CommandWithMeta {

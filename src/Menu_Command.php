@@ -1,7 +1,7 @@
 <?php
 
-use FP_CLI\Formatter;
-use FP_CLI\Utils;
+use FIN_CLI\Formatter;
+use FIN_CLI\Utils;
 
 /**
  * Lists, creates, assigns, and deletes the active theme's navigation menus.
@@ -11,11 +11,11 @@ use FP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # Create a new menu
- *     $ fp menu create "My Menu"
+ *     $ fin menu create "My Menu"
  *     Success: Created menu 200.
  *
  *     # List existing menus
- *     $ fp menu list
+ *     $ fin menu list
  *     +---------+----------+----------+-----------+-------+
  *     | term_id | name     | slug     | locations | count |
  *     +---------+----------+----------+-----------+-------+
@@ -24,16 +24,16 @@ use FP_CLI\Utils;
  *     +---------+----------+----------+-----------+-------+
  *
  *     # Create a new menu link item
- *     $ fp menu item add-custom my-menu Apple http://apple.com --porcelain
+ *     $ fin menu item add-custom my-menu Apple http://apple.com --porcelain
  *     1922
  *
  *     # Assign the 'my-menu' menu to the 'primary' location
- *     $ fp menu location assign my-menu primary
+ *     $ fin menu location assign my-menu primary
  *     Success: Assigned location primary to menu my-menu.
  *
- * @package fp-cli
+ * @package fin-cli
  */
-class Menu_Command extends FP_CLI_Command {
+class Menu_Command extends FIN_CLI_Command {
 
 	protected $obj_type   = 'nav_menu';
 	protected $obj_fields = [
@@ -57,22 +57,22 @@ class Menu_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu create "My Menu"
+	 *     $ fin menu create "My Menu"
 	 *     Success: Created menu 200.
 	 */
 	public function create( $args, $assoc_args ) {
 
-		$menu_id = fp_create_nav_menu( $args[0] );
+		$menu_id = fin_create_nav_menu( $args[0] );
 
-		if ( is_fp_error( $menu_id ) ) {
+		if ( is_fin_error( $menu_id ) ) {
 
-			FP_CLI::error( $menu_id->get_error_message() );
+			FIN_CLI::error( $menu_id->get_error_message() );
 
 		} elseif ( Utils\get_flag_value( $assoc_args, 'porcelain' ) ) {
 
-				FP_CLI::line( (string) $menu_id );
+				FIN_CLI::line( (string) $menu_id );
 		} else {
-			FP_CLI::success( "Created menu {$menu_id}." );
+			FIN_CLI::success( "Created menu {$menu_id}." );
 		}
 	}
 
@@ -86,7 +86,7 @@ class Menu_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu delete "My Menu"
+	 *     $ fin menu delete "My Menu"
 	 *     Deleted menu 'My Menu'.
 	 *     Success: Deleted 1 of 1 menus.
 	 */
@@ -95,12 +95,12 @@ class Menu_Command extends FP_CLI_Command {
 		$count  = 0;
 		$errors = 0;
 		foreach ( $args as $arg ) {
-			$ret = fp_delete_nav_menu( $arg );
-			if ( ! $ret || is_fp_error( $ret ) ) {
-				FP_CLI::warning( "Couldn't delete menu '{$arg}'." );
+			$ret = fin_delete_nav_menu( $arg );
+			if ( ! $ret || is_fin_error( $ret ) ) {
+				FIN_CLI::warning( "Couldn't delete menu '{$arg}'." );
 				++$errors;
 			} else {
-				FP_CLI::log( "Deleted menu '{$arg}'." );
+				FIN_CLI::log( "Deleted menu '{$arg}'." );
 				++$count;
 			}
 		}
@@ -149,7 +149,7 @@ class Menu_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu list
+	 *     $ fin menu list
 	 *     +---------+----------+----------+-----------+-------+
 	 *     | term_id | name     | slug     | locations | count |
 	 *     +---------+----------+----------+-----------+-------+
@@ -161,7 +161,7 @@ class Menu_Command extends FP_CLI_Command {
 	 */
 	public function list_( $args, $assoc_args ) {
 
-		$menus = fp_get_nav_menus();
+		$menus = fin_get_nav_menus();
 
 		$menu_locations = get_nav_menu_locations();
 		foreach ( $menus as &$menu ) {

@@ -1,115 +1,115 @@
 Feature: Manage FinPress users
 
   Scenario: User CRUD operations
-    Given a FP install
+    Given a FIN install
 
-    When I try `fp user get bogus-user`
+    When I try `fin user get bogus-user`
     Then the return code should be 1
     And STDOUT should be empty
 
-    When I run `fp user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=author --porcelain`
+    When I run `fin user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=author --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {USER_ID}
 
-    When I run `fp user get {USER_ID}`
+    When I run `fin user get {USER_ID}`
     Then STDOUT should be a table containing rows:
       | Field        | Value      |
       | ID           | {USER_ID}  |
       | roles        | author     |
 
-    When I run `fp user exists {USER_ID}`
+    When I run `fin user exists {USER_ID}`
     Then STDOUT should be:
       """
       Success: User with ID {USER_ID} exists.
       """
     And the return code should be 0
 
-    When I try `fp user exists 1000`
+    When I try `fin user exists 1000`
     Then STDOUT should be empty
     And the return code should be 1
 
-    When I run `fp user get {USER_ID} --field=user_registered`
+    When I run `fin user get {USER_ID} --field=user_registered`
     Then STDOUT should not contain:
       """
       0000-00-00 00:00:00
       """
 
-    When I run `fp user meta get {USER_ID} first_name`
+    When I run `fin user meta get {USER_ID} first_name`
     Then STDOUT should be:
       """
       test
       """
 
-    When I run `fp user list --fields=user_login,roles`
+    When I run `fin user list --fields=user_login,roles`
     Then STDOUT should be a table containing rows:
       | user_login        | roles      |
       | testuser2         | author     |
 
-    When I run `fp user meta get {USER_ID} last_name`
+    When I run `fin user meta get {USER_ID} last_name`
     Then STDOUT should be:
       """
       user
       """
 
-    When I run `fp user delete {USER_ID} --yes`
+    When I run `fin user delete {USER_ID} --yes`
     Then STDOUT should not be empty
 
-    When I try `fp user create testuser2 testuser2@example.com --role=wrongrole --porcelain`
+    When I try `fin user create testuser2 testuser2@example.com --role=wrongrole --porcelain`
     Then the return code should be 1
     And STDOUT should be empty
 
-    When I run `fp user create testuser testuser@example.com --porcelain`
+    When I run `fin user create testuser testuser@example.com --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {USER_ID}
 
     When I try the previous command again
     Then the return code should be 1
 
-    When I run `fp user update {USER_ID} --display_name=Foo`
-    And I run `fp user get {USER_ID}`
+    When I run `fin user update {USER_ID} --display_name=Foo`
+    And I run `fin user get {USER_ID}`
     Then STDOUT should be a table containing rows:
       | Field        | Value     |
       | ID           | {USER_ID} |
       | display_name | Foo       |
 
-    When I run `fp user get testuser@example.com`
+    When I run `fin user get testuser@example.com`
     Then STDOUT should be a table containing rows:
       | Field        | Value     |
       | ID           | {USER_ID} |
       | display_name | Foo       |
 
-    When I run `fp user delete {USER_ID} --yes`
+    When I run `fin user delete {USER_ID} --yes`
     Then STDOUT should not be empty
 
-    When I run `fp user create testuser3 testuser3@example.com --user_pass=testuser3pass`
+    When I run `fin user create testuser3 testuser3@example.com --user_pass=testuser3pass`
     Then STDOUT should not contain:
       """
       Password:
       """
 
     # Check with valid password.
-    When I run `fp user check-password testuser3 testuser3pass`
+    When I run `fin user check-password testuser3 testuser3pass`
     Then the return code should be 0
 
     # Check with invalid password.
-    When I try `fp user check-password testuser3 invalidpass`
+    When I try `fin user check-password testuser3 invalidpass`
     Then the return code should be 1
 
-    When I try `fp user check-password invaliduser randomstring`
+    When I try `fin user check-password invaliduser randomstring`
     Then STDERR should contain:
       """
       Invalid user ID, email or login: 'invaliduser'
       """
     And the return code should be 1
 
-    When I run `fp user create testuser3b testuser3b@example.com --user_pass="test\"user3b's\pass\!"`
+    When I run `fin user create testuser3b testuser3b@example.com --user_pass="test\"user3b's\pass\!"`
     Then STDOUT should not contain:
       """
       Password:
       """
 
     # Check password without the `--escape-chars` option.
-    When I try `fp user check-password testuser3b "test\"user3b's\pass\!"`
+    When I try `fin user check-password testuser3b "test\"user3b's\pass\!"`
     Then STDERR should be:
       """
       Warning: Password contains characters that need to be escaped. Please escape them manually or use the `--escape-chars` option.
@@ -117,37 +117,37 @@ Feature: Manage FinPress users
     And the return code should be 1
 
     # Check password with the `--escape-chars` option.
-    When I try `fp user check-password testuser3b "test\"user3b's\pass\!" --escape-chars`
+    When I try `fin user check-password testuser3b "test\"user3b's\pass\!" --escape-chars`
     Then the return code should be 0
 
     # Check password with manually escaped characters.
-    When I try `fp user check-password testuser3b "test\\\"user3b\'s\\\pass\\\!"`
+    When I try `fin user check-password testuser3b "test\\\"user3b\'s\\\pass\\\!"`
     Then the return code should be 0
 
   Scenario: Reassigning user posts
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp user create bobjones bob@example.com --role=author --porcelain`
+    When I run `fin user create bobjones bob@example.com --role=author --porcelain`
     Then save STDOUT as {BOB_ID}
 
-    When I run `fp user create sally sally@example.com --role=editor --porcelain`
+    When I run `fin user create sally sally@example.com --role=editor --porcelain`
     Then save STDOUT as {SALLY_ID}
 
-    When I run `fp post generate --count=3 --post_author=bobjones`
-    And I run `fp post list --author={BOB_ID} --format=count`
+    When I run `fin post generate --count=3 --post_author=bobjones`
+    And I run `fin post list --author={BOB_ID} --format=count`
     Then STDOUT should be:
       """
       3
       """
 
-    When I run `fp user delete bobjones --reassign={SALLY_ID}`
-    And I run `fp post list --author={SALLY_ID} --format=count`
+    When I run `fin user delete bobjones --reassign={SALLY_ID}`
+    And I run `fin post list --author={SALLY_ID} --format=count`
     Then STDOUT should be:
       """
       3
       """
 
-    When I try `fp user update 9999 --user_pass=securepassword`
+    When I try `fin user update 9999 --user_pass=securepassword`
     Then the return code should be 1
     And STDERR should contain:
       """
@@ -155,7 +155,7 @@ Feature: Manage FinPress users
       """
 
   Scenario: Delete user with invalid reassign
-    Given a FP install
+    Given a FIN install
     And a session_no file:
       """
       n
@@ -165,83 +165,83 @@ Feature: Manage FinPress users
       y
       """
 
-    When I run `fp user create bobjones bob@example.com --role=author --porcelain`
+    When I run `fin user create bobjones bob@example.com --role=author --porcelain`
     Then save STDOUT as {BOB_ID}
 
-    When I run `fp post list --format=count`
+    When I run `fin post list --format=count`
     Then save STDOUT as {TOTAL_POSTS}
 
-    When I run `fp post generate --count=3 --format=ids --post_author=bobjones`
-    And I run `fp post list --author={BOB_ID} --format=count`
+    When I run `fin post generate --count=3 --format=ids --post_author=bobjones`
+    And I run `fin post list --author={BOB_ID} --format=count`
     Then STDOUT should be:
       """
       3
       """
 
-    When I run `fp user delete bobjones < session_no`
+    When I run `fin user delete bobjones < session_no`
     Then STDOUT should contain:
       """
       --reassign parameter not passed. All associated posts will be deleted. Proceed? [y/n]
       """
 
-    When I run `fp user delete bobjones --reassign=99999 < session_no`
+    When I run `fin user delete bobjones --reassign=99999 < session_no`
     Then STDOUT should contain:
       """
       --reassign parameter is invalid. All associated posts will be deleted. Proceed? [y/n]
       """
 
-    When I run `fp user delete bobjones < session_yes`
-    And I run `fp post list --format=count`
+    When I run `fin user delete bobjones < session_yes`
+    And I run `fin post list --format=count`
     Then STDOUT should be:
       """
       {TOTAL_POSTS}
       """
 
   Scenario: Deleting user from the whole network
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp user create bobjones bob@example.com --role=author --porcelain`
+    When I run `fin user create bobjones bob@example.com --role=author --porcelain`
     Then save STDOUT as {BOB_ID}
 
-    When I run `fp user get bobjones`
+    When I run `fin user get bobjones`
     Then STDOUT should not be empty
 
-    When I run `fp user delete bobjones --network --yes`
+    When I run `fin user delete bobjones --network --yes`
     Then STDOUT should not be empty
 
-    When I try `fp user get bobjones`
+    When I try `fin user get bobjones`
     Then STDERR should not be empty
     And the return code should be 1
 
   Scenario: Trying to delete existing user with no roles from a subsite
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp user create bobjones bob@example.com --role=author --url=https://example.com --porcelain`
+    When I run `fin user create bobjones bob@example.com --role=author --url=https://example.com --porcelain`
     Then save STDOUT as {BOB_ID}
 
-    When I run `fp user delete bobjones --yes`
+    When I run `fin user delete bobjones --yes`
     Then STDOUT should contain:
       """
       Success: Removed user
       """
     And STDERR should be empty
 
-    When I try `fp user delete bobjones --yes`
+    When I try `fin user delete bobjones --yes`
     Then STDERR should be:
       """
       Warning: No roles found for user {BOB_ID} on https://example.com, no users deleted.
       """
     And the return code should be 1
 
-  @require-fp-4.0
+  @require-fin-4.0
   Scenario: Trying to delete super admin
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp user create bobjones bob@example.com --role=author --porcelain`
+    When I run `fin user create bobjones bob@example.com --role=author --porcelain`
     Then save STDOUT as {BOB_ID}
 
-    When I run `fp super-admin add {BOB_ID}`
-    And I try `fp user delete bobjones --network --yes`
+    When I run `fin super-admin add {BOB_ID}`
+    And I try `fin user delete bobjones --network --yes`
     Then STDERR should be:
       """
       Warning: Failed deleting user {BOB_ID}. The user is a super admin.
@@ -249,28 +249,28 @@ Feature: Manage FinPress users
     And the return code should be 1
 
   Scenario: Create new users on multisite
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I try `fp user create bob-jones bobjones@example.com`
+    When I try `fin user create bob-jones bobjones@example.com`
     Then STDERR should contain:
       """
       lowercase letters (a-z) and numbers
       """
     And the return code should be 1
 
-    When I run `fp user create bobjones bobjones@example.com --display_name="Bob Jones"`
+    When I run `fin user create bobjones bobjones@example.com --display_name="Bob Jones"`
     Then STDOUT should not be empty
 
-    When I run `fp user get bobjones --field=display_name`
+    When I run `fin user get bobjones --field=display_name`
     Then STDOUT should be:
       """
       Bob Jones
       """
 
   Scenario: Managing user roles
-    Given a FP install
+    Given a FIN install
 
-    When I try `fp user add-role 1`
+    When I try `fin user add-role 1`
     Then the return code should be 1
     And STDERR should be:
       """
@@ -278,91 +278,91 @@ Feature: Manage FinPress users
       """
     And STDOUT should be empty
 
-    When I run `fp user add-role 1 editor`
+    When I run `fin user add-role 1 editor`
     Then STDOUT should be:
       """
       Success: Added 'editor' role for admin (1).
       """
 
-    When I run `fp user get 1 --field=roles`
+    When I run `fin user get 1 --field=roles`
     Then STDOUT should be:
       """
       administrator, editor
       """
 
-    When I run `fp user add-role 1 editor contributor`
+    When I run `fin user add-role 1 editor contributor`
     Then STDOUT should be:
       """
       Success: Added 'editor', 'contributor' roles for admin (1).
       """
 
-    When I run `fp user get 1 --field=roles`
+    When I run `fin user get 1 --field=roles`
     Then STDOUT should be:
       """
       administrator, editor, contributor
       """
 
-    When I run `fp user remove-role 1 editor contributor`
+    When I run `fin user remove-role 1 editor contributor`
     Then STDOUT should be:
       """
       Success: Removed 'editor', 'contributor' roles from admin (1).
       """
 
-    When I run `fp user get 1 --field=roles`
+    When I run `fin user get 1 --field=roles`
     Then STDOUT should be:
       """
       administrator
       """
 
-    When I try `fp user add-role 1 edit`
+    When I try `fin user add-role 1 edit`
     Then STDERR should contain:
       """
       Role doesn't exist
       """
     And the return code should be 1
 
-    When I try `fp user set-role 1 edit`
+    When I try `fin user set-role 1 edit`
     Then STDERR should contain:
       """
       Role doesn't exist
       """
     And the return code should be 1
 
-    When I try `fp user remove-role 1 edit`
+    When I try `fin user remove-role 1 edit`
     Then STDERR should contain:
       """
       Role doesn't exist
       """
     And the return code should be 1
 
-    When I run `fp user set-role 1 author`
+    When I run `fin user set-role 1 author`
     Then STDOUT should not be empty
 
-    When I run `fp user get 1`
+    When I run `fin user get 1`
     Then STDOUT should be a table containing rows:
       | Field | Value  |
       | roles | author |
 
-    When I run `fp user remove-role 1 editor`
+    When I run `fin user remove-role 1 editor`
     Then STDOUT should not be empty
 
-    When I run `fp user get 1`
+    When I run `fin user get 1`
     Then STDOUT should be a table containing rows:
       | Field | Value  |
       | roles | author |
 
-    When I run `fp user remove-role 1`
+    When I run `fin user remove-role 1`
     Then STDOUT should not be empty
 
-    When I run `fp user get 1`
+    When I run `fin user get 1`
     Then STDOUT should be a table containing rows:
       | Field | Value |
       | roles |       |
 
   Scenario: Invalid User Role
-    Given a FP install
-    When I run `fp user create testuser4 testemail4@example.com`
-    And I try `fp user update testuser4 --role=banana`
+    Given a FIN install
+    When I run `fin user create testuser4 testemail4@example.com`
+    And I try `fin user update testuser4 --role=banana`
     Then STDERR should be:
       """
       Warning: Role doesn't exist: banana
@@ -373,28 +373,28 @@ Feature: Manage FinPress users
       """
     And the return code should be 0
 
-    When I run `fp user get admin --field=roles`
+    When I run `fin user get admin --field=roles`
     Then STDOUT should be:
       """
       administrator
       """
 
   Scenario: Managing user capabilities
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp user add-cap 1 edit_vip_product`
+    When I run `fin user add-cap 1 edit_vip_product`
     Then STDOUT should be:
       """
       Success: Added 'edit_vip_product' capability for admin (1).
       """
 
-    When I run `fp user list-caps 1 | tail -n 1`
+    When I run `fin user list-caps 1 | tail -n 1`
     Then STDOUT should be:
       """
       edit_vip_product
       """
 
-    When I run `fp user remove-cap 1 edit_vip_product`
+    When I run `fin user remove-cap 1 edit_vip_product`
     Then STDOUT should be:
       """
       Success: Removed 'edit_vip_product' cap for admin (1).
@@ -408,7 +408,7 @@ Feature: Manage FinPress users
       """
     And STDOUT should be empty
 
-    When I run `fp user list-caps 1`
+    When I run `fin user list-caps 1`
     Then STDOUT should not contain:
       """
       edit_vip_product
@@ -418,7 +418,7 @@ Feature: Manage FinPress users
       publish_posts
       """
 
-    When I try `fp user remove-cap 1 publish_posts`
+    When I try `fin user remove-cap 1 publish_posts`
     Then the return code should be 1
     And STDERR should be:
       """
@@ -426,98 +426,98 @@ Feature: Manage FinPress users
       """
     And STDOUT should be empty
 
-    When I run `fp user list-caps 1`
+    When I run `fin user list-caps 1`
     Then STDOUT should contain:
       """
       publish_posts
       """
 
   Scenario: Show error when trying to remove capability same as role
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=contributor --porcelain`
+    When I run `fin user create testuser2 testuser2@example.com --first_name=test --last_name=user --role=contributor --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {USER_ID}
 
-    When I run `fp user list-caps {USER_ID}`
+    When I run `fin user list-caps {USER_ID}`
     Then STDOUT should contain:
       """
       contributor
       """
 
-    When I run `fp user get {USER_ID} --field=roles`
+    When I run `fin user get {USER_ID} --field=roles`
     Then STDOUT should contain:
       """
       contributor
       """
 
-    When I try `fp user remove-cap {USER_ID} contributor`
+    When I try `fin user remove-cap {USER_ID} contributor`
     Then the return code should be 1
     And STDERR should be:
       """
-      Error: Aborting because a role has the same name as 'contributor'. Use `fp user remove-cap {USER_ID} contributor --force` to proceed with the removal.
+      Error: Aborting because a role has the same name as 'contributor'. Use `fin user remove-cap {USER_ID} contributor --force` to proceed with the removal.
       """
     And STDOUT should be empty
 
-    When I run `fp user remove-cap {USER_ID} contributor --force`
+    When I run `fin user remove-cap {USER_ID} contributor --force`
     Then STDOUT should be:
       """
       Success: Removed 'contributor' cap for testuser2 ({USER_ID}).
       """
 
   Scenario: Show password when creating a user
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp user create testrandompass testrandompass@example.com`
+    When I run `fin user create testrandompass testrandompass@example.com`
     Then STDOUT should contain:
       """
       Password:
       """
 
-    When I run `fp user create testsuppliedpass testsuppliedpass@example.com --user_pass=suppliedpass`
+    When I run `fin user create testsuppliedpass testsuppliedpass@example.com --user_pass=suppliedpass`
     Then STDOUT should not contain:
       """
       Password:
       """
 
   Scenario: List network users
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp user create testsubscriber testsubscriber@example.com`
+    When I run `fin user create testsubscriber testsubscriber@example.com`
     Then STDOUT should contain:
       """
       Success: Created user
       """
 
-    When I run `fp user list --field=user_login`
+    When I run `fin user list --field=user_login`
     Then STDOUT should contain:
       """
       testsubscriber
       """
 
-    When I run `fp user delete testsubscriber --yes`
+    When I run `fin user delete testsubscriber --yes`
     Then STDOUT should contain:
       """
       Success: Removed user
       """
 
-    When I run `fp user list --field=user_login`
+    When I run `fin user list --field=user_login`
     Then STDOUT should not contain:
       """
       testsubscriber
       """
 
-    When I run `fp user list --field=user_login --network`
+    When I run `fin user list --field=user_login --network`
     Then STDOUT should contain:
       """
       testsubscriber
       """
 
   Scenario: Listing user capabilities
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp user create bob bob@gmail.com --role=contributor`
-    And I run `fp user list-caps bob`
+    When I run `fin user create bob bob@gmail.com --role=contributor`
+    And I run `fin user list-caps bob`
     Then STDOUT should be:
       """
       edit_posts
@@ -528,19 +528,19 @@ Feature: Manage FinPress users
       contributor
       """
 
-    When I run `fp user list-caps bob --format=json`
+    When I run `fin user list-caps bob --format=json`
     Then STDOUT should be:
       """
       [{"name":"edit_posts"},{"name":"read"},{"name":"level_1"},{"name":"level_0"},{"name":"delete_posts"},{"name":"contributor"}]
       """
 
-    When I run `fp user list-caps bob --format=count`
+    When I run `fin user list-caps bob --format=count`
     Then STDOUT should be:
       """
       6
       """
 
-    When I run `fp user list-caps bob --exclude-role-names`
+    When I run `fin user list-caps bob --exclude-role-names`
     Then STDOUT should be:
       """
       edit_posts
@@ -550,8 +550,8 @@ Feature: Manage FinPress users
       delete_posts
       """
 
-    When I run `fp user add-cap bob newcap`
-    And I run `fp user list-caps bob --origin=role`
+    When I run `fin user add-cap bob newcap`
+    And I run `fin user list-caps bob --origin=role`
     Then STDOUT should be:
       """
       edit_posts
@@ -562,47 +562,47 @@ Feature: Manage FinPress users
       contributor
       """
 
-    When I run `fp user list-caps bob --origin=user`
+    When I run `fin user list-caps bob --origin=user`
     Then STDOUT should be:
       """
       newcap
       """
 
   Scenario: Make sure FinPress receives the slashed data it expects
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp user create slasheduser slasheduser@example.com --display_name='My\User' --porcelain`
+    When I run `fin user create slasheduser slasheduser@example.com --display_name='My\User' --porcelain`
     Then save STDOUT as {USER_ID}
 
-    When I run `fp user get {USER_ID} --field=display_name`
+    When I run `fin user get {USER_ID} --field=display_name`
     Then STDOUT should be:
       """
       My\User
       """
 
-    When I run `fp user update {USER_ID} --display_name='My\New\User'`
+    When I run `fin user update {USER_ID} --display_name='My\New\User'`
     Then STDOUT should not be empty
 
-    When I run `fp user get {USER_ID} --field=display_name`
+    When I run `fin user get {USER_ID} --field=display_name`
     Then STDOUT should be:
       """
       My\New\User
       """
 
   Scenario: Don't send user creation emails by default
-    Given a FP multisite install
+    Given a FIN multisite install
 
-    When I run `fp user create testuser2 testuser2@example.com`
+    When I run `fin user create testuser2 testuser2@example.com`
     Then an email should not be sent
 
-    When I run `fp user create testuser3 testuser3@example.com --send-email`
+    When I run `fin user create testuser3 testuser3@example.com --send-email`
     Then an email should be sent
 
   Scenario: List URLs of one or more users
-    Given a FP install
-    And I run `fp user create bob bob@gmail.com --role=contributor`
+    Given a FIN install
+    And I run `fin user create bob bob@gmail.com --role=contributor`
 
-    When I run `fp user list --include=1,2 --field=url`
+    When I run `fin user list --include=1,2 --field=url`
     Then STDOUT should be:
       """
       https://example.com/?author=1
@@ -610,42 +610,42 @@ Feature: Manage FinPress users
       """
 
   Scenario: Get user with email as login
-    Given a FP install
-    And I run `fp user create testuser4@example.com testemail4@example.com`
+    Given a FIN install
+    And I run `fin user create testuser4@example.com testemail4@example.com`
 
-    When I run `fp user get testemail4@example.com --field=user_login`
+    When I run `fin user get testemail4@example.com --field=user_login`
     Then STDOUT should be:
       """
       testuser4@example.com
       """
 
-    When I run `fp user get testuser4@example.com --field=user_login`
+    When I run `fin user get testuser4@example.com --field=user_login`
     Then STDOUT should be:
       """
       testuser4@example.com
       """
 
   Scenario: Mark/remove a user from spam
-    Given a FP multisite install
-    And I run `fp user create bumblebee bbee@example.com --role=author --porcelain`
+    Given a FIN multisite install
+    And I run `fin user create bumblebee bbee@example.com --role=author --porcelain`
     And save STDOUT as {BBEE_ID}
-    And I run `fp user create oprime oprime@example.com --role=author --porcelain`
+    And I run `fin user create oprime oprime@example.com --role=author --porcelain`
     And save STDOUT as {OP_ID}
-    And I run `fp user get bumblebee`
+    And I run `fin user get bumblebee`
     And STDOUT should not be empty
-    And I run `fp user get oprime`
+    And I run `fin user get oprime`
     And STDOUT should not be empty
 
-    When I run `fp site create --slug=foo --porcelain`
+    When I run `fin site create --slug=foo --porcelain`
     Then save STDOUT as {SPAM_SITE_ID}
 
-    When I run `fp --url=example.com/foo user set-role {BBEE_ID} administrator`
+    When I run `fin --url=example.com/foo user set-role {BBEE_ID} administrator`
     Then STDOUT should contain:
       """
       Success:
       """
 
-    When I run `fp user spam {BBEE_ID}`
+    When I run `fin user spam {BBEE_ID}`
     Then STDOUT should be:
       """
       User {BBEE_ID} marked as spam.
@@ -663,19 +663,19 @@ Feature: Manage FinPress users
       """
     And the return code should be 0
 
-    When I run `fp site list --site__in=1 --field=spam`
+    When I run `fin site list --site__in=1 --field=spam`
     Then STDOUT should be:
       """
       0
       """
 
-    When I run `fp site list --site__in={SPAM_SITE_ID} --field=spam`
+    When I run `fin site list --site__in={SPAM_SITE_ID} --field=spam`
     Then STDOUT should be:
       """
       1
       """
 
-    When I try `fp user spam {OP_ID} 9999`
+    When I try `fin user spam {OP_ID} 9999`
     Then STDOUT should be:
       """
       User {OP_ID} marked as spam.
@@ -687,56 +687,56 @@ Feature: Manage FinPress users
       """
     And the return code should be 1
 
-    When I run `fp user unspam {BBEE_ID}`
+    When I run `fin user unspam {BBEE_ID}`
     Then STDOUT should contain:
       """
       Success:
       """
 
-    When I run `fp site list --site__in=1 --field=spam`
+    When I run `fin site list --site__in=1 --field=spam`
     Then STDOUT should be:
       """
       0
       """
 
-    When I run `fp site list --site__in={SPAM_SITE_ID} --field=spam`
+    When I run `fin site list --site__in={SPAM_SITE_ID} --field=spam`
     Then STDOUT should be:
       """
       0
       """
 
-  @require-fp-4.3
+  @require-fin-4.3
   Scenario: Sending emails on update
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp user get 1 --field=user_email`
+    When I run `fin user get 1 --field=user_email`
     Then save STDOUT as {ORIGINAL_EMAIL}
 
-    When I run `fp user update 1 --user_email=different.mail@example.com`
+    When I run `fin user update 1 --user_email=different.mail@example.com`
     Then STDOUT should contain:
       """
       Success: Updated user 1.
       """
     And an email should be sent
 
-    When I run `fp user update 1 --user_email={ORIGINAL_EMAIL} --skip-email`
+    When I run `fin user update 1 --user_email={ORIGINAL_EMAIL} --skip-email`
     Then STDOUT should contain:
       """
       Success: Updated user 1.
       """
     And an email should not be sent
 
-    When I run `fp user get 1 --field=user_pass`
+    When I run `fin user get 1 --field=user_pass`
     Then save STDOUT as {ORIGINAL_PASSWORD}
 
-    When I run `fp user update 1 --user_pass=different_password`
+    When I run `fin user update 1 --user_pass=different_password`
     Then STDOUT should contain:
       """
       Success: Updated user 1.
       """
     And an email should be sent
 
-    When I run `fp user update 1 --user_pass={ORIGINAL_PASSWORD} --skip-email`
+    When I run `fin user update 1 --user_pass={ORIGINAL_PASSWORD} --skip-email`
     Then STDOUT should contain:
       """
       Success: Updated user 1.
@@ -744,29 +744,29 @@ Feature: Manage FinPress users
     And an email should not be sent
 
   Scenario: Set user url when creating a user
-    Given a FP install
-    And I run `fp user create testurl sample@email.com --user_url='http://www.testsite.com'`
+    Given a FIN install
+    And I run `fin user create testurl sample@email.com --user_url='http://www.testsite.com'`
 
-    When I run `fp user get testurl --fields=user_url`
+    When I run `fin user get testurl --fields=user_url`
     Then STDOUT should be a table containing rows:
       | Field        | Value                   |
       | user_url     | http://www.testsite.com |
 
   Scenario: Support nickname creating and updating user
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp user create testuser testuser@example.com --nickname=customtestuser --porcelain`
+    When I run `fin user create testuser testuser@example.com --nickname=customtestuser --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {USER_ID}
 
-    When I run `fp user meta get {USER_ID} nickname`
+    When I run `fin user meta get {USER_ID} nickname`
     Then STDOUT should be:
       """
       customtestuser
       """
 
-    When I run `fp user update {USER_ID} --nickname=newtestuser`
-    And I run `fp user meta get {USER_ID} nickname`
+    When I run `fin user update {USER_ID} --nickname=newtestuser`
+    And I run `fin user meta get {USER_ID} nickname`
     Then STDOUT should be:
       """
       newtestuser

@@ -1,6 +1,6 @@
 <?php
 
-use FP_CLI\CommandWithMeta;
+use FIN_CLI\CommandWithMeta;
 
 /**
  * Gets, adds, updates, deletes, and lists network custom fields.
@@ -8,7 +8,7 @@ use FP_CLI\CommandWithMeta;
  * ## EXAMPLES
  *
  *     # Get a list of super-admins
- *     $ fp network meta get 1 site_admins
+ *     $ fin network meta get 1 site_admins
  *     array (
  *       0 => 'supervisor',
  *     )

@@ -1,6 +1,6 @@
 <?php
 
-use FP_CLI\CommandWithMeta;
+use FIN_CLI\CommandWithMeta;
 
 /**
  * Adds, updates, deletes, and lists term custom fields.
@@ -8,19 +8,19 @@ use FP_CLI\CommandWithMeta;
  * ## EXAMPLES
  *
  *     # Set term meta
- *     $ fp term meta set 123 bio "Mary is a FinPress developer."
+ *     $ fin term meta set 123 bio "Mary is a FinPress developer."
  *     Success: Updated custom field 'bio'.
  *
  *     # Get term meta
- *     $ fp term meta get 123 bio
+ *     $ fin term meta get 123 bio
  *     Mary is a FinPress developer.
  *
  *     # Update term meta
- *     $ fp term meta update 123 bio "Mary is an awesome FinPress developer."
+ *     $ fin term meta update 123 bio "Mary is an awesome FinPress developer."
  *     Success: Updated custom field 'bio'.
  *
  *     # Delete term meta
- *     $ fp term meta delete 123 bio
+ *     $ fin term meta delete 123 bio
  *     Success: Deleted custom field.
  */
 class Term_Meta_Command extends CommandWithMeta {
@@ -34,8 +34,8 @@ class Term_Meta_Command extends CommandWithMeta {
 	 */
 	protected function check_object_id( $object_id ) {
 		$term = get_term( (int) $object_id );
-		if ( ! $term || is_fp_error( $term ) ) {
-			FP_CLI::error( "Could not find the term with ID {$object_id}." );
+		if ( ! $term || is_fin_error( $term ) ) {
+			FIN_CLI::error( "Could not find the term with ID {$object_id}." );
 		}
 		return $term->term_id;
 	}
@@ -53,7 +53,7 @@ class Term_Meta_Command extends CommandWithMeta {
 	 *                           value for the specified metadata key, no change
 	 *                           will be made.
 	 *
-	 * @return int|false|FP_Error The meta ID on success, false on failure, FP_Error when term_id is ambiguous between taxonomies.
+	 * @return int|false|FIN_Error The meta ID on success, false on failure, FIN_Error when term_id is ambiguous between taxonomies.
 	 *
 	 * @phpstan-ignore method.childReturnType
 	 */
@@ -72,8 +72,8 @@ class Term_Meta_Command extends CommandWithMeta {
 	 *                           metadata entries with the specified value.
 	 *                           Otherwise, update all entries.
 	 *
-	 * @return int|bool|FP_Error Meta ID if the key didn't exist, true on successful
-	 *                  update, false on failure, FP_Error when term_id is ambiguous between taxonomies.
+	 * @return int|bool|FIN_Error Meta ID if the key didn't exist, true on successful
+	 *                  update, false on failure, FIN_Error when term_id is ambiguous between taxonomies.
 	 *
 	 * @phpstan-ignore method.childReturnType
 	 */

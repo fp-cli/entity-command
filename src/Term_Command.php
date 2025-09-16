@@ -1,7 +1,7 @@
 <?php
 
-use FP_CLI\Formatter;
-use FP_CLI\Utils;
+use FIN_CLI\Formatter;
+use FIN_CLI\Utils;
 
 /**
  * Manages taxonomy terms and term meta, with create, delete, and list commands.
@@ -11,33 +11,33 @@ use FP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # Create a new term.
- *     $ fp term create category Apple --description="A type of fruit"
+ *     $ fin term create category Apple --description="A type of fruit"
  *     Success: Created category 199.
  *
  *     # Get details about a term.
- *     $ fp term get category 199 --format=json --fields=term_id,name,slug,count
+ *     $ fin term get category 199 --format=json --fields=term_id,name,slug,count
  *     {"term_id":199,"name":"Apple","slug":"apple","count":1}
  *
  *     # Update an existing term.
- *     $ fp term update category 15 --name=Apple
+ *     $ fin term update category 15 --name=Apple
  *     Success: Term updated.
  *
  *     # Get the term's URL.
- *     $ fp term list post_tag --include=123 --field=url
+ *     $ fin term list post_tag --include=123 --field=url
  *     http://example.com/tag/tips-and-tricks
  *
  *     # Delete post category
- *     $ fp term delete category 15
+ *     $ fin term delete category 15
  *     Success: Deleted category 15.
  *
  *     # Recount posts assigned to each categories and tags
- *     $ fp term recount category post_tag
+ *     $ fin term recount category post_tag
  *     Success: Updated category term count
  *     Success: Updated post_tag term count
  *
- * @package fp-cli
+ * @package fin-cli
  */
-class Term_Command extends FP_CLI_Command {
+class Term_Command extends FIN_CLI_Command {
 
 	private $fields = [
 		'term_id',
@@ -98,7 +98,7 @@ class Term_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # List post categories
-	 *     $ fp term list category --format=csv
+	 *     $ fin term list category --format=csv
 	 *     term_id,term_taxonomy_id,name,slug,description,parent,count
 	 *     2,2,aciform,aciform,,0,1
 	 *     3,3,antiquarianism,antiquarianism,,0,1
@@ -106,7 +106,7 @@ class Term_Command extends FP_CLI_Command {
 	 *     5,5,asmodeus,asmodeus,,0,1
 	 *
 	 *     # List post tags
-	 *     $ fp term list post_tag --fields=name,slug
+	 *     $ fin term list post_tag --fields=name,slug
 	 *     +-----------+-------------+
 	 *     | name      | slug        |
 	 *     +-----------+-------------+
@@ -121,7 +121,7 @@ class Term_Command extends FP_CLI_Command {
 	public function list_( $args, $assoc_args ) {
 		foreach ( $args as $taxonomy ) {
 			if ( ! taxonomy_exists( $taxonomy ) ) {
-				FP_CLI::error( "Taxonomy {$taxonomy} doesn't exist." );
+				FIN_CLI::error( "Taxonomy {$taxonomy} doesn't exist." );
 			}
 		}
 
@@ -134,15 +134,15 @@ class Term_Command extends FP_CLI_Command {
 
 		if ( ! empty( $assoc_args['term_id'] ) ) {
 			/**
-			 * @var \FP_Term $term
+			 * @var \FIN_Term $term
 			 */
 			$term  = get_term_by( 'id', $assoc_args['term_id'], $args[0] );
 			$terms = [ $term ];
 		} else {
 			/**
-			 * @var \FP_Term[] $terms
+			 * @var \FIN_Term[] $terms
 			 */
-			// phpcs:ignore FinPress.FP.DeprecatedParameters.Get_termsParam2Found -- Required for backward compatibility.
+			// phpcs:ignore FinPress.FIN.DeprecatedParameters.Get_termsParam2Found -- Required for backward compatibility.
 			$terms = get_terms( $args, $assoc_args );
 		}
 
@@ -159,7 +159,7 @@ class Term_Command extends FP_CLI_Command {
 		);
 
 		if ( 'ids' === $formatter->format ) {
-			$terms = fp_list_pluck( $terms, 'term_id' );
+			$terms = fin_list_pluck( $terms, 'term_id' );
 			echo implode( ' ', $terms );
 		} else {
 			$formatter->display_items( $terms );
@@ -192,7 +192,7 @@ class Term_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Create a new category "Apple" with a description.
-	 *     $ fp term create category Apple --description="A type of fruit"
+	 *     $ fin term create category Apple --description="A type of fruit"
 	 *     Success: Created category 199.
 	 */
 	public function create( $args, $assoc_args ) {
@@ -204,21 +204,21 @@ class Term_Command extends FP_CLI_Command {
 			'description' => '',
 			'parent'      => 0,
 		];
-		$assoc_args = fp_parse_args( $assoc_args, $defaults );
+		$assoc_args = fin_parse_args( $assoc_args, $defaults );
 
 		$porcelain = Utils\get_flag_value( $assoc_args, 'porcelain' );
 		unset( $assoc_args['porcelain'] );
 
-		$assoc_args = fp_slash( $assoc_args );
-		$term       = fp_slash( $term );
-		$result     = fp_insert_term( $term, $taxonomy, $assoc_args );
+		$assoc_args = fin_slash( $assoc_args );
+		$term       = fin_slash( $term );
+		$result     = fin_insert_term( $term, $taxonomy, $assoc_args );
 
-		if ( is_fp_error( $result ) ) {
-			FP_CLI::error( $result->get_error_message() );
+		if ( is_fin_error( $result ) ) {
+			FIN_CLI::error( $result->get_error_message() );
 		} elseif ( $porcelain ) {
-				FP_CLI::line( (string) $result['term_id'] );
+				FIN_CLI::line( (string) $result['term_id'] );
 		} else {
-			FP_CLI::success( "Created {$taxonomy} {$result['term_id']}." );
+			FIN_CLI::success( "Created {$taxonomy} {$result['term_id']}." );
 		}
 	}
 
@@ -262,11 +262,11 @@ class Term_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Get details about a category with id 199.
-	 *     $ fp term get category 199 --format=json
+	 *     $ fin term get category 199 --format=json
 	 *     {"term_id":199,"name":"Apple","slug":"apple","term_group":0,"term_taxonomy_id":199,"taxonomy":"category","description":"A type of fruit","parent":0,"count":0,"filter":"raw"}
 	 *
 	 *     # Get details about a category with slug apple.
-	 *     $ fp term get category apple --by=slug --format=json
+	 *     $ fin term get category apple --by=slug --format=json
 	 *     {"term_id":199,"name":"Apple","slug":"apple","term_group":0,"term_taxonomy_id":199,"taxonomy":"category","description":"A type of fruit","parent":0,"count":0,"filter":"raw"}
 	 */
 	public function get( $args, $assoc_args ) {
@@ -281,7 +281,7 @@ class Term_Command extends FP_CLI_Command {
 		$term = get_term_by( $field, $term, $taxonomy );
 
 		if ( ! $term ) {
-			FP_CLI::error( "Term doesn't exist." );
+			FIN_CLI::error( "Term doesn't exist." );
 		}
 
 		if ( ! isset( $term->url ) ) {
@@ -336,11 +336,11 @@ class Term_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Change category with id 15 to use the name "Apple"
-	 *     $ fp term update category 15 --name=Apple
+	 *     $ fin term update category 15 --name=Apple
 	 *     Success: Term updated.
 	 *
 	 *     # Change category with slug apple to use the name "Apple"
-	 *     $ fp term update category apple --by=slug --name=Apple
+	 *     $ fin term update category apple --by=slug --name=Apple
 	 *     Success: Term updated.
 	 */
 	public function update( $args, $assoc_args ) {
@@ -353,7 +353,7 @@ class Term_Command extends FP_CLI_Command {
 			'description' => null,
 			'parent'      => null,
 		];
-		$assoc_args = fp_parse_args( $assoc_args, $defaults );
+		$assoc_args = fin_parse_args( $assoc_args, $defaults );
 
 		foreach ( $assoc_args as $key => $value ) {
 			if ( null === $value ) {
@@ -361,7 +361,7 @@ class Term_Command extends FP_CLI_Command {
 			}
 		}
 
-		$assoc_args = fp_slash( $assoc_args );
+		$assoc_args = fin_slash( $assoc_args );
 
 		/**
 		 * @var string $field
@@ -371,16 +371,16 @@ class Term_Command extends FP_CLI_Command {
 		$term = get_term_by( $field, $term, $taxonomy );
 
 		if ( ! $term ) {
-			FP_CLI::error( "Term doesn't exist." );
+			FIN_CLI::error( "Term doesn't exist." );
 		}
 
 		// Update term.
-		$result = fp_update_term( $term->term_id, $taxonomy, $assoc_args );
+		$result = fin_update_term( $term->term_id, $taxonomy, $assoc_args );
 
-		if ( is_fp_error( $result ) ) {
-			FP_CLI::error( $result->get_error_message() );
+		if ( is_fin_error( $result ) ) {
+			FIN_CLI::error( $result->get_error_message() );
 		} else {
-			FP_CLI::success( 'Term updated.' );
+			FIN_CLI::success( 'Term updated.' );
 		}
 	}
 
@@ -409,17 +409,17 @@ class Term_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete post category by id
-	 *     $ fp term delete category 15
+	 *     $ fin term delete category 15
 	 *     Deleted category 15.
 	 *     Success: Deleted 1 of 1 terms.
 	 *
 	 *     # Delete post category by slug
-	 *     $ fp term delete category apple --by=slug
+	 *     $ fin term delete category apple --by=slug
 	 *     Deleted category 15.
 	 *     Success: Deleted 1 of 1 terms.
 	 *
 	 *     # Delete all post tags
-	 *     $ fp term list post_tag --field=term_id | xargs fp term delete post_tag
+	 *     $ fin term list post_tag --field=term_id | xargs fin term delete post_tag
 	 *     Deleted post_tag 159.
 	 *     Deleted post_tag 160.
 	 *     Deleted post_tag 161.
@@ -443,7 +443,7 @@ class Term_Command extends FP_CLI_Command {
 
 				// If term not found, then show error message and skip the iteration.
 				if ( ! $term ) {
-					FP_CLI::warning( "{$taxonomy} {$term_id} doesn't exist." );
+					FIN_CLI::warning( "{$taxonomy} {$term_id} doesn't exist." );
 					continue;
 				}
 
@@ -452,16 +452,16 @@ class Term_Command extends FP_CLI_Command {
 
 			}
 
-			$result = fp_delete_term( $term_id, $taxonomy );
+			$result = fin_delete_term( $term_id, $taxonomy );
 
-			if ( is_fp_error( $result ) ) {
-				FP_CLI::warning( $result );
+			if ( is_fin_error( $result ) ) {
+				FIN_CLI::warning( $result );
 				++$errors;
 			} elseif ( $result ) {
-				FP_CLI::log( "Deleted {$taxonomy} {$term_id}." );
+				FIN_CLI::log( "Deleted {$taxonomy} {$term_id}." );
 				++$successes;
 			} else {
-				FP_CLI::warning( "{$taxonomy} {$term_id} doesn't exist." );
+				FIN_CLI::warning( "{$taxonomy} {$term_id} doesn't exist." );
 			}
 		}
 		Utils\report_batch_operation_results( 'term', 'delete', count( $args ), $successes, $errors );
@@ -501,17 +501,17 @@ class Term_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Generate post categories.
-	 *     $ fp term generate category --count=10
+	 *     $ fin term generate category --count=10
 	 *     Generating terms  100% [=========] 0:02 / 0:02
 	 *
 	 *     # Add meta to every generated term.
-	 *     $ fp term generate category --format=ids --count=3 | xargs -d ' ' -I % fp term meta add % foo bar
+	 *     $ fin term generate category --format=ids --count=3 | xargs -d ' ' -I % fin term meta add % foo bar
 	 *     Success: Added custom field.
 	 *     Success: Added custom field.
 	 *     Success: Added custom field.
 	 */
 	public function generate( $args, $assoc_args ) {
-		global $fpdb;
+		global $findb;
 
 		list ( $taxonomy ) = $args;
 
@@ -525,11 +525,11 @@ class Term_Command extends FP_CLI_Command {
 		$max_depth  = $final_args['max_depth'];
 
 		if ( ! taxonomy_exists( $taxonomy ) ) {
-			FP_CLI::error( "'{$taxonomy}' is not a registered taxonomy." );
+			FIN_CLI::error( "'{$taxonomy}' is not a registered taxonomy." );
 		}
 
 		/**
-		 * @var \FP_Taxonomy $tax
+		 * @var \FIN_Taxonomy $tax
 		 */
 		$tax = get_taxonomy( $taxonomy );
 
@@ -547,9 +547,9 @@ class Term_Command extends FP_CLI_Command {
 		$current_parent   = 0;
 		$current_depth    = 1;
 
-		$max_id = (int) $fpdb->get_var( "SELECT term_taxonomy_id FROM {$fpdb->term_taxonomy} ORDER BY term_taxonomy_id DESC LIMIT 1" );
+		$max_id = (int) $findb->get_var( "SELECT term_taxonomy_id FROM {$findb->term_taxonomy} ORDER BY term_taxonomy_id DESC LIMIT 1" );
 
-		$suspend_cache_invalidation = fp_suspend_cache_invalidation( true );
+		$suspend_cache_invalidation = fin_suspend_cache_invalidation( true );
 		$created                    = [];
 
 		for ( $index = $max_id + 1; $index <= $max_id + $count; $index++ ) {
@@ -575,9 +575,9 @@ class Term_Command extends FP_CLI_Command {
 			];
 
 			$name = "{$label} {$index}";
-			$term = fp_insert_term( $name, $taxonomy, $args );
-			if ( is_fp_error( $term ) ) {
-				FP_CLI::warning( $term );
+			$term = fin_insert_term( $name, $taxonomy, $args );
+			if ( is_fin_error( $term ) ) {
+				FIN_CLI::warning( $term );
 			} else {
 				$created[]        = $term['term_id'];
 				$previous_term_id = $term['term_id'];
@@ -594,7 +594,7 @@ class Term_Command extends FP_CLI_Command {
 			}
 		}
 
-		fp_suspend_cache_invalidation( $suspend_cache_invalidation );
+		fin_suspend_cache_invalidation( $suspend_cache_invalidation );
 		clean_term_cache( $created, $taxonomy );
 
 		if ( 'progress' === $format ) {
@@ -609,7 +609,7 @@ class Term_Command extends FP_CLI_Command {
 	 * posts in the database, the number of posts associated with a term
 	 * can become out-of-sync with the actual number of posts.
 	 *
-	 * This command runs fp_update_term_count() on the taxonomy's terms
+	 * This command runs fin_update_term_count() on the taxonomy's terms
 	 * to bring the count back to the correct value.
 	 *
 	 * ## OPTIONS
@@ -620,12 +620,12 @@ class Term_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Recount posts assigned to each categories and tags
-	 *     $ fp term recount category post_tag
+	 *     $ fin term recount category post_tag
 	 *     Success: Updated category term count.
 	 *     Success: Updated post_tag term count.
 	 *
 	 *     # Recount all listed taxonomies
-	 *     $ fp taxonomy list --field=name | xargs fp term recount
+	 *     $ fin taxonomy list --field=name | xargs fin term recount
 	 *     Success: Updated category term count.
 	 *     Success: Updated post_tag term count.
 	 *     Success: Updated nav_menu term count.
@@ -636,20 +636,20 @@ class Term_Command extends FP_CLI_Command {
 		foreach ( $args as $taxonomy ) {
 
 			if ( ! taxonomy_exists( $taxonomy ) ) {
-				FP_CLI::warning( "Taxonomy {$taxonomy} does not exist." );
+				FIN_CLI::warning( "Taxonomy {$taxonomy} does not exist." );
 			} else {
 
 				/**
-				 * @var \FP_Term[] $terms
+				 * @var \FIN_Term[] $terms
 				 */
 
-				// phpcs:ignore FinPress.FP.DeprecatedParameters.Get_termsParam2Found -- Required for backward compatibility.
+				// phpcs:ignore FinPress.FIN.DeprecatedParameters.Get_termsParam2Found -- Required for backward compatibility.
 				$terms             = get_terms( $taxonomy, [ 'hide_empty' => false ] );
-				$term_taxonomy_ids = fp_list_pluck( $terms, 'term_taxonomy_id' );
+				$term_taxonomy_ids = fin_list_pluck( $terms, 'term_taxonomy_id' );
 
-				fp_update_term_count( $term_taxonomy_ids, $taxonomy );
+				fin_update_term_count( $term_taxonomy_ids, $taxonomy );
 
-				FP_CLI::success( "Updated {$taxonomy} term count." );
+				FIN_CLI::success( "Updated {$taxonomy} term count." );
 			}
 		}
 	}
@@ -680,7 +680,7 @@ class Term_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Migrate a category's term (video) to tag taxonomy.
-	 *     $ fp term migrate 9190 --from=category --to=post_tag
+	 *     $ fin term migrate 9190 --from=category --to=post_tag
 	 *     Term 'video' assigned to post 1155.
 	 *     Term 'video' migrated.
 	 *     Old instance of term 'video' removed from its original taxonomy.
@@ -706,16 +706,16 @@ class Term_Command extends FP_CLI_Command {
 		$term = get_term_by( $field, $term_reference, $original_taxonomy );
 
 		if ( ! $term ) {
-			FP_CLI::error( "Taxonomy term '{$term_reference}' for taxonomy '{$original_taxonomy}' doesn't exist." );
+			FIN_CLI::error( "Taxonomy term '{$term_reference}' for taxonomy '{$original_taxonomy}' doesn't exist." );
 		}
 
 		$tax = get_taxonomy( $original_taxonomy );
 
 		if ( ! $tax ) {
-			FP_CLI::error( "Taxonomy '{$original_taxonomy}' doesn't exist." );
+			FIN_CLI::error( "Taxonomy '{$original_taxonomy}' doesn't exist." );
 		}
 
-		$id = fp_insert_term(
+		$id = fin_insert_term(
 			$term->name,
 			$destination_taxonomy,
 			[
@@ -725,8 +725,8 @@ class Term_Command extends FP_CLI_Command {
 			]
 		);
 
-		if ( is_fp_error( $id ) ) {
-			FP_CLI::error( $id->get_error_message() );
+		if ( is_fin_error( $id ) ) {
+			FIN_CLI::error( $id->get_error_message() );
 		}
 
 		/**
@@ -737,13 +737,13 @@ class Term_Command extends FP_CLI_Command {
 		foreach ( $post_ids as $post_id ) {
 			$type = get_post_type( (int) $post_id );
 			if ( in_array( $type, $tax->object_type, true ) ) {
-				$term_taxonomy_id = fp_set_object_terms( (int) $post_id, $id['term_id'], $destination_taxonomy, true );
+				$term_taxonomy_id = fin_set_object_terms( (int) $post_id, $id['term_id'], $destination_taxonomy, true );
 
-				if ( is_fp_error( $term_taxonomy_id ) ) {
-					FP_CLI::error( "Failed to assign the term '{$term->slug}' to the post {$post_id}. Reason: " . $term_taxonomy_id->get_error_message() );
+				if ( is_fin_error( $term_taxonomy_id ) ) {
+					FIN_CLI::error( "Failed to assign the term '{$term->slug}' to the post {$post_id}. Reason: " . $term_taxonomy_id->get_error_message() );
 				}
 
-				FP_CLI::log( "Term '{$term->slug}' assigned to post {$post_id}." );
+				FIN_CLI::log( "Term '{$term->slug}' assigned to post {$post_id}." );
 			}
 
 			clean_post_cache( (int) $post_id );
@@ -751,28 +751,28 @@ class Term_Command extends FP_CLI_Command {
 
 		clean_term_cache( $term->term_id );
 
-		FP_CLI::log( "Term '{$term->slug}' migrated." );
+		FIN_CLI::log( "Term '{$term->slug}' migrated." );
 
-		$del = fp_delete_term( $term->term_id, $tax->name );
+		$del = fin_delete_term( $term->term_id, $tax->name );
 
-		if ( is_fp_error( $del ) ) {
-			FP_CLI::error( "Failed to delete the term '{$term->slug}'. Reason: " . $del->get_error_message() );
+		if ( is_fin_error( $del ) ) {
+			FIN_CLI::error( "Failed to delete the term '{$term->slug}'. Reason: " . $del->get_error_message() );
 		}
 
-		FP_CLI::log( "Old instance of term '{$term->slug}' removed from its original taxonomy." );
+		FIN_CLI::log( "Old instance of term '{$term->slug}' removed from its original taxonomy." );
 		$post_count  = count( $post_ids );
 		$post_plural = Utils\pluralize( 'post', $post_count );
-		FP_CLI::success( "Migrated the term '{$term->slug}' from taxonomy '{$tax->name}' to taxonomy '{$destination_taxonomy}' for {$post_count} {$post_plural}." );
+		FIN_CLI::success( "Migrated the term '{$term->slug}' from taxonomy '{$tax->name}' to taxonomy '{$destination_taxonomy}' for {$post_count} {$post_plural}." );
 	}
 
 	private function maybe_make_child() {
 		// 50% chance of making child term.
-		return ( fp_rand( 1, 2 ) === 1 );
+		return ( fin_rand( 1, 2 ) === 1 );
 	}
 
 	private function maybe_reset_depth() {
 		// 10% chance of resetting to root depth.
-		return ( fp_rand( 1, 10 ) === 7 );
+		return ( fin_rand( 1, 10 ) === 7 );
 	}
 
 	private function get_formatter( &$assoc_args ) {

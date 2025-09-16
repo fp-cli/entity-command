@@ -1,20 +1,20 @@
 Feature: Migrate term custom fields
 
-  @require-fp-4.4
+  @require-fin-4.4
   Scenario: Migrate an existing term by slug
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp term create category apple`
+    When I run `fin term create category apple`
     Then STDOUT should not be empty
 
-    When I run `fp post create --post_title='Test post' --porcelain`
+    When I run `fin post create --post_title='Test post' --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {POST_ID}
 
-    When I run `fp post term set {POST_ID} category apple`
+    When I run `fin post term set {POST_ID} category apple`
     Then STDOUT should not be empty
 
-    When I run `fp term migrate apple --by=slug --from=category --to=post_tag`
+    When I run `fin term migrate apple --by=slug --from=category --to=post_tag`
     Then STDOUT should be:
       """
       Term 'apple' assigned to post {POST_ID}.
@@ -23,22 +23,22 @@ Feature: Migrate term custom fields
       Success: Migrated the term 'apple' from taxonomy 'category' to taxonomy 'post_tag' for 1 post.
       """
 
-  @require-fp-4.4
+  @require-fin-4.4
   Scenario: Migrate an existing term by ID
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp term create category apple --porcelain`
+    When I run `fin term create category apple --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {TERM_ID}
 
-    When I run `fp post create --post_title='Test post' --porcelain`
+    When I run `fin post create --post_title='Test post' --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {POST_ID}
 
-    When I run `fp post term set {POST_ID} category {TERM_ID}`
+    When I run `fin post term set {POST_ID} category {TERM_ID}`
     Then STDOUT should not be empty
 
-    When I run `fp term migrate {TERM_ID} --by=slug --from=category --to=post_tag`
+    When I run `fin term migrate {TERM_ID} --by=slug --from=category --to=post_tag`
     Then STDOUT should be:
       """
       Term '{TERM_ID}' assigned to post {POST_ID}.
@@ -47,28 +47,28 @@ Feature: Migrate term custom fields
       Success: Migrated the term '{TERM_ID}' from taxonomy 'category' to taxonomy 'post_tag' for 1 post.
       """
 
-  @require-fp-4.4
+  @require-fin-4.4
   Scenario: Migrate a term in multiple posts
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp term create category orange`
+    When I run `fin term create category orange`
     Then STDOUT should not be empty
 
-    When I run `fp post create --post_title='Test post' --porcelain`
+    When I run `fin post create --post_title='Test post' --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {POST_ID}
 
-    When I run `fp post term set {POST_ID} category orange`
+    When I run `fin post term set {POST_ID} category orange`
     Then STDOUT should not be empty
 
-    When I run `fp post create --post_title='Test post 2' --porcelain`
+    When I run `fin post create --post_title='Test post 2' --porcelain`
     Then STDOUT should be a number
     And save STDOUT as {POST_ID_2}
 
-    When I run `fp post term set {POST_ID_2} category orange`
+    When I run `fin post term set {POST_ID_2} category orange`
     Then STDOUT should not be empty
 
-    When I run `fp term migrate orange --by=slug --from=category --to=post_tag`
+    When I run `fin term migrate orange --by=slug --from=category --to=post_tag`
     Then STDOUT should be:
       """
       Term 'orange' assigned to post {POST_ID}.
@@ -78,11 +78,11 @@ Feature: Migrate term custom fields
       Success: Migrated the term 'orange' from taxonomy 'category' to taxonomy 'post_tag' for 2 posts.
       """
 
-  @require-fp-4.4
+  @require-fin-4.4
   Scenario: Try to migrate a term that does not exist
-    Given a FP install
+    Given a FIN install
 
-    When I try `fp term migrate peach --by=slug --from=category --to=post_tag`
+    When I try `fin term migrate peach --by=slug --from=category --to=post_tag`
     Then STDERR should be:
       """
       Error: Taxonomy term 'peach' for taxonomy 'category' doesn't exist.

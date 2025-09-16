@@ -1,8 +1,8 @@
 <?php
 
-use FP_CLI\CommandWithDBObject;
-use FP_CLI\Fetchers\Comment as CommentFetcher;
-use FP_CLI\Utils;
+use FIN_CLI\CommandWithDBObject;
+use FIN_CLI\Fetchers\Comment as CommentFetcher;
+use FIN_CLI\Utils;
 
 /**
  * Creates, updates, deletes, and moderates comments.
@@ -10,23 +10,23 @@ use FP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # Create a new comment.
- *     $ fp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fp-cli"
+ *     $ fin comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fin-cli"
  *     Success: Created comment 932.
  *
  *     # Update an existing comment.
- *     $ fp comment update 123 --comment_author='That Guy'
+ *     $ fin comment update 123 --comment_author='That Guy'
  *     Success: Updated comment 123.
  *
  *     # Delete an existing comment.
- *     $ fp comment delete 1337 --force
+ *     $ fin comment delete 1337 --force
  *     Success: Deleted comment 1337.
  *
  *     # Trash all spam comments.
- *     $ fp comment delete $(fp comment list --status=spam --format=ids)
+ *     $ fin comment delete $(fin comment list --status=spam --format=ids)
  *     Success: Trashed comment 264.
  *     Success: Trashed comment 262.
  *
- * @package fp-cli
+ * @package fin-cli
  */
 class Comment_Command extends CommandWithDBObject {
 
@@ -53,7 +53,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## OPTIONS
 	 *
 	 * [--<field>=<value>]
-	 * : Associative args for the new comment. See fp_insert_comment().
+	 * : Associative args for the new comment. See fin_insert_comment().
 	 *
 	 * [--porcelain]
 	 * : Output just the new comment id.
@@ -61,11 +61,11 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Create comment.
-	 *     $ fp comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fp-cli"
+	 *     $ fin comment create --comment_post_ID=15 --comment_content="hello blog" --comment_author="fin-cli"
 	 *     Success: Created comment 932.
 	 */
 	public function create( $args, $assoc_args ) {
-		$assoc_args = fp_slash( $assoc_args );
+		$assoc_args = fin_slash( $assoc_args );
 		parent::_create(
 			$args,
 			$assoc_args,
@@ -74,19 +74,19 @@ class Comment_Command extends CommandWithDBObject {
 					$post_id = $params['comment_post_ID'];
 					$post    = get_post( $post_id );
 					if ( ! $post ) {
-						return new FP_Error( 'no_post', "Can't find post {$post_id}." );
+						return new FIN_Error( 'no_post', "Can't find post {$post_id}." );
 					}
 				} else {
-					// Make sure it's set for older FP versions else get undefined PHP notice.
+					// Make sure it's set for older FIN versions else get undefined PHP notice.
 					$params['comment_post_ID'] = 0;
 				}
 
-				// We use fp_insert_comment() instead of fp_new_comment() to stay at a low level and
-				// avoid fp_die() formatted messages or notifications
-				$comment_id = fp_insert_comment( $params );
+				// We use fin_insert_comment() instead of fin_new_comment() to stay at a low level and
+				// avoid fin_die() formatted messages or notifications
+				$comment_id = fin_insert_comment( $params );
 
 				if ( ! $comment_id ) {
-					return new FP_Error( 'db_error', 'Could not create comment.' );
+					return new FIN_Error( 'db_error', 'Could not create comment.' );
 				}
 
 				return $comment_id;
@@ -103,22 +103,22 @@ class Comment_Command extends CommandWithDBObject {
 	 * : One or more IDs of comments to update.
 	 *
 	 * --<field>=<value>
-	 * : One or more fields to update. See fp_update_comment().
+	 * : One or more fields to update. See fin_update_comment().
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     # Update comment.
-	 *     $ fp comment update 123 --comment_author='That Guy'
+	 *     $ fin comment update 123 --comment_author='That Guy'
 	 *     Success: Updated comment 123.
 	 */
 	public function update( $args, $assoc_args ) {
-		$assoc_args = fp_slash( $assoc_args );
+		$assoc_args = fin_slash( $assoc_args );
 		parent::_update(
 			$args,
 			$assoc_args,
 			function ( $params ) {
-				if ( ! fp_update_comment( $params ) ) {
-					return new FP_Error( 'db_error', 'Could not update comment.' );
+				if ( ! fin_update_comment( $params ) ) {
+					return new FIN_Error( 'db_error', 'Could not update comment.' );
 				}
 
 				return true;
@@ -154,11 +154,11 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Generate comments for the given post.
-	 *     $ fp comment generate --format=ids --count=3 --post_id=123
+	 *     $ fin comment generate --format=ids --count=3 --post_id=123
 	 *     138 139 140
 	 *
 	 *     # Add meta to every generated comment.
-	 *     $ fp comment generate --format=ids --count=3 | xargs -d ' ' -I % fp comment meta add % foo bar
+	 *     $ fin comment generate --format=ids --count=3 | xargs -d ' ' -I % fin comment meta add % foo bar
 	 *     Success: Added custom field.
 	 *     Success: Added custom field.
 	 *     Success: Added custom field.
@@ -178,12 +178,12 @@ class Comment_Command extends CommandWithDBObject {
 			$notify = Utils\make_progress_bar( 'Generating comments', $assoc_args['count'] );
 		}
 
-		$comment_count = fp_count_comments();
+		$comment_count = fin_count_comments();
 		$total         = (int) $comment_count->total_comments;
 		$limit         = $total + $assoc_args['count'];
 
 		for ( $index = $total; $index < $limit; $index++ ) {
-			$comment_id = fp_insert_comment(
+			$comment_id = fin_insert_comment(
 				[
 					'comment_content' => "Comment {$index}",
 					'comment_post_ID' => $assoc_args['post_id'],
@@ -232,14 +232,14 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Get comment.
-	 *     $ fp comment get 21 --field=content
+	 *     $ fin comment get 21 --field=content
 	 *     Thanks for all the comments, everyone!
 	 */
 	public function get( $args, $assoc_args ) {
 		$comment_id = (int) $args[0];
 		$comment    = get_comment( $comment_id );
 		if ( empty( $comment ) ) {
-			FP_CLI::error( 'Invalid comment ID.' );
+			FIN_CLI::error( 'Invalid comment ID.' );
 		}
 
 		if ( ! isset( $comment->url ) ) {
@@ -260,12 +260,12 @@ class Comment_Command extends CommandWithDBObject {
 	 * Gets a list of comments.
 	 *
 	 * Display comments based on all arguments supported by
-	 * [FP_Comment_Query()](https://developer.finpress.org/reference/classes/FP_Comment_Query/__construct/).
+	 * [FIN_Comment_Query()](https://developer.finpress.org/reference/classes/FIN_Comment_Query/__construct/).
 	 *
 	 * ## OPTIONS
 	 *
 	 * [--<field>=<value>]
-	 * : One or more args to pass to FP_Comment_Query.
+	 * : One or more args to pass to FIN_Comment_Query.
 	 *
 	 * [--field=<field>]
 	 * : Prints the value of a single field for each comment.
@@ -313,13 +313,13 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # List comment IDs.
-	 *     $ fp comment list --field=ID
+	 *     $ fin comment list --field=ID
 	 *     22
 	 *     23
 	 *     24
 	 *
 	 *     # List comments of a post.
-	 *     $ fp comment list --post_id=1 --fields=ID,comment_date,comment_author
+	 *     $ fin comment list --post_id=1 --fields=ID,comment_date,comment_author
 	 *     +------------+---------------------+----------------+
 	 *     | comment_ID | comment_date        | comment_author |
 	 *     +------------+---------------------+----------------+
@@ -327,7 +327,7 @@ class Comment_Command extends CommandWithDBObject {
 	 *     +------------+---------------------+----------------+
 	 *
 	 *     # List approved comments.
-	 *     $ fp comment list --number=3 --status=approve --fields=ID,comment_date,comment_author
+	 *     $ fin comment list --number=3 --status=approve --fields=ID,comment_date,comment_author
 	 *     +------------+---------------------+----------------+
 	 *     | comment_ID | comment_date        | comment_author |
 	 *     +------------+---------------------+----------------+
@@ -337,7 +337,7 @@ class Comment_Command extends CommandWithDBObject {
 	 *     +------------+---------------------+----------------+
 	 *
 	 *     # List unapproved comments.
-	 *     $ fp comment list --number=3 --status=hold --fields=ID,comment_date,comment_author
+	 *     $ fin comment list --number=3 --status=hold --fields=ID,comment_date,comment_author
 	 *     +------------+---------------------+----------------+
 	 *     | comment_ID | comment_date        | comment_author |
 	 *     +------------+---------------------+----------------+
@@ -347,7 +347,7 @@ class Comment_Command extends CommandWithDBObject {
 	 *     +------------+---------------------+----------------+
 	 *
 	 *     # List comments marked as spam.
-	 *     $ fp comment list --status=spam --fields=ID,comment_date,comment_author
+	 *     $ fin comment list --status=spam --fields=ID,comment_date,comment_author
 	 *     +------------+---------------------+----------------+
 	 *     | comment_ID | comment_date        | comment_author |
 	 *     +------------+---------------------+----------------+
@@ -355,7 +355,7 @@ class Comment_Command extends CommandWithDBObject {
 	 *     +------------+---------------------+----------------+
 	 *
 	 *     # List comments in trash.
-	 *     $ fp comment list --status=trash --fields=ID,comment_date,comment_author
+	 *     $ fin comment list --status=trash --fields=ID,comment_date,comment_author
 	 *     +------------+---------------------+----------------+
 	 *     | comment_ID | comment_date        | comment_author |
 	 *     +------------+---------------------+----------------+
@@ -377,7 +377,7 @@ class Comment_Command extends CommandWithDBObject {
 			$assoc_args['count'] = true;
 		}
 
-		$query    = new FP_Comment_Query();
+		$query    = new FIN_Comment_Query();
 		$comments = $query->query( $assoc_args );
 
 		if ( 'count' === $formatter->format ) {
@@ -393,9 +393,9 @@ class Comment_Command extends CommandWithDBObject {
 
 			if ( 'ids' === $formatter->format ) {
 				/**
-				 * @var \FP_Comment[] $comments
+				 * @var \FIN_Comment[] $comments
 				 */
-				$items = fp_list_pluck( $comments, 'comment_ID' );
+				$items = fin_list_pluck( $comments, 'comment_ID' );
 
 				$comments = $items;
 			} elseif ( is_array( $comments ) ) {
@@ -425,11 +425,11 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete comment.
-	 *     $ fp comment delete 1337 --force
+	 *     $ fin comment delete 1337 --force
 	 *     Success: Deleted comment 1337.
 	 *
 	 *     # Delete multiple comments.
-	 *     $ fp comment delete 1337 2341 --force
+	 *     $ fin comment delete 1337 2341 --force
 	 *     Success: Deleted comment 1337.
 	 *     Success: Deleted comment 2341.
 	 */
@@ -440,8 +440,8 @@ class Comment_Command extends CommandWithDBObject {
 			function ( $comment_id, $assoc_args ) {
 				$force = (bool) Utils\get_flag_value( $assoc_args, 'force' );
 
-				$status = fp_get_comment_status( $comment_id );
-				$result = fp_delete_comment( $comment_id, $force );
+				$status = fin_get_comment_status( $comment_id );
+				$result = fin_delete_comment( $comment_id, $force );
 
 				if ( ! $result ) {
 					return [ 'error', "Failed deleting comment {$comment_id}." ];
@@ -459,32 +459,32 @@ class Comment_Command extends CommandWithDBObject {
 		/**
 		 * @var callable $func
 		 */
-		$func = "fp_{$status}_comment";
+		$func = "fin_{$status}_comment";
 
 		if ( ! $func( $comment_id ) ) {
-			FP_CLI::error( sprintf( $failure, "comment {$comment_id}" ) );
+			FIN_CLI::error( sprintf( $failure, "comment {$comment_id}" ) );
 		}
-		FP_CLI::success( sprintf( $success, "comment {$comment_id}" ) );
+		FIN_CLI::success( sprintf( $success, "comment {$comment_id}" ) );
 	}
 
 	private function set_status( $args, $status, $success ) {
 		$comment = $this->fetcher->get_check( $args );
 
-		$result = fp_set_comment_status( $comment->comment_ID, $status, true );
+		$result = fin_set_comment_status( $comment->comment_ID, $status, true );
 
-		if ( is_fp_error( $result ) ) {
-			FP_CLI::error( $result );
+		if ( is_fin_error( $result ) ) {
+			FIN_CLI::error( $result );
 		}
 
-		FP_CLI::success( "{$success} comment {$comment->comment_ID}." );
+		FIN_CLI::success( "{$success} comment {$comment->comment_ID}." );
 	}
 
 	/**
-	 * Warns if `$_SERVER['SERVER_NAME']` not set as used in email from-address sent to post author in `fp_notify_postauthor()`.
+	 * Warns if `$_SERVER['SERVER_NAME']` not set as used in email from-address sent to post author in `fin_notify_postauthor()`.
 	 */
 	private function check_server_name() {
 		if ( empty( $_SERVER['SERVER_NAME'] ) ) {
-			FP_CLI::warning( 'Site url not set - defaulting to \'example.com\'. Any notification emails sent to post author may appear to come from \'example.com\'.' );
+			FIN_CLI::warning( 'Site url not set - defaulting to \'example.com\'. Any notification emails sent to post author may appear to come from \'example.com\'.' );
 			$_SERVER['SERVER_NAME'] = 'example.com';
 		}
 	}
@@ -500,7 +500,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Trash comment.
-	 *     $ fp comment trash 1337
+	 *     $ fin comment trash 1337
 	 *     Success: Trashed comment 1337.
 	 */
 	public function trash( $args, $assoc_args ) {
@@ -520,7 +520,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Untrash comment.
-	 *     $ fp comment untrash 1337
+	 *     $ fin comment untrash 1337
 	 *     Success: Untrashed comment 1337.
 	 */
 	public function untrash( $args, $assoc_args ) {
@@ -541,7 +541,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Spam comment.
-	 *     $ fp comment spam 1337
+	 *     $ fin comment spam 1337
 	 *     Success: Marked as spam comment 1337.
 	 */
 	public function spam( $args, $assoc_args ) {
@@ -561,7 +561,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Unspam comment.
-	 *     $ fp comment unspam 1337
+	 *     $ fin comment unspam 1337
 	 *     Success: Unspammed comment 1337.
 	 */
 	public function unspam( $args, $assoc_args ) {
@@ -582,7 +582,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Approve comment.
-	 *     $ fp comment approve 1337
+	 *     $ fin comment approve 1337
 	 *     Success: Approved comment 1337.
 	 */
 	public function approve( $args, $assoc_args ) {
@@ -603,7 +603,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Unapprove comment.
-	 *     $ fp comment unapprove 1337
+	 *     $ fin comment unapprove 1337
 	 *     Success: Unapproved comment 1337.
 	 */
 	public function unapprove( $args, $assoc_args ) {
@@ -624,7 +624,7 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Count comments on whole blog.
-	 *     $ fp comment count
+	 *     $ fin comment count
 	 *     approved:        33
 	 *     spam:            3
 	 *     trash:           1
@@ -634,7 +634,7 @@ class Comment_Command extends CommandWithDBObject {
 	 *     total_comments:  37
 	 *
 	 *     # Count comments in a post.
-	 *     $ fp comment count 42
+	 *     $ fin comment count 42
 	 *     approved:        19
 	 *     spam:            0
 	 *     trash:           0
@@ -646,7 +646,7 @@ class Comment_Command extends CommandWithDBObject {
 	public function count( $args, $assoc_args ) {
 		$post_id = $args[0] ?? null;
 
-		$count = fp_count_comments( $post_id );
+		$count = fin_count_comments( $post_id );
 
 		// Move total_comments to the end of the object
 		$total = $count->total_comments;
@@ -655,7 +655,7 @@ class Comment_Command extends CommandWithDBObject {
 		$count->total_comments = $total;
 
 		foreach ( (array) $count as $status => $count ) {
-			FP_CLI::line( str_pad( "$status:", 17 ) . $count );
+			FIN_CLI::line( str_pad( "$status:", 17 ) . $count );
 		}
 	}
 
@@ -670,19 +670,19 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Recount comment for the post.
-	 *     $ fp comment recount 123
+	 *     $ fin comment recount 123
 	 *     Updated post 123 comment count to 67.
 	 */
 	public function recount( $args ) {
 		foreach ( $args as $id ) {
-			if ( fp_update_comment_count( $id ) ) {
+			if ( fin_update_comment_count( $id ) ) {
 				/**
-				 * @var \FP_Post $post
+				 * @var \FIN_Post $post
 				 */
 				$post = get_post( $id );
-				FP_CLI::log( "Updated post {$post->ID} comment count to {$post->comment_count}." );
+				FIN_CLI::log( "Updated post {$post->ID} comment count to {$post->comment_count}." );
 			} else {
-				FP_CLI::warning( "Post {$id} doesn't exist." );
+				FIN_CLI::warning( "Post {$id} doesn't exist." );
 			}
 		}
 	}
@@ -698,18 +698,18 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Get status of comment.
-	 *     $ fp comment status 1337
+	 *     $ fin comment status 1337
 	 *     approved
 	 */
 	public function status( $args, $assoc_args ) {
 		list( $comment_id ) = $args;
 
-		$status = fp_get_comment_status( $comment_id );
+		$status = fin_get_comment_status( $comment_id );
 
 		if ( false === $status ) {
-			FP_CLI::error( "Could not check status of comment {$comment_id}." );
+			FIN_CLI::error( "Could not check status of comment {$comment_id}." );
 		} else {
-			FP_CLI::line( $status );
+			FIN_CLI::line( $status );
 		}
 	}
 
@@ -726,12 +726,12 @@ class Comment_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Check whether comment exists.
-	 *     $ fp comment exists 1337
+	 *     $ fin comment exists 1337
 	 *     Success: Comment with ID 1337 exists.
 	 */
 	public function exists( $args ) {
 		if ( $this->fetcher->get( $args[0] ) ) {
-			FP_CLI::success( "Comment with ID {$args[0]} exists." );
+			FIN_CLI::success( "Comment with ID {$args[0]} exists." );
 		}
 	}
 }

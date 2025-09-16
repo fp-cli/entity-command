@@ -1,7 +1,7 @@
 Feature: Clean up duplicate post meta values
 
   Scenario: Clean up duplicate post meta values.
-    Given a FP install
+    Given a FIN install
     And a session_no file:
       """
       n
@@ -11,7 +11,7 @@ Feature: Clean up duplicate post meta values
       y
       """
 
-    When I run `fp post meta add 1 foo bar`
+    When I run `fin post meta add 1 foo bar`
     Then STDOUT should be:
       """
       Success: Added custom field.
@@ -23,27 +23,27 @@ Feature: Clean up duplicate post meta values
     When I run the previous command again
     Then the return code should be 0
 
-    When I run `fp post meta list 1 --keys=foo`
+    When I run `fin post meta list 1 --keys=foo`
     Then STDOUT should be a table containing rows:
       | post_id | meta_key | meta_value |
       | 1       | foo      | bar        |
       | 1       | foo      | bar        |
       | 1       | foo      | bar        |
 
-    When I run `fp post meta clean-duplicates 1 foo < session_no`
+    When I run `fin post meta clean-duplicates 1 foo < session_no`
     # Check for contains only, as the string contains a trailing space.
     Then STDOUT should contain:
       """
       Are you sure you want to delete 2 duplicate meta values and keep 1 valid meta value? [y/n]
       """
 
-    When I run `fp post meta list 1 --keys=foo --format=count`
+    When I run `fin post meta list 1 --keys=foo --format=count`
     Then STDOUT should be:
       """
       3
       """
 
-    When I run `fp post meta clean-duplicates 1 foo < session_yes`
+    When I run `fin post meta clean-duplicates 1 foo < session_yes`
     Then STDOUT should contain:
       """
       Cleaned up duplicate 'foo' meta values.
@@ -55,7 +55,7 @@ Feature: Clean up duplicate post meta values
       Success: Nothing to clean up: found 1 valid meta value and 0 duplicates.
       """
 
-    When I try `fp post meta clean-duplicates 1 food`
+    When I try `fin post meta clean-duplicates 1 food`
     Then STDERR should be:
       """
       Error: No meta values found for 'food'.

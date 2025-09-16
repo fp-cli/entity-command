@@ -1,6 +1,6 @@
 <?php
 
-use FP_CLI\CommandWithTerms;
+use FIN_CLI\CommandWithTerms;
 
 /**
  * Adds, updates, removes, and lists user terms.
@@ -8,7 +8,7 @@ use FP_CLI\CommandWithTerms;
  * ## EXAMPLES
  *
  *     # Set user terms
- *     $ fp user term set 123 test category
+ *     $ fin user term set 123 test category
  *     Success: Set terms.
  */
 class User_Term_Command extends CommandWithTerms {

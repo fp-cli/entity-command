@@ -1,7 +1,7 @@
 <?php
 
-use FP_CLI\Formatter;
-use FP_CLI\Utils;
+use FIN_CLI\Formatter;
+use FIN_CLI\Utils;
 
 /**
  * List, add, and delete items associated with a menu.
@@ -9,18 +9,18 @@ use FP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # Add an existing post to an existing menu
- *     $ fp menu item add-post sidebar-menu 33 --title="Custom Test Post"
+ *     $ fin menu item add-post sidebar-menu 33 --title="Custom Test Post"
  *     Success: Menu item added.
  *
  *     # Create a new menu link item
- *     $ fp menu item add-custom sidebar-menu Apple http://apple.com
+ *     $ fin menu item add-custom sidebar-menu Apple http://apple.com
  *     Success: Menu item added.
  *
  *     # Delete menu item
- *     $ fp menu item delete 45
+ *     $ fin menu item delete 45
  *     Success: Deleted 1 of 1 menu items.
  */
-class Menu_Item_Command extends FP_CLI_Command {
+class Menu_Item_Command extends FIN_CLI_Command {
 
 	protected $obj_fields = [
 		'db_id',
@@ -79,7 +79,7 @@ class Menu_Item_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu item list main-menu
+	 *     $ fin menu item list main-menu
 	 *     +-------+-----------+-------------+---------------------------------+----------+
 	 *     | db_id | type      | title       | link                            | position |
 	 *     +-------+-----------+-------------+---------------------------------+----------+
@@ -91,13 +91,13 @@ class Menu_Item_Command extends FP_CLI_Command {
 	 */
 	public function list_( $args, $assoc_args ) {
 
-		$items = fp_get_nav_menu_items( $args[0] );
+		$items = fin_get_nav_menu_items( $args[0] );
 		if ( false === $items ) {
-			FP_CLI::error( 'Invalid menu.' );
+			FIN_CLI::error( 'Invalid menu.' );
 		}
 
 		// Correct position inconsistency and
-		// protected `url` param in FP-CLI
+		// protected `url` param in FIN-CLI
 		$items = array_map(
 			function ( $item ) {
 					$item->position = $item->menu_order;
@@ -160,7 +160,7 @@ class Menu_Item_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu item add-post sidebar-menu 33 --title="Custom Test Post"
+	 *     $ fin menu item add-post sidebar-menu 33 --title="Custom Test Post"
 	 *     Success: Menu item added.
 	 *
 	 * @subcommand add-post
@@ -171,7 +171,7 @@ class Menu_Item_Command extends FP_CLI_Command {
 		unset( $args[1] );
 		$post = get_post( $assoc_args['object-id'] );
 		if ( ! $post ) {
-			FP_CLI::error( 'Invalid post.' );
+			FIN_CLI::error( 'Invalid post.' );
 		}
 		$assoc_args['object'] = $post->post_type;
 
@@ -221,7 +221,7 @@ class Menu_Item_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu item add-term sidebar-menu post_tag 24
+	 *     $ fin menu item add-term sidebar-menu post_tag 24
 	 *     Success: Menu item added.
 	 *
 	 * @subcommand add-term
@@ -234,7 +234,7 @@ class Menu_Item_Command extends FP_CLI_Command {
 		unset( $args[2] );
 
 		if ( ! get_term_by( 'id', $assoc_args['object-id'], $assoc_args['object'] ) ) {
-			FP_CLI::error( 'Invalid term.' );
+			FIN_CLI::error( 'Invalid term.' );
 		}
 
 		$this->add_or_update_item( 'add', 'taxonomy', $args, $assoc_args );
@@ -277,7 +277,7 @@ class Menu_Item_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu item add-custom sidebar-menu Apple http://apple.com
+	 *     $ fin menu item add-custom sidebar-menu Apple http://apple.com
 	 *     Success: Menu item added.
 	 *
 	 * @subcommand add-custom
@@ -325,7 +325,7 @@ class Menu_Item_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu item update 45 --title=FinPress --link='http://finpress.org' --target=_blank --position=2
+	 *     $ fin menu item update 45 --title=FinPress --link='http://finpress.org' --target=_blank --position=2
 	 *     Success: Menu item updated.
 	 *
 	 * @subcommand update
@@ -335,7 +335,7 @@ class Menu_Item_Command extends FP_CLI_Command {
 		// Shuffle the position of these.
 		$args[1] = $args[0];
 		$terms   = get_the_terms( $args[1], 'nav_menu' );
-		if ( $terms && ! is_fp_error( $terms ) ) {
+		if ( $terms && ! is_fin_error( $terms ) ) {
 			$args[0] = (int) $terms[0]->term_id;
 		} else {
 			$args[0] = 0;
@@ -354,13 +354,13 @@ class Menu_Item_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp menu item delete 45
+	 *     $ fin menu item delete 45
 	 *     Success: Deleted 1 of 1 menu items.
 	 *
 	 * @subcommand delete
 	 */
 	public function delete( $args, $assoc_args ) {
-		global $fpdb;
+		global $findb;
 
 		$count  = 0;
 		$errors = 0;
@@ -372,9 +372,9 @@ class Menu_Item_Command extends FP_CLI_Command {
 
 			// @phpstan-ignore cast.int
 			$parent_menu_id = (int) get_post_meta( $arg, '_menu_item_menu_item_parent', true );
-			$result         = fp_delete_post( $arg, true );
+			$result         = fin_delete_post( $arg, true );
 			if ( ! $result ) {
-				FP_CLI::warning( "Couldn't delete menu item {$arg}." );
+				FIN_CLI::warning( "Couldn't delete menu item {$arg}." );
 				++$errors;
 			} else {
 
@@ -383,11 +383,11 @@ class Menu_Item_Command extends FP_CLI_Command {
 				}
 
 				if ( $parent_menu_id ) {
-					$children = $fpdb->get_results( $fpdb->prepare( "SELECT post_id FROM $fpdb->postmeta WHERE meta_key='_menu_item_menu_item_parent' AND meta_value=%s", (int) $arg ) );
+					$children = $findb->get_results( $findb->prepare( "SELECT post_id FROM $findb->postmeta WHERE meta_key='_menu_item_menu_item_parent' AND meta_value=%s", (int) $arg ) );
 					if ( $children ) {
-						$children_query = $fpdb->prepare( "UPDATE $fpdb->postmeta SET meta_value = %d WHERE meta_key = '_menu_item_menu_item_parent' AND meta_value=%s", $parent_menu_id, (int) $arg );
+						$children_query = $findb->prepare( "UPDATE $findb->postmeta SET meta_value = %d WHERE meta_key = '_menu_item_menu_item_parent' AND meta_value=%s", $parent_menu_id, (int) $arg );
 						// phpcs:ignore FinPress.DB.PreparedSQL.NotPrepared -- $children_query is already prepared above.
-						$fpdb->query( $children_query );
+						$findb->query( $children_query );
 						foreach ( $children as $child ) {
 							clean_post_cache( $child );
 						}
@@ -412,12 +412,12 @@ class Menu_Item_Command extends FP_CLI_Command {
 		$menu            = $args[0];
 		$menu_item_db_id = $args[1] ?? 0;
 
-		$menu = fp_get_nav_menu_object( $menu );
+		$menu = fin_get_nav_menu_object( $menu );
 		if ( false === $menu ) {
-			FP_CLI::error( 'Invalid menu.' );
+			FIN_CLI::error( 'Invalid menu.' );
 		}
 
-		// `url` is protected in FP-CLI, so we use `link` instead
+		// `url` is protected in FIN-CLI, so we use `link` instead
 		$assoc_args['url'] = Utils\get_flag_value( $assoc_args, 'link' );
 
 		// Need to persist the menu item data. See https://core.trac.finpress.org/ticket/28138
@@ -426,13 +426,13 @@ class Menu_Item_Command extends FP_CLI_Command {
 			$menu_item_obj = get_post( $menu_item_db_id );
 
 			if ( ! $menu_item_obj ) {
-				FP_CLI::error( 'Invalid menu.' );
+				FIN_CLI::error( 'Invalid menu.' );
 			}
 
 			/**
 			 * @var object{title: string, url: string, description: string, object: string, object_id: int, menu_item_parent: int, attr_title: string, target: string, classes: string[], xfn: string, post_status: string, menu_order: int} $menu_item_obj
 			 */
-			$menu_item_obj = fp_setup_nav_menu_item( $menu_item_obj );
+			$menu_item_obj = fin_setup_nav_menu_item( $menu_item_obj );
 
 			// Correct the menu position if this was the first item. See https://core.trac.finpress.org/ticket/28140
 			$position = ( 0 === $menu_item_obj->menu_order ) ? 1 : $menu_item_obj->menu_order;
@@ -476,21 +476,21 @@ class Menu_Item_Command extends FP_CLI_Command {
 
 		$menu_item_args = [];
 		foreach ( $default_args as $key => $default_value ) {
-			// fp_update_nav_menu_item() has a weird argument prefix
+			// fin_update_nav_menu_item() has a weird argument prefix
 			$new_key                    = 'menu-item-' . $key;
 			$menu_item_args[ $new_key ] = Utils\get_flag_value( $assoc_args, $key, $default_value );
 		}
 
 		$menu_item_args['menu-item-type'] = $type;
-		$result                           = fp_update_nav_menu_item( $menu->term_id, $menu_item_db_id, $menu_item_args );
+		$result                           = fin_update_nav_menu_item( $menu->term_id, $menu_item_db_id, $menu_item_args );
 
-		if ( is_fp_error( $result ) ) {
-			FP_CLI::error( $result->get_error_message() );
+		if ( is_fin_error( $result ) ) {
+			FIN_CLI::error( $result->get_error_message() );
 		} elseif ( ! $result ) {
 			if ( 'add' === $method ) {
-				FP_CLI::error( "Couldn't add menu item." );
+				FIN_CLI::error( "Couldn't add menu item." );
 			} elseif ( 'update' === $method ) {
-				FP_CLI::error( "Couldn't update menu item." );
+				FIN_CLI::error( "Couldn't update menu item." );
 			}
 		} else {
 
@@ -501,22 +501,22 @@ class Menu_Item_Command extends FP_CLI_Command {
 			/**
 			 * Set the menu
 			 *
-			 * fp_update_nav_menu_item() *should* take care of this, but
-			 * depends on fp_insert_post()'s "tax_input" argument, which
+			 * fin_update_nav_menu_item() *should* take care of this, but
+			 * depends on fin_insert_post()'s "tax_input" argument, which
 			 * is ignored if the user can't edit the taxonomy
 			 *
 			 * @see https://core.trac.finpress.org/ticket/27113
 			 */
 			if ( ! is_object_in_term( $result, 'nav_menu', (int) $menu->term_id ) ) {
-				fp_set_object_terms( $result, [ (int) $menu->term_id ], 'nav_menu' );
+				fin_set_object_terms( $result, [ (int) $menu->term_id ], 'nav_menu' );
 			}
 
 			if ( 'add' === $method && ! empty( $assoc_args['porcelain'] ) ) {
-				FP_CLI::line( (string) $result );
+				FIN_CLI::line( (string) $result );
 			} elseif ( 'add' === $method ) {
-					FP_CLI::success( 'Menu item added.' );
+					FIN_CLI::success( 'Menu item added.' );
 			} elseif ( 'update' === $method ) {
-				FP_CLI::success( 'Menu item updated.' );
+				FIN_CLI::success( 'Menu item updated.' );
 			}
 		}
 	}
@@ -532,8 +532,8 @@ class Menu_Item_Command extends FP_CLI_Command {
 	 * @return int number of rows affected
 	 */
 	private function reorder_menu_items( $menu_id, $min_position, $increment, $ignore_item_id = 0 ) {
-		global $fpdb;
-		return $fpdb->query( $fpdb->prepare( "UPDATE $fpdb->posts SET `menu_order`=`menu_order`+(%d) WHERE `menu_order`>=%d AND ID IN (SELECT object_id FROM $fpdb->term_relationships WHERE term_taxonomy_id=%d) AND ID<>%d", (int) $increment, (int) $min_position, (int) $menu_id, (int) $ignore_item_id ) );
+		global $findb;
+		return $findb->query( $findb->prepare( "UPDATE $findb->posts SET `menu_order`=`menu_order`+(%d) WHERE `menu_order`>=%d AND ID IN (SELECT object_id FROM $findb->term_relationships WHERE term_taxonomy_id=%d) AND ID<>%d", (int) $increment, (int) $min_position, (int) $menu_id, (int) $ignore_item_id ) );
 	}
 
 	protected function get_formatter( &$assoc_args ) {

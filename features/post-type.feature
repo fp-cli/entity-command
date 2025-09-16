@@ -1,32 +1,32 @@
 Feature: Manage FinPress post types
 
   Background:
-    Given a FP install
+    Given a FIN install
 
   Scenario: Listing post types
-    When I run `fp post-type list --format=csv`
+    When I run `fin post-type list --format=csv`
     Then STDOUT should be CSV containing:
       | name | label | description | hierarchical | public | capability_type |
       | post | Posts |             |              | 1      | post            |
       | page | Pages |             | 1            | 1      | page            |
 
-  @require-fp-5.0
+  @require-fin-5.0
   Scenario: Listing post types with count
-    When I run `fp post-type list --fields=name,count --format=csv`
+    When I run `fin post-type list --fields=name,count --format=csv`
     Then STDOUT should be CSV containing:
       | name | count |
       | post | 1     |
       | page | 2     |
 
   Scenario: Get a post type
-    When I try `fp post-type get invalid-post-type`
+    When I try `fin post-type get invalid-post-type`
     Then STDERR should be:
       """
       Error: Post type invalid-post-type doesn't exist.
       """
     And the return code should be 1
 
-    When I run `fp post-type get page`
+    When I run `fin post-type get page`
     Then STDOUT should be a table containing rows:
       | Field       | Value     |
       | name        | page      |
@@ -40,9 +40,9 @@ Feature: Manage FinPress post types
       "title":true
       """
 
-  @require-fp-5.0
+  @require-fin-5.0
   Scenario: Get a post type with count
-    When I try `fp post-type get page --fields=name,count`
+    When I try `fin post-type get page --fields=name,count`
     Then STDOUT should be a table containing rows:
       | Field       | Value     |
       | name        | page      |

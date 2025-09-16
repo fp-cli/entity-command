@@ -1,8 +1,8 @@
 <?php
 
-use FP_CLI\CommandWithDBObject;
-use FP_CLI\Utils;
-use FP_CLI\Fetchers\Signup as SignupFetcher;
+use FIN_CLI\CommandWithDBObject;
+use FIN_CLI\Utils;
+use FIN_CLI\Fetchers\Signup as SignupFetcher;
 
 /**
  * Manages signups on a multisite installation.
@@ -10,7 +10,7 @@ use FP_CLI\Fetchers\Signup as SignupFetcher;
  * ## EXAMPLES
  *
  *     # List signups.
- *     $ fp user signup list
+ *     $ fin user signup list
  *     +-----------+------------+---------------------+---------------------+--------+------------------+
  *     | signup_id | user_login | user_email          | registered          | active | activation_key   |
  *     +-----------+------------+---------------------+---------------------+--------+------------------+
@@ -19,16 +19,16 @@ use FP_CLI\Fetchers\Signup as SignupFetcher;
  *     +-----------+------------+---------------------+---------------------+--------+------------------+
  *
  *     # Activate signup.
- *     $ fp user signup activate 2
+ *     $ fin user signup activate 2
  *     Signup 2 activated. Password: bZFSGsfzb9xs
  *     Success: Activated 1 of 1 signups.
  *
  *     # Delete signup.
- *     $ fp user signup delete 3
+ *     $ fin user signup delete 3
  *     Signup 3 deleted.
  *     Success: Deleted 1 of 1 signups.
  *
- * @package fp-cli
+ * @package fin-cli
  */
 class Signup_Command extends CommandWithDBObject {
 
@@ -103,11 +103,11 @@ class Signup_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # List signup IDs.
-	 *     $ fp user signup list --field=signup_id
+	 *     $ fin user signup list --field=signup_id
 	 *     1
 	 *
 	 *     # List all signups.
-	 *     $ fp user signup list
+	 *     $ fin user signup list
 	 *     +-----------+------------+---------------------+---------------------+--------+------------------+
 	 *     | signup_id | user_login | user_email          | registered          | active | activation_key   |
 	 *     +-----------+------------+---------------------+---------------------+--------+------------------+
@@ -117,10 +117,10 @@ class Signup_Command extends CommandWithDBObject {
 	 *
 	 * @subcommand list
 	 *
-	 * @package fp-cli
+	 * @package fin-cli
 	 */
 	public function list_( $args, $assoc_args ) {
-		global $fpdb;
+		global $findb;
 
 		if ( isset( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = explode( ',', $assoc_args['fields'] );
@@ -135,12 +135,12 @@ class Signup_Command extends CommandWithDBObject {
 		 */
 		$per_page = Utils\get_flag_value( $assoc_args, 'per_page' );
 
-		$limit = $per_page ? $fpdb->prepare( 'LIMIT %d', (int) $per_page ) : '';
+		$limit = $per_page ? $findb->prepare( 'LIMIT %d', (int) $per_page ) : '';
 
-		$query = "SELECT * FROM $fpdb->signups {$limit}";
+		$query = "SELECT * FROM $findb->signups {$limit}";
 
 		// phpcs:ignore FinPress.DB.PreparedSQL.NotPrepared -- Prepared properly above.
-		$results = $fpdb->get_results( $query, ARRAY_A );
+		$results = $findb->get_results( $query, ARRAY_A );
 
 		if ( $results ) {
 			foreach ( $results as $item ) {
@@ -160,7 +160,7 @@ class Signup_Command extends CommandWithDBObject {
 		$formatter = $this->get_formatter( $assoc_args );
 
 		if ( 'ids' === $format ) {
-			FP_CLI::line( implode( ' ', fp_list_pluck( $signups, 'signup_id' ) ) );
+			FIN_CLI::line( implode( ' ', fin_list_pluck( $signups, 'signup_id' ) ) );
 		} else {
 			$formatter->display_items( $signups );
 		}
@@ -194,13 +194,13 @@ class Signup_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Get signup.
-	 *     $ fp user signup get 1 --field=user_login
+	 *     $ fin user signup get 1 --field=user_login
 	 *     bobuser
 	 *
 	 *     # Get signup and export to JSON file.
-	 *     $ fp user signup get bobuser --format=json > bobuser.json
+	 *     $ fin user signup get bobuser --format=json > bobuser.json
 	 *
-	 * @package fp-cli
+	 * @package fin-cli
 	 */
 	public function get( $args, $assoc_args ) {
 		$signup = $this->fetcher->get_check( $args[0] );
@@ -225,11 +225,11 @@ class Signup_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Activate signup.
-	 *     $ fp user signup activate 2
+	 *     $ fin user signup activate 2
 	 *     Signup 2 activated. Password: bZFSGsfzb9xs
 	 *     Success: Activated 1 of 1 signups.
 	 *
-	 * @package fp-cli
+	 * @package fin-cli
 	 */
 	public function activate( $args, $assoc_args ) {
 		$signups = $this->fetcher->get_many( $args );
@@ -238,13 +238,13 @@ class Signup_Command extends CommandWithDBObject {
 		$errors    = 0;
 
 		foreach ( $signups as $signup ) {
-			$result = fpmu_activate_signup( $signup->activation_key );
+			$result = finmu_activate_signup( $signup->activation_key );
 
-			if ( is_fp_error( $result ) ) {
-				FP_CLI::warning( "Failed activating signup {$signup->signup_id}." );
+			if ( is_fin_error( $result ) ) {
+				FIN_CLI::warning( "Failed activating signup {$signup->signup_id}." );
 				++$errors;
 			} else {
-				FP_CLI::log( "Signup {$signup->signup_id} activated. Password: {$result['password']}" );
+				FIN_CLI::log( "Signup {$signup->signup_id} activated. Password: {$result['password']}" );
 				++$successes;
 			}
 		}
@@ -266,11 +266,11 @@ class Signup_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete signup.
-	 *     $ fp user signup delete 3
+	 *     $ fin user signup delete 3
 	 *     Signup 3 deleted.
 	 *     Success: Deleted 1 of 1 signups.
 	 *
-	 * @package fp-cli
+	 * @package fin-cli
 	 */
 	public function delete( $args, $assoc_args ) {
 		$count = count( $args );
@@ -278,16 +278,16 @@ class Signup_Command extends CommandWithDBObject {
 		$all = Utils\get_flag_value( $assoc_args, 'all', false );
 
 		if ( ( 0 < $count && true === $all ) || ( 0 === $count && true !== $all ) ) {
-			FP_CLI::error( 'You need to specify either one or more signups or provide the --all flag.' );
+			FIN_CLI::error( 'You need to specify either one or more signups or provide the --all flag.' );
 		}
 
 		if ( true === $all ) {
 			if ( ! $this->delete_all_signups() ) {
-				FP_CLI::error( 'Error deleting signups.' );
+				FIN_CLI::error( 'Error deleting signups.' );
 			}
 
-			FP_CLI::success( 'Deleted all signups.' );
-			FP_CLI::halt( 0 );
+			FIN_CLI::success( 'Deleted all signups.' );
+			FIN_CLI::halt( 0 );
 		}
 
 		$signups = $this->fetcher->get_many( $args );
@@ -297,10 +297,10 @@ class Signup_Command extends CommandWithDBObject {
 
 		foreach ( $signups as $signup ) {
 			if ( $this->delete_signup( $signup ) ) {
-				FP_CLI::log( "Signup {$signup->signup_id} deleted." );
+				FIN_CLI::log( "Signup {$signup->signup_id} deleted." );
 				++$successes;
 			} else {
-				FP_CLI::warning( "Failed deleting signup {$signup->signup_id}." );
+				FIN_CLI::warning( "Failed deleting signup {$signup->signup_id}." );
 				++$errors;
 			}
 		}
@@ -315,11 +315,11 @@ class Signup_Command extends CommandWithDBObject {
 	 * @return bool True if success; otherwise false.
 	 */
 	private function delete_signup( $signup ) {
-		global $fpdb;
+		global $findb;
 
 		$signup_id = $signup->signup_id;
 
-		$result = $fpdb->delete( $fpdb->signups, array( 'signup_id' => $signup_id ), array( '%d' ) );
+		$result = $findb->delete( $findb->signups, array( 'signup_id' => $signup_id ), array( '%d' ) );
 
 		return $result ? true : false;
 	}
@@ -330,9 +330,9 @@ class Signup_Command extends CommandWithDBObject {
 	 * @return bool True if success; otherwise false.
 	 */
 	private function delete_all_signups() {
-		global $fpdb;
+		global $findb;
 
-		$results = $fpdb->query( 'DELETE FROM ' . $fpdb->signups );
+		$results = $findb->query( 'DELETE FROM ' . $findb->signups );
 
 		return $results ? true : false;
 	}

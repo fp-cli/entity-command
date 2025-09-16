@@ -1,9 +1,9 @@
 <?php
 
-use FP_CLI\CommandWithDBObject;
-use FP_CLI\Fetchers\Post as PostFetcher;
-use FP_CLI\Fetchers\User as UserFetcher;
-use FP_CLI\Utils;
+use FIN_CLI\CommandWithDBObject;
+use FIN_CLI\Fetchers\Post as PostFetcher;
+use FIN_CLI\Fetchers\User as UserFetcher;
+use FIN_CLI\Utils;
 
 /**
  * Manages posts, content, and meta.
@@ -11,18 +11,18 @@ use FP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # Create a new post.
- *     $ fp post create --post_type=post --post_title='A sample post'
+ *     $ fin post create --post_type=post --post_title='A sample post'
  *     Success: Created post 123.
  *
  *     # Update an existing post.
- *     $ fp post update 123 --post_status=draft
+ *     $ fin post update 123 --post_status=draft
  *     Success: Updated post 123.
  *
  *     # Delete an existing post.
- *     $ fp post delete 123
+ *     $ fin post delete 123
  *     Success: Trashed post 123.
  *
- * @package fp-cli
+ * @package fin-cli
  */
 class Post_Command extends CommandWithDBObject {
 
@@ -132,7 +132,7 @@ class Post_Command extends CommandWithDBObject {
 	 *   be read from STDIN.
 	 *
 	 * [--<field>=<value>]
-	 * : Associative args for the new post. See fp_insert_post().
+	 * : Associative args for the new post. See fin_insert_post().
 	 *
 	 * [--edit]
 	 * : Immediately open system's editor to write or edit post content.
@@ -147,19 +147,19 @@ class Post_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Create post and schedule for future
-	 *     $ fp post create --post_type=post --post_title='A future post' --post_status=future --post_date='2030-12-01 07:00:00'
+	 *     $ fin post create --post_type=post --post_title='A future post' --post_status=future --post_date='2030-12-01 07:00:00'
 	 *     Success: Created post 1921.
 	 *
 	 *     # Create post with content from given file
-	 *     $ fp post create ./post-content.txt --post_category=201,345 --post_title='Post from file'
+	 *     $ fin post create ./post-content.txt --post_category=201,345 --post_title='Post from file'
 	 *     Success: Created post 1922.
 	 *
 	 *     # Create a post with multiple meta values.
-	 *     $ fp post create --post_title='A post' --post_content='Just a small post.' --meta_input='{"key1":"value1","key2":"value2"}'
+	 *     $ fin post create --post_title='A post' --post_content='Just a small post.' --meta_input='{"key1":"value1","key2":"value2"}'
 	 *     Success: Created post 1923.
 	 *
 	 *     # Create a duplicate post from existing posts.
-	 *     $ fp post create --from-post=123 --post_title='Different Title'
+	 *     $ fin post create --from-post=123 --post_title='Different Title'
 	 *     Success: Created post 2350.
 	 */
 	public function create( $args, $assoc_args ) {
@@ -170,7 +170,7 @@ class Post_Command extends CommandWithDBObject {
 		if ( Utils\get_flag_value( $assoc_args, 'edit' ) ) {
 			$input = Utils\get_flag_value( $assoc_args, 'post_content', '' );
 
-			$output = $this->_edit( $input, 'FP-CLI: New Post' );
+			$output = $this->_edit( $input, 'FIN-CLI: New Post' );
 			if ( $output ) {
 				$assoc_args['post_content'] = $output;
 			} else {
@@ -206,12 +206,12 @@ class Post_Command extends CommandWithDBObject {
 			$assoc_args = array_merge( $post_arr, $assoc_args );
 		}
 
-		$assoc_args = fp_slash( $assoc_args );
+		$assoc_args = fin_slash( $assoc_args );
 		parent::_create(
 			$args,
 			$assoc_args,
 			function ( $params ) {
-				return fp_insert_post( $params, true );
+				return fin_insert_post( $params, true );
 			}
 		);
 	}
@@ -307,27 +307,27 @@ class Post_Command extends CommandWithDBObject {
 	 *   be read from STDIN.
 	 *
 	 * --<field>=<value>
-	 * : One or more fields to update. See fp_insert_post().
+	 * : One or more fields to update. See fin_insert_post().
 	 *
 	 * [--defer-term-counting]
 	 * : Recalculate term count in batch, for a performance boost.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp post update 123 --post_name=something --post_status=draft
+	 *     $ fin post update 123 --post_name=something --post_status=draft
 	 *     Success: Updated post 123.
 	 *
 	 *     # Update a post with multiple meta values.
-	 *     $ fp post update 123 --meta_input='{"key1":"value1","key2":"value2"}'
+	 *     $ fin post update 123 --meta_input='{"key1":"value1","key2":"value2"}'
 	 *     Success: Updated post 123.
 	 *
 	 *     # Update multiple posts at once.
-	 *     $ fp post update 123 456 --post_author=789
+	 *     $ fin post update 123 456 --post_author=789
 	 *     Success: Updated post 123.
 	 *     Success: Updated post 456.
 	 *
 	 *     # Update all posts of a given post type at once.
-	 *     $ fp post update $(fp post list --post_type=page --format=ids) --post_author=123
+	 *     $ fin post update $(fin post list --post_type=page --format=ids) --post_author=123
 	 *     Success: Updated post 123.
 	 *     Success: Updated post 456.
 	 */
@@ -350,12 +350,12 @@ class Post_Command extends CommandWithDBObject {
 		$array_arguments = [ 'meta_input' ];
 		$assoc_args      = Utils\parse_shell_arrays( $assoc_args, $array_arguments );
 
-		$assoc_args = fp_slash( $assoc_args );
+		$assoc_args = fin_slash( $assoc_args );
 		parent::_update(
 			$args,
 			$assoc_args,
 			function ( $params ) {
-				return fp_update_post( $params, true );
+				return fin_update_post( $params, true );
 			}
 		);
 	}
@@ -371,15 +371,15 @@ class Post_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Launch system editor to edit post
-	 *     $ fp post edit 123
+	 *     $ fin post edit 123
 	 */
 	public function edit( $args, $assoc_args ) {
 		$post = $this->fetcher->get_check( $args[0] );
 
-		$result = $this->_edit( $post->post_content, "FP-CLI post {$post->ID}" );
+		$result = $this->_edit( $post->post_content, "FIN-CLI post {$post->ID}" );
 
 		if ( false === $result ) {
-			FP_CLI::warning( 'No change made to post content.' );
+			FIN_CLI::warning( 'No change made to post content.' );
 		} else {
 			$this->update( $args, [ 'post_content' => $result ] );
 		}
@@ -422,7 +422,7 @@ class Post_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Save the post content to a file
-	 *     $ fp post get 123 --field=content > file.txt
+	 *     $ fin post get 123 --field=content > file.txt
 	 */
 	public function get( $args, $assoc_args ) {
 		$post = $this->fetcher->get_check( $args[0] );
@@ -459,22 +459,22 @@ class Post_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete post skipping trash
-	 *     $ fp post delete 123 --force
+	 *     $ fin post delete 123 --force
 	 *     Success: Deleted post 123.
 	 *
 	 *     # Delete multiple posts
-	 *     $ fp post delete 123 456 789
+	 *     $ fin post delete 123 456 789
 	 *     Success: Trashed post 123.
 	 *     Success: Trashed post 456.
 	 *     Success: Trashed post 789.
 	 *
 	 *     # Delete all pages
-	 *     $ fp post delete $(fp post list --post_type='page' --format=ids)
+	 *     $ fin post delete $(fin post list --post_type='page' --format=ids)
 	 *     Success: Trashed post 1164.
 	 *     Success: Trashed post 1186.
 	 *
 	 *     # Delete all posts in the trash
-	 *     $ fp post delete $(fp post list --post_status=trash --format=ids)
+	 *     $ fin post delete $(fin post list --post_status=trash --format=ids)
 	 *     Success: Deleted post 1268.
 	 *     Success: Deleted post 1294.
 	 */
@@ -505,7 +505,7 @@ class Post_Command extends CommandWithDBObject {
 			];
 		}
 
-		if ( ! fp_delete_post( $post_id, $assoc_args['force'] ) ) {
+		if ( ! fin_delete_post( $post_id, $assoc_args['force'] ) ) {
 			return [ 'error', "Failed deleting post {$post_id}." ];
 		}
 
@@ -517,13 +517,13 @@ class Post_Command extends CommandWithDBObject {
 	/**
 	 * Gets a list of posts.
 	 *
-	 * Display posts based on all arguments supported by [FP_Query()](https://developer.finpress.org/reference/classes/fp_query/).
+	 * Display posts based on all arguments supported by [FIN_Query()](https://developer.finpress.org/reference/classes/fin_query/).
 	 * Only shows post types marked as post by default.
 	 *
 	 * ## OPTIONS
 	 *
 	 * [--<field>=<value>]
-	 * : One or more args to pass to FP_Query.
+	 * : One or more args to pass to FIN_Query.
 	 *
 	 * [--field=<field>]
 	 * : Prints the value of a single field for each post.
@@ -580,18 +580,18 @@ class Post_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # List post
-	 *     $ fp post list --field=ID
+	 *     $ fin post list --field=ID
 	 *     568
 	 *     829
 	 *     1329
 	 *     1695
 	 *
 	 *     # List posts in JSON
-	 *     $ fp post list --post_type=post --posts_per_page=5 --format=json
+	 *     $ fin post list --post_type=post --posts_per_page=5 --format=json
 	 *     [{"ID":1,"post_title":"Hello world!","post_name":"hello-world","post_date":"2015-06-20 09:00:10","post_status":"publish"},{"ID":1178,"post_title":"Markup: HTML Tags and Formatting","post_name":"markup-html-tags-and-formatting","post_date":"2013-01-11 20:22:19","post_status":"draft"}]
 	 *
 	 *     # List all pages
-	 *     $ fp post list --post_type=page --fields=post_title,post_status
+	 *     $ fin post list --post_type=page --fields=post_title,post_status
 	 *     +-------------+-------------+
 	 *     | post_title  | post_status |
 	 *     +-------------+-------------+
@@ -599,11 +599,11 @@ class Post_Command extends CommandWithDBObject {
 	 *     +-------------+-------------+
 	 *
 	 *     # List ids of all pages and posts
-	 *     $ fp post list --post_type=page,post --format=ids
+	 *     $ fin post list --post_type=page,post --format=ids
 	 *     15 25 34 37 198
 	 *
 	 *     # List given posts
-	 *     $ fp post list --post__in=1,3
+	 *     $ fin post list --post__in=1,3
 	 *     +----+--------------+-------------+---------------------+-------------+
 	 *     | ID | post_title   | post_name   | post_date           | post_status |
 	 *     +----+--------------+-------------+---------------------+-------------+
@@ -612,7 +612,7 @@ class Post_Command extends CommandWithDBObject {
 	 *     +----+--------------+-------------+---------------------+-------------+
 	 *
 	 *     # List given post by a specific author
-	 *     $ fp post list --author=2
+	 *     $ fin post list --author=2
 	 *     +----+-------------------+-------------------+---------------------+-------------+
 	 *     | ID | post_title        | post_name         | post_date           | post_status |
 	 *     +----+-------------------+-------------------+---------------------+-------------+
@@ -638,19 +638,19 @@ class Post_Command extends CommandWithDBObject {
 
 		if ( 'ids' === $formatter->format ) {
 			$query_args['fields'] = 'ids';
-			$query                = new FP_Query( $query_args );
+			$query                = new FIN_Query( $query_args );
 			// @phpstan-ignore argument.type
 			echo implode( ' ', $query->posts );
 		} elseif ( 'count' === $formatter->format ) {
 			$query_args['fields'] = 'ids';
-			$query                = new FP_Query( $query_args );
+			$query                = new FIN_Query( $query_args );
 			$formatter->display_items( $query->posts );
 		} else {
-			$query = new FP_Query( $query_args );
+			$query = new FIN_Query( $query_args );
 			$posts = array_map(
 				function ( $post ) {
 					/**
-					 * @var \FP_Post $post
+					 * @var \FIN_Post $post
 					 */
 
 					// @phpstan-ignore property.notFound
@@ -727,18 +727,18 @@ class Post_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Generate posts.
-	 *     $ fp post generate --count=10 --post_type=page --post_date=1999-01-04
+	 *     $ fin post generate --count=10 --post_type=page --post_date=1999-01-04
 	 *     Generating posts  100% [================================================] 0:01 / 0:04
 	 *
 	 *     # Generate posts with fetched content.
-	 *     $ curl -N https://loripsum.net/api/5 | fp post generate --post_content --count=10
+	 *     $ curl -N https://loripsum.net/api/5 | fin post generate --post_content --count=10
 	 *       % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
 	 *                                      Dload  Upload   Total   Spent    Left  Speed
 	 *     100  2509  100  2509    0     0    616      0  0:00:04  0:00:04 --:--:--   616
 	 *     Generating posts  100% [================================================] 0:01 / 0:04
 	 *
 	 *     # Add meta to every generated posts.
-	 *     $ fp post generate --format=ids | xargs -d ' ' -I % fp post meta add % foo bar
+	 *     $ fin post generate --format=ids | xargs -d ' ' -I % fin post meta add % foo bar
 	 *     Success: Added custom field.
 	 *     Success: Added custom field.
 	 *     Success: Added custom field.
@@ -747,7 +747,7 @@ class Post_Command extends CommandWithDBObject {
 	 * @param array{count: string, post_type: string, post_status: string, post_title: string, post_author: string, post_date?: string, post_date_gmt?: string, post_content?: string, max_depth: string, format: string} $assoc_args Associative arguments.
 	 */
 	public function generate( $args, $assoc_args ) {
-		global $fpdb;
+		global $findb;
 
 		$defaults = [
 			'count'         => 100,
@@ -778,7 +778,7 @@ class Post_Command extends CommandWithDBObject {
 			$post_data['post_date_gmt'] .= ' 00:00:00';
 		}
 
-		// In older FinPress versions, fp_insert_post post dates default to the current time when a value is absent. We need to send a value for post_date_gmt if post_date is set and vice versa.
+		// In older FinPress versions, fin_insert_post post dates default to the current time when a value is absent. We need to send a value for post_date_gmt if post_date is set and vice versa.
 		if ( ! empty( $post_data['post_date'] ) && empty( $post_data['post_date_gmt'] ) ) {
 			$post_data['post_date_gmt'] = get_gmt_from_date( $post_data['post_date'] );
 		}
@@ -788,7 +788,7 @@ class Post_Command extends CommandWithDBObject {
 		}
 
 		if ( ! post_type_exists( $post_data['post_type'] ) ) {
-			FP_CLI::error( "'{$post_data['post_type']}' is not a registered post type." );
+			FIN_CLI::error( "'{$post_data['post_type']}' is not a registered post type." );
 		}
 
 		if ( $post_data['post_author'] ) {
@@ -798,17 +798,17 @@ class Post_Command extends CommandWithDBObject {
 
 		if ( Utils\get_flag_value( $assoc_args, 'post_content' ) ) {
 			if ( ! Utils\has_stdin() ) {
-				FP_CLI::error( 'The parameter `post_content` reads from STDIN.' );
+				FIN_CLI::error( 'The parameter `post_content` reads from STDIN.' );
 			}
 
 			$post_data['post_content'] = (string) file_get_contents( 'php://stdin' );
 		}
 
 		// Get the total number of posts.
-		$total = $fpdb->get_var( $fpdb->prepare( "SELECT COUNT(*) FROM $fpdb->posts WHERE post_type = %s", $post_data['post_type'] ) );
+		$total = $findb->get_var( $findb->prepare( "SELECT COUNT(*) FROM $findb->posts WHERE post_type = %s", $post_data['post_type'] ) );
 
 		/**
-		 * @var \FP_Post_Type $post_type
+		 * @var \FIN_Post_Type $post_type
 		 */
 		$post_type = get_post_type_object( $post_data['post_type'] );
 
@@ -862,9 +862,9 @@ class Post_Command extends CommandWithDBObject {
 				'post_content'  => $post_data['post_content'],
 			];
 
-			$post_id = fp_insert_post( $args, true );
-			if ( is_fp_error( $post_id ) ) {
-				FP_CLI::warning( $post_id );
+			$post_id = fin_insert_post( $args, true );
+			if ( is_fin_error( $post_id ) ) {
+				FIN_CLI::warning( $post_id );
 			} else {
 				$previous_post_id = $post_id;
 				if ( 'ids' === $format ) {
@@ -897,7 +897,7 @@ class Post_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Get post ID by URL
-	 *     $ fp post url-to-id https://example.com/?p=1
+	 *     $ fin post url-to-id https://example.com/?p=1
 	 *     1
 	 *
 	 * @subcommand url-to-id
@@ -908,20 +908,20 @@ class Post_Command extends CommandWithDBObject {
 		$post = get_post( $post_id );
 
 		if ( null === $post ) {
-			FP_CLI::error( "Could not get post with url $args[0]." );
+			FIN_CLI::error( "Could not get post with url $args[0]." );
 		}
 
-		FP_CLI::print_value( $post_id, $assoc_args );
+		FIN_CLI::print_value( $post_id, $assoc_args );
 	}
 
 	private function maybe_make_child() {
 		// 50% chance of making child post.
-		return ( fp_rand( 1, 2 ) === 1 );
+		return ( fin_rand( 1, 2 ) === 1 );
 	}
 
 	private function maybe_reset_depth() {
 		// 10% chance of resetting to root depth,
-		return ( fp_rand( 1, 10 ) === 7 );
+		return ( fin_rand( 1, 10 ) === 7 );
 	}
 
 	/**
@@ -934,7 +934,7 @@ class Post_Command extends CommandWithDBObject {
 		if ( '-' !== $arg ) {
 			$readfile = $arg;
 			if ( ! file_exists( $readfile ) || ! is_file( $readfile ) ) {
-				FP_CLI::error( "Unable to read content from '{$readfile}'." );
+				FIN_CLI::error( "Unable to read content from '{$readfile}'." );
 			}
 		} else {
 			$readfile = 'php://stdin';
@@ -960,12 +960,12 @@ class Post_Command extends CommandWithDBObject {
 					$category_id = category_exists( $post_category );
 				}
 				if ( ! $category_id ) {
-					FP_CLI::error( "No such post category '{$post_category}'." );
+					FIN_CLI::error( "No such post category '{$post_category}'." );
 				}
 				$category_ids[] = $category_id;
 			}
 		}
-		// If no category ids found, return exploded array for compat with previous FP-CLI versions.
+		// If no category ids found, return exploded array for compat with previous FIN-CLI versions.
 		return $category_ids ?: $categories;
 	}
 
@@ -1019,7 +1019,7 @@ class Post_Command extends CommandWithDBObject {
 	private function get_tags( $post_id ) {
 		$tag_data = get_the_tags( $post_id );
 		$tag_arr  = [];
-		if ( $tag_data && ! is_fp_error( $tag_data ) ) {
+		if ( $tag_data && ! is_fin_error( $tag_data ) ) {
 			foreach ( $tag_data as $tag ) {
 				array_push( $tag_arr, $tag->slug );
 			}
@@ -1041,21 +1041,21 @@ class Post_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # The post exists.
-	 *     $ fp post exists 1337
+	 *     $ fin post exists 1337
 	 *     Success: Post with ID 1337 exists.
 	 *     $ echo $?
 	 *     0
 	 *
 	 *     # The post does not exist.
-	 *     $ fp post exists 10000
+	 *     $ fin post exists 10000
 	 *     $ echo $?
 	 *     1
 	 */
 	public function exists( $args ) {
 		if ( $this->fetcher->get( $args[0] ) ) {
-			FP_CLI::success( "Post with ID {$args[0]} exists." );
+			FIN_CLI::success( "Post with ID {$args[0]} exists." );
 		} else {
-			FP_CLI::halt( 1 );
+			FIN_CLI::halt( 1 );
 		}
 	}
 

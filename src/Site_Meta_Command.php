@@ -1,7 +1,7 @@
 <?php
 
-use FP_CLI\CommandWithMeta;
-use FP_CLI\Fetchers\Site as SiteFetcher;
+use FIN_CLI\CommandWithMeta;
+use FIN_CLI\Fetchers\Site as SiteFetcher;
 
 /**
  * Adds, updates, deletes, and lists site custom fields.
@@ -9,19 +9,19 @@ use FP_CLI\Fetchers\Site as SiteFetcher;
  * ## EXAMPLES
  *
  *     # Set site meta
- *     $ fp site meta set 123 bio "Mary is a FinPress developer."
+ *     $ fin site meta set 123 bio "Mary is a FinPress developer."
  *     Success: Updated custom field 'bio'.
  *
  *     # Get site meta
- *     $ fp site meta get 123 bio
+ *     $ fin site meta get 123 bio
  *     Mary is a FinPress developer.
  *
  *     # Update site meta
- *     $ fp site meta update 123 bio "Mary is an awesome FinPress developer."
+ *     $ fin site meta update 123 bio "Mary is an awesome FinPress developer."
  *     Success: Updated custom field 'bio'.
  *
  *     # Delete site meta
- *     $ fp site meta delete 123 bio
+ *     $ fin site meta delete 123 bio
  *     Success: Deleted custom field.
  */
 class Site_Meta_Command extends CommandWithMeta {

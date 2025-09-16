@@ -1,15 +1,15 @@
 Feature: Manage network-wide custom fields.
 
   Scenario: Non-multisite
-    Given a FP install
+    Given a FIN install
 
-    When I run `fp network-meta`
+    When I run `fin network-meta`
     Then STDOUT should contain:
       """
-      usage: fp network meta
+      usage: fin network meta
       """
 
-    When I try `fp network-meta get 1 site_admins`
+    When I try `fin network-meta get 1 site_admins`
     Then STDOUT should be empty
     And STDERR should contain:
       """
